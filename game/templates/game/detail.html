@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% block page_title %}{{ game.name }}{% endblock %}
+
+
+{% block content %}
+
+<div class="container">
+  <p>{{ game.description }}</p>
+</div>
+
+<div class="contaner border p-2">
+  <p>{{ room.description }}</p>
+  <p>You Can:</p>
+  <p>
+    {% for exit, pk in exits.items %}
+      <a href="{% url 'game:detail' game_pk=game.pk room_pk=pk %}">
+        {{ exit }}<br />
+      </a>
+    {% endfor %}
+  </p>
+</div>
+
+{% endblock %}
