@@ -11,12 +11,16 @@
 
 <div class="contaner border p-2">
   <p>{{ room.description }}</p>
+  <p>You can see: {{ room.items.all | join:", " }}</p>
   <p>You Can:</p>
   <p>
     {% for exit, pk in exits.items %}
       <a href="{% url 'game:detail' game_pk=game.pk room_pk=pk %}">
         {{ exit }}<br />
       </a>
+    {% endfor %}
+    {% for item in room.items.all %}
+      Take {{ item.name }}<br />
     {% endfor %}
   </p>
 </div>
