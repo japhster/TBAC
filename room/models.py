@@ -20,6 +20,9 @@ class Room(models.Model):
     description = models.CharField(max_length=1000)
     visited_description = models.CharField(max_length=1000, blank=True)
     exits = models.ManyToManyField("self", through="Exit")
+    required_items = models.ManyToManyField(
+        "item.Item", related_name="required_by_rooms"
+    )
 
     def __str__(self):
         return self.name
@@ -35,6 +38,9 @@ class Exit(models.Model):
     one_to_two = models.CharField(max_length=250)
     two_to_one = models.CharField(max_length=250)
     is_locked = models.BooleanField(default=False)
+    key_required = models.ForeignKey(
+        "item.Item", related_name="unlocks", on_delete=models.SET_NULL, null=True
+    )
 
     objects = ExitManager()
 

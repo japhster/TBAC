@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+
+
+{% block page_title %}
+  {% if editing %}
+    Item Editor
+  {% else %}
+    {{ game.name }}
+  {% endif %}
+{% endblock %}
+
+{% block content %}
+<div class="container">
+  <form method="POST">
+    {% csrf_token %}
+    <table class="table">
+      <tr>
+        <th>Name</th>
+        <td>{{ form.name }} {{ form.name.errors.as_text }}</td>
+      </tr>
+      <tr>
+        <th>Description</th>
+        <td>{{ form.description }} {{ form.description.errors.as_text }}</td>
+      </tr>
+      <tr>
+        <th>Type of Item</th>
+        <td>{{ form.item_type }} {{ form.item_type.errors.as_text }}</td>
+      </tr>
+      <tr>
+        <th>Room</th>
+        <td>{{ form.room }} {{ form.room.errors.as_text }}</td>
+      </tr>
+      <tr>
+        <th>Contained Within</th>
+        <td>
+          {{ form.contained_within }}
+          {{ form.contained_within.errors.as_text }}
+        </td>
+      </tr>
+      <tr>
+        <th>Is Starting Item</th>
+        <td>
+          {{ form.is_starting_item }}
+          {{ form.is_starting_item.errors.as_text }}
+        </td>
+      </tr>
+      <tr>
+        <th colspan=2 class="text-center">
+          {% for error in form.non_field_errors %}
+            <p>{{ error }}</p>
+          {% endfor %}
+          <button type="submit" class="btn btn-primary">
+            {% if editing %}Update{% else %}Create{% endif %}
+          </button>
+        </th>
+      </tr>
+    </table>
+  </form>
+</div>
+
+{% endblock %}

@@ -25,4 +25,5 @@ urlpatterns = [
     path("admin/", admin.site.urls),
     path("game/", include("game.urls")),
     path("room/", include("room.urls")),
+    path("item/", include("item.urls")),
 ]

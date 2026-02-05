@@ -84,6 +84,43 @@
         </ul>
       </div>
     </div>
+
+    <div class="col">
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title">Items</h5>
+          <a href="{% url 'item:new' game.pk %}" class="card-link">+ New Item</a>
+        </div>
+        <ul class="list-group list-group-flush">
+          {% for item in game.items.all %}
+            <li class="list-group-item">
+              <table class="table table-borderless table-sm m-0">
+                <tr>
+                  <td
+                    class="w-100"
+                    data-bs-toggle="popover"
+                    data-bs-trigger="hover focus"
+                    data-bs-placement="left"
+                    data-bs-content="{% if item.is_starting_item %}Starting Item{% elif item.room %}Item is found in {{ item.room.name }}{% else %}Item is hidden in {{ item.contained_within.name }}{% endif %}"
+                  >
+                    {{ item.name }}
+                  </td>
+                  <td>
+                    <a href="{% url 'item:edit' item.pk %}">
+                      {% include "icons/edit.html" %}
+                    </a>
+                  </td>
+                  <td><a href="{% url 'item:delete' item.pk %}">
+                      {% include "icons/delete.html" %}
+                  </a></td>
+                </tr>
+              </table>
+            </li>
+          {% endfor %}
+        </ul>
+      </div>
+    </div>
+
 </div>
 
 {% endblock %}
