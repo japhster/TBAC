@@ -8,37 +8,60 @@ class Migration(migrations.Migration):
 
     initial = True
 
-    dependencies = [
-    ]
+    dependencies = []
 
     operations = [
         migrations.CreateModel(
-            name='Exit',
+            name="Exit",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('one_to_two', models.CharField(max_length=250)),
-                ('two_to_one', models.CharField(max_length=250)),
-                ('is_locked', models.BooleanField(default=False)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("one_to_two", models.CharField(max_length=250)),
+                ("two_to_one", models.CharField(max_length=250)),
+                ("is_locked", models.BooleanField(default=False)),
             ],
         ),
         migrations.CreateModel(
-            name='Room',
+            name="Room",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=250)),
-                ('description', models.CharField(max_length=1000)),
-                ('visited_description', models.CharField(blank=True, max_length=1000)),
-                ('exits', models.ManyToManyField(through='room.Exit', to='room.room')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("name", models.CharField(max_length=250)),
+                ("description", models.CharField(max_length=1000)),
+                ("visited_description", models.CharField(blank=True, max_length=1000)),
+                ("exits", models.ManyToManyField(through="room.Exit", to="room.room")),
             ],
         ),
         migrations.AddField(
-            model_name='exit',
-            name='room_1',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='exits_from_1', to='room.room'),
+            model_name="exit",
+            name="room_1",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="exits_from_1",
+                to="room.room",
+            ),
         ),
         migrations.AddField(
-            model_name='exit',
-            name='room_2',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='exists_from_2', to='room.room'),
+            model_name="exit",
+            name="room_2",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="exists_from_2",
+                to="room.room",
+            ),
         ),
     ]

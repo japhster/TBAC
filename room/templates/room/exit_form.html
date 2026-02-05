@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+
+{% block page_title %}
+  {% if editing %}
+    Exit Editor
+  {% else %}
+    {{ game.name }}
+  {% endif %}
+{% endblock %}
+
+{% block content %}
+
+<div class="container">
+  <form method="POST">
+    {% csrf_token %}
+    <table class="table">
+      <tr>
+        <th>{{ form.room_1 }} {{ form.room_1.errors.as_text }}</th>
+        <th class="text-center">&lt;-&gt;</th>
+        <th>{{ form.room_2 }} {{ form.room_2.errors.as_text }}</th>
+      </tr>
+      <tr>
+        <th>
+          Move from this room:
+          {{ form.one_to_two }} {{ form.one_to_two.errors.as_text }}
+        </th>
+        <th class="text-center">&lt;-&gt;</th>
+        <th>
+          Move from this room:
+          {{ form.two_to_one }} {{ form.two_to_one.errors.as_text }}
+        </th>
+      </tr>
+      <tr>
+        <th colspan=3 class="text-center">
+          <button type="submit" class="btn btn-primary">
+            {% if editing %}Edit{% else %}Create{% endif %}
+          </button>
+        </th>
+      </tr>
+    </table>
+  </form>
+</div>
+
+{% endblock %}

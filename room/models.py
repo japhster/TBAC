@@ -1,6 +1,5 @@
 from django.db import models
 
-
 # Create your models here.
 
 
@@ -14,20 +13,25 @@ class ExitManager(models.Manager):
 
 
 class Room(models.Model):
-    game = models.ForeignKey("game.Game", related_name="rooms", on_delete=models.CASCADE)
+    game = models.ForeignKey(
+        "game.Game", related_name="rooms", on_delete=models.CASCADE
+    )
     name = models.CharField(max_length=250)
     description = models.CharField(max_length=1000)
     visited_description = models.CharField(max_length=1000, blank=True)
     exits = models.ManyToManyField("self", through="Exit")
-
 
     def __str__(self):
         return self.name
 
 
 class Exit(models.Model):
-    room_1 = models.ForeignKey("Room", related_name="exits_from_1", on_delete=models.CASCADE)
-    room_2 = models.ForeignKey("Room", related_name="exists_from_2", on_delete=models.CASCADE)
+    room_1 = models.ForeignKey(
+        "Room", related_name="exits_from_1", on_delete=models.CASCADE
+    )
+    room_2 = models.ForeignKey(
+        "Room", related_name="exists_from_2", on_delete=models.CASCADE
+    )
     one_to_two = models.CharField(max_length=250)
     two_to_one = models.CharField(max_length=250)
     is_locked = models.BooleanField(default=False)

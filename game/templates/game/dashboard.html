@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+
+{% block page_title %}{{ game.name }}{% endblock %}
+
+{% block content %}
+
+<div class="container">
+  <div class="row row-cols-3 row-cols-md-3 g-4">
+    <div class="col">
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title">Rooms</h5>
+          <a href="{% url 'room:new' game.pk %}" class="card-link">+ New Room</a>
+        </div>
+        <ul class="list-group list-group-flush">
+            {% for room in game.rooms.all %}
+              <li class="list-group-item">
+                <table class="table table-borderless table-sm m-0">
+                <tr>
+                  <td class="w-100">{{ room.name }}</td>
+                  <td
+                    data-bs-toggle="popover"
+                    data-bs-trigger="hover focus"
+                    data-bs-placement="top"
+                    data-bs-content="{% if room.pk == game.start_room.pk %}this is the starting room{% else %}set the starting room{% endif %}"
+                  >
+                    {% if room.pk == game.start_room.pk %}
+                      <svg width="1.25em" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0 0 13.5 3h-6a2.25 2.25 0 0 0-2.25 2.25v13.5A2.25 2.25 0 0 0 7.5 21h6a2.25 2.25 0 0 0 2.25-2.25V15m3 0 3-3m0 0-3-3m3 3H9" />
+                      </svg>
+                    {% else %}
+                      <a href="{% url 'room:set_starting' room.pk %}">
+                        <svg width="1.25em" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                          <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0 0 13.5 3h-6a2.25 2.25 0 0 0-2.25 2.25v13.5A2.25 2.25 0 0 0 7.5 21h6a2.25 2.25 0 0 0 2.25-2.25V15m3 0 3-3m0 0-3-3m3 3H9" />
+                        </svg>
+
+                      </a>
+                    {% endif %}
+                  </td>
+                  <td>
+                    <a href="{% url 'room:edit' room.pk %}">
+                      {% include "icons/edit.html" %}
+                    </a>
+                  </td>
+                  <td>
+                    <a href="{% url 'room:delete' room.pk %}">
+                      {% include "icons/delete.html" %}
+                    </a>
+                  </td>
+                </tr>
+                </table>
+              </li>
+            {% endfor %}
+        </ul>
+      </div>
+    </div>
+
+    <div class="col">
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title">Exits</h5>
+          <a href="{% url 'room:new_exit' game.pk %}" class="card-link">+ New Exit</a>
+        </div>
+        <ul class="list-group list-group-flush">
+          {% for exit in exits %}
+            <li class="list-group-item">
+              <table class="table table-borderless table-sm m-0">
+                <tr>
+                  <td class="w-100">
+                    {{ exit.room_1.name }} &lt;-&gt; {{ exit.room_2.name }}
+                  </td>
+                  <td>
+                    <a href="{% url 'room:edit_exit' game_pk=game.pk exit_pk=exit.pk %}">
+                      {% include "icons/edit.html" %}
+                    </a>
+                  </td>
+                  <td><a href="{% url 'room:delete_exit' exit.pk %}">
+                      {% include "icons/delete.html" %}
+                  </a></td>
+                </tr>
+              </table>
+            </li>
+          {% endfor %}
+        </ul>
+      </div>
+    </div>
+</div>
+
+{% endblock %}

@@ -22,6 +22,9 @@
             <li class="nav-item">
               <a class="nav-link active" aria-current="page" href="{% url 'game:list' %}">Home</a>
             </li>
+            <li class="nav-item">
+              <a class="nav-link active" aria-current="page" href="{% url 'game:new' %}">New game</a>
+            </li>
           </ul>
         </div>
       </div>
@@ -29,8 +32,24 @@
     <div class="container">
       <div class="container text-center mb-3 mt-2">
         <h2>{% block page_title %}{%endblock %}</h2>
+        {% if links %}
+          <table class="table">
+            <tr>
+              {% for label, link in links %}
+                <th><a href={{link}}>{{ label }}</a></th>
+              {% endfor %}
+            </tr>
+          </table>
+        {% endif %}
       </div>
       {% block content %}{% endblock %}
     </div>
   </body>
+
+  <script>
+    var popoverTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="popover"]'))
+    var popoverList = popoverTriggerList.map(function (popoverTriggerEl) {
+      return new bootstrap.Popover(popoverTriggerEl)
+    })
+  </script>
 </html>

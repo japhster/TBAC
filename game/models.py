@@ -2,6 +2,7 @@ from django.db import models
 
 # Create your models here.
 
+
 class GameManager(models.Manager):
 
     def playable(self, *args, **kwargs):
@@ -11,10 +12,13 @@ class GameManager(models.Manager):
 
         return qs
 
+
 class Game(models.Model):
-    name = models.CharField(max_length=250)
+    name = models.CharField(max_length=250, unique=True)
     description = models.CharField(max_length=1000)
-    start_room = models.OneToOneField("room.Room", related_name="starts_game", null=True, on_delete=models.SET_NULL)
+    start_room = models.OneToOneField(
+        "room.Room", related_name="starts_game", null=True, on_delete=models.SET_NULL
+    )
 
     objects = GameManager()
 
