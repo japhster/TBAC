@@ -20,9 +20,13 @@ from django.urls import include, path
 from django.http import HttpResponseRedirect
 from django.shortcuts import reverse
 
+from . import views
+
 urlpatterns = [
     path("", lambda r: HttpResponseRedirect(reverse("game:list"))),
     path("admin/", admin.site.urls),
+    # path("accounts/", include("django.contrib.auth.urls")),
+    path("logout/", views.logout_view, name="logout"),
     path("game/", include("game.urls")),
     path("room/", include("room.urls")),
     path("item/", include("item.urls")),

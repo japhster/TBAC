@@ -1,16 +1,30 @@
-from django.shortcuts import render, reverse, get_object_or_404
-from django.http import HttpResponseRedirect
+from django.contrib.auth.decorators import login_required
 from django.db.models import Q
+from django.http import HttpResponseRedirect
+from django.shortcuts import render, reverse, get_object_or_404
 
 from . import forms, models
 from room.models import Exit
+from tbac import helpers
 
 # Create your views here.
 
 
+@login_required
 def game_list(request):
     return render(
-        request, "game/list.html", context={"games": models.Game.objects.playable()}
+        request, "game/list.html", context={"games": models.Game.objects.playable(user=request.user)}
+    )
+
+
+def my_games(request):
+    return render(
+        request,
+        "game/my_games.html",
+        context={
+            "games": models.Game.objects.filter(created_by=request.user),
+            "links": [("+ new game", reverse("game:new"))],
+        },
     )
 
 
@@ -34,12 +48,14 @@ def game_detail(request, game_pk, room_pk=None):
     )
 
 
+@login_required
 def create_game(request):
     form = forms.GameForm(request.POST or None)
     if request.method == "POST" and form.is_valid():
         game = models.Game.objects.create(
             name=form.cleaned_data["name"],
             description=form.cleaned_data["description"],
+            created_by=request.user,
         )
         return HttpResponseRedirect(
             reverse("game:dashboard", kwargs={"game_pk": game.pk})
@@ -69,11 +85,12 @@ def edit_game(request, game_pk):
     return render(request, "game/game_form.html", context={"form": form})
 
 
+@login_required
 def game_dashboard(request, game_pk):
     game = get_object_or_404(
-        models.Game.objects.prefetch_related("rooms", "items").select_related(
-            "start_room"
-        ),
+        models.Game.objects.filter(created_by=request.user)
+        .prefetch_related("rooms", "items")
+        .select_related("start_room"),
         pk=game_pk,
     )
 
@@ -83,16 +100,43 @@ def game_dashboard(request, game_pk):
         .select_related("room_1", "room_2")
     )
 
+    publish_link = (
+        "publish", reverse("game:publish", kwargs={"game_pk": game_pk})
+    ) if not game.is_published else (
+        "unpublish", reverse("game:unpublish", kwargs={"game_pk": game_pk})
+    )
+
     return render(
         request,
         "game/dashboard.html",
         context={
             "game": game,
             "exits": all_exits,
-            "links": [("edit", reverse("game:edit", kwargs={"game_pk": game_pk}))],
+            "links": [
+                ("back", reverse("game:my_games")),
+                ("edit", reverse("game:edit", kwargs={"game_pk": game_pk})),
+                publish_link,
+            ],
         },
     )
 
+
+@login_required
+def publish_game(request, game_pk):
+    game = get_object_or_404(models.Game, pk=game_pk, created_by=request.user)
+
+    game.is_published = True
+    game.save()
+    return helpers.custom_redirect("game:dashboard", {"game_pk": game_pk})
+
+
+@login_required
+def unpublish_game(request, game_pk):
+    game = get_object_or_404(models.Game, pk=game_pk, created_by=request.user)
+
+    game.is_published = False
+    game.save()
+    return helpers.custom_redirect("game:dashboard", {"game_pk": game_pk})
 
 def new_end_state(request, game_pk):
     game = get_object_or_404(models.Game, pk=game_pk)

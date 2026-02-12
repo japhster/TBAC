@@ -1,7 +1,8 @@
+from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404, render
 from django.db.models import Q
 
-from . import models
+from . import forms, models
 from item.models import Item
 from room.models import Exit, Room
 from tbac import helpers
@@ -30,12 +31,46 @@ def _copy_item(session, item, room_map, item_map):
     return item.pk
 
 
+@login_required
+def start_session(request, game_pk):
+    """Attempt to get an existing session of the game passed based on the
+    logged in user id.
+
+    Ask the user whether they wish to continue or restart the game and respond in kind.
+    """
+
+    game = get_object_or_404(models.Game.objects.all(), pk=game_pk)
+
+    try:
+        existing_session = models.Session.objects.get(game=game, player=request.user)
+    except models.Session.DoesNotExist:
+        return helpers.custom_redirect("game:new_session", kwargs={"game_pk": game_pk})
+
+    form = forms.ContinueGameForm(request.POST or None)
+
+    print(request.POST)
+
+    if request.method == "POST" and form.is_valid():
+        print(form.cleaned_data)
+        if form.cleaned_data["continue_adventure"]:
+            return _session_redirect(existing_session.pk)
+        else:
+            existing_session.delete()
+            return helpers.custom_redirect(
+                "game:new_session", kwargs={"game_pk": game_pk}
+            )
+
+    return render(request, "game/continue.html", context={"game": game, "form": form})
+
+
+@login_required
 def start_new_session(request, game_pk):
     game = get_object_or_404(
         models.Game.objects.prefetch_related("rooms", "items"), pk=game_pk
     )
     session = models.Session.objects.create(
         game=game,
+        player=request.user,
     )
 
     # a map of the old room pk to the new room pk

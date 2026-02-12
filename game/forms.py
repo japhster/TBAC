@@ -36,3 +36,7 @@ class EndStateForm(forms.Form):
         self.fields["owned_items"].queryset = Item.objects.base().filter(
             game_id=game_pk
         )
+
+
+class ContinueGameForm(forms.Form):
+    continue_adventure = forms.BooleanField(required=False)

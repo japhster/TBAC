@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+
+{% block page_title %}Continue?{% endblock %}
+
+{% block content %}
+
+<div class="container w-50 text-center">
+  <p>
+    You already have progress in this Adventure, would you like to continue from where you left off or restart?
+    (If you choose to restart you will never be able to access your current progress again.)
+  </p>
+  <div class="container w-50">
+    <form method="POST">
+      {% csrf_token %}
+      {{ form.errors }}
+      <table class="table table-borderless">
+        <tr>
+          <th class="text-center"><button type="submit" class="btn btn-primary" name="continue_adventure" value=true>Continue</button></th>
+        </tr>
+        <tr>
+          <th class="text-center"><button type="submit" class="btn btn-danger" name="continue_adventure" value=false>Restart</button></th>
+        </tr>
+      </table>
+    </form>
+  </div>
+</div>
+
+{% endblock %}

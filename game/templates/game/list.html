@@ -12,7 +12,7 @@
     <tbody>
       {% for game in games %}
         <tr>
-          <td><a href="{% url 'game:new_session' game.pk %}">{{ game.name }}</a></td>
+          <td><a href="{% url 'game:start_session' game.pk %}">{{ game.name }}</a></td>
         </tr>
       {% empty %}
         <tr><th>No Games Found</th></tr>

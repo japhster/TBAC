@@ -6,10 +6,13 @@ app_name = "game"
 
 urlpatterns = [
     path("list/", views.game_list, name="list"),
+    path("my-games/", views.my_games, name="my_games"),
     path("detail/<int:game_pk>/", views.game_detail, name="detail"),
     path("create/", views.create_game, name="new"),
     path("edit/<int:game_pk>/", views.edit_game, name="edit"),
     path("dashboard/<int:game_pk>/", views.game_dashboard, name="dashboard"),
+    path("publish/<int:game_pk>/", views.publish_game, name="publish"),
+    path("unpublish/<int:game_pk>/", views.unpublish_game, name="unpublish"),
     path("new/end_state/<int:game_pk>/", views.new_end_state, name="new_end_state"),
     path(
         "edit/end_state/<int:end_state_pk>", views.edit_end_state, name="edit_end_state"
@@ -20,6 +23,11 @@ urlpatterns = [
         name="delete_end_state",
     ),
     # session urls
+    path(
+        "session/start/<int:game_pk>/",
+        session_views.start_session,
+        name="start_session",
+    ),
     path(
         "session/new/<int:game_pk>/",
         session_views.start_new_session,

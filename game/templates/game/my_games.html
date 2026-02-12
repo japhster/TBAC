@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+
+{% block page_title %}My Games{% endblock %}
+
+
+{% block content %}
+
+<div class="container text-center">
+  <table class="table">
+    <thead><tr><th>Text-Based Adventure Games</th></tr></thead>
+    <tbody>
+      {% for game in games %}
+        <tr>
+          <td><a href="{% url 'game:dashboard' game.pk %}">{{ game.name }}</a></td>
+        </tr>
+      {% empty %}
+        <tr><th>No Games Found</th></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+{% endblock %}

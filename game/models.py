@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.db import models
 
 from item.models import Item
@@ -9,9 +10,15 @@ from room.models import Exit
 class GameManager(models.Manager):
 
     def playable(self, *args, **kwargs):
+        user = kwargs.pop("user", None)
         qs = self.filter(*args, **kwargs)
+        if user:
+            qs = qs.filter(models.Q(is_published=True) | models.Q(sessions__player=user))
         if "start_room" not in kwargs:
             qs = qs.filter(start_room__isnull=False)
+
+        if "created_by" not in kwargs:
+            qs = qs.filter(created_by__isnull=False)
 
         return qs
 
@@ -30,6 +37,13 @@ class Game(models.Model):
     start_room = models.OneToOneField(
         "room.Room", related_name="starts_game", null=True, on_delete=models.SET_NULL
     )
+    created_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        related_name="games",
+        null=True,
+        on_delete=models.SET_NULL,
+    )
+    is_published = models.BooleanField(default=False)
 
     objects = GameManager()
 
@@ -78,6 +92,9 @@ class Session(models.Model):
         on_delete=models.CASCADE,
         limit_choices_to=models.Q(session__isnull=False),
         null=True,
+    )
+    player = models.ForeignKey(
+        settings.AUTH_USER_MODEL, related_name="sessions", on_delete=models.CASCADE
     )
 
     def get_inventory(self):
