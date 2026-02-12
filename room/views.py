@@ -10,7 +10,7 @@ from tbac import links, helpers
 
 def create_room(request, game_pk):
     game = get_object_or_404(Game, pk=game_pk)
-    form = forms.RoomForm(request.POST or None)
+    form = forms.RoomForm(request.POST or None, game_pk=game_pk)
 
     dashboard_link = reverse("game:dashboard", kwargs={"game_pk": game_pk})
 
@@ -18,8 +18,10 @@ def create_room(request, game_pk):
         room = models.Room.objects.create(
             name=form.cleaned_data["name"],
             description=form.cleaned_data["description"],
+            visited_description=form.cleaned_data["visited_description"],
             game=game,
         )
+        room.required_items.set(form.cleaned_data["required_items"])
         return HttpResponseRedirect(dashboard_link)
 
     return render(
@@ -40,7 +42,10 @@ def edit_room(request, room_pk):
         initial={
             "name": room.name,
             "description": room.description,
+            "visited_description": room.visited_description,
+            "required_items": room.required_items.values_list("pk", flat=True),
         },
+        game_pk=room.game_id,
     )
 
     dashboard_link = reverse("game:dashboard", kwargs={"game_pk": room.game.pk})
@@ -49,6 +54,9 @@ def edit_room(request, room_pk):
         room.name = form.cleaned_data["name"]
         room.description = form.cleaned_data["description"]
         room.save()
+        print(room.required_items.all(), form.cleaned_data["required_items"])
+        room.required_items.set(form.cleaned_data["required_items"])
+
         return HttpResponseRedirect(dashboard_link)
 
     return render(
@@ -105,7 +113,6 @@ def create_exit(request, game_pk):
 
 def edit_exit(request, game_pk, exit_pk):
     room_exit = get_object_or_404(models.Exit, pk=exit_pk)
-    print(room_exit.room_1, room_exit.room_2)
     form = forms.ExitForm(
         request.POST or None,
         game_pk=game_pk,

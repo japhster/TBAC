@@ -16,10 +16,20 @@
     {% csrf_token %}
     <table class="table">
       <tr>
-        <th>Name</th><td>{{ form.name }} {{ form.name.errors.as_text }}</td>
+        <th>Name</th>
+        <td>{{ form.name }} {{ form.name.errors.as_text }}</td>
       </tr>
       <tr>
-        <th>Description</th><td>{{ form.description }} {{ form.description.errors.as_text }}</td>
+        <th>Description</th>
+        <td>{{ form.description }} {{ form.description.errors.as_text }}</td>
+      </tr>
+      <tr>
+        <th>Secondary Description After Visiting (Optional)</th>
+        <td>{{ form.visited_description }} {{ form.visited_description.errors.as_text }}</td>
+      </tr>
+      <tr>
+        <th>Required Items to Access</th>
+        <td>{{ form.required_items }} {{ form.required_items.errors.as_text }}</td>
       </tr>
       <tr>
         <th colspan=2 class="text-center">

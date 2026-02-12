@@ -16,12 +16,12 @@ class ItemForm(forms.Form):
         choices=models.Item.ItemTypeChoices.choices,
     )
     room = forms.ModelChoiceField(
-        queryset=Room.objects.all(),
+        queryset=Room.objects.none(),
         widget=forms.Select(attrs={"class": "form-select"}),
         required=False,
     )
     contained_within = forms.ModelChoiceField(
-        queryset=models.Item.objects.all(),
+        queryset=models.Item.objects.none(),
         widget=forms.Select(attrs={"class": "form-select"}),
         required=False,
     )
@@ -32,8 +32,8 @@ class ItemForm(forms.Form):
 
     def __init__(self, *args, game_pk, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields["room"].queryset = Room.objects.filter(game_id=game_pk)
-        self.fields["contained_within"].queryset = models.Item.objects.filter(
+        self.fields["room"].queryset = Room.objects.base().filter(game_id=game_pk)
+        self.fields["contained_within"].queryset = models.Item.objects.base().filter(
             game_id=game_pk, item_type=models.Item.ItemTypeChoices.CONTAINER
         )
 

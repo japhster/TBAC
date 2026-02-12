@@ -25,8 +25,6 @@ def create_item(request, game_pk):
 
         return helpers.custom_redirect("game:dashboard", kwargs={"game_pk": game_pk})
 
-    print(form.errors)
-
     return render(
         request,
         "item/item_form.html",

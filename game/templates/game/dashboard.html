@@ -13,7 +13,7 @@
           <a href="{% url 'room:new' game.pk %}" class="card-link">+ New Room</a>
         </div>
         <ul class="list-group list-group-flush">
-            {% for room in game.rooms.all %}
+            {% for room in game.rooms.base %}
               <li class="list-group-item">
                 <table class="table table-borderless table-sm m-0">
                 <tr>
@@ -92,7 +92,7 @@
           <a href="{% url 'item:new' game.pk %}" class="card-link">+ New Item</a>
         </div>
         <ul class="list-group list-group-flush">
-          {% for item in game.items.all %}
+          {% for item in game.items.base %}
             <li class="list-group-item">
               <table class="table table-borderless table-sm m-0">
                 <tr>
@@ -111,6 +111,34 @@
                     </a>
                   </td>
                   <td><a href="{% url 'item:delete' item.pk %}">
+                      {% include "icons/delete.html" %}
+                  </a></td>
+                </tr>
+              </table>
+            </li>
+          {% endfor %}
+        </ul>
+      </div>
+    </div>
+
+    <div class="col">
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title">End States</h5>
+          <a href="{% url 'game:new_end_state' game.pk %}" class="card-link">+ New End State</a>
+        </div>
+        <ul class="list-group list-group-flush">
+          {% for state in game.end_states.base %}
+            <li class="list-group-item">
+              <table class="table table-borderless table-sm m-0">
+                <tr>
+                  <td>{{ state.name }}</td>
+                  <td>
+                    <a href="{% url 'game:edit_end_state' state.pk %}">
+                      {% include "icons/edit.html" %}
+                    </a>
+                  </td>
+                  <td><a href="{% url 'game:delete_end_state' state.pk %}">
                       {% include "icons/delete.html" %}
                   </a></td>
                 </tr>

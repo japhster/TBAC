@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block page_title %}{{ game.name }}{% endblock %}
+
+
+{% block content %}
+
+<div class="container">
+  <p>{{ game.description }}</p>
+</div>
+
+<div class="contaner border p-2">
+  <h3>{{ end_state.name }}</h3>
+  <p>{{ end_state.message }}</p>
+</div>
+
+{% endblock %}

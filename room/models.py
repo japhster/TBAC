@@ -4,12 +4,25 @@ from django.db import models
 
 
 class ExitManager(models.Manager):
+    def base(self):
+        return self.get_queryset().filter(session__isnull=True)
+
+    def session(self, session_pk):
+        return self.get_queryset().filter(session_id=session_pk)
 
     def from_room(self, *args, **kwargs):
         room = kwargs.pop("room")
         return self.filter(*args, **kwargs).filter(
             models.Q(room_1=room) | models.Q(room_2=room)
         )
+
+
+class RoomManager(models.Manager):
+    def base(self):
+        return self.get_queryset().filter(session__isnull=True)
+
+    def session(self, session_pk):
+        return self.get_queryset().filter(session_id=session_pk)
 
 
 class Room(models.Model):
@@ -23,6 +36,17 @@ class Room(models.Model):
     required_items = models.ManyToManyField(
         "item.Item", related_name="required_by_rooms"
     )
+
+    # session tracking
+    session = models.ForeignKey(
+        "game.Session",
+        related_name="rooms",
+        on_delete=models.CASCADE,
+        null=True,
+        default=None,
+    )
+
+    objects = RoomManager()
 
     def __str__(self):
         return self.name
@@ -40,6 +64,15 @@ class Exit(models.Model):
     is_locked = models.BooleanField(default=False)
     key_required = models.ForeignKey(
         "item.Item", related_name="unlocks", on_delete=models.SET_NULL, null=True
+    )
+
+    # session tracking
+    session = models.ForeignKey(
+        "game.Session",
+        related_name="exits",
+        on_delete=models.CASCADE,
+        null=True,
+        default=None,
     )
 
     objects = ExitManager()

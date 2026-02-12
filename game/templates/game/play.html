@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block page_title %}{{ game.name }}{% endblock %}
+
+
+{% block content %}
+
+<div class="container">
+  <p>{{ game.description }}</p>
+</div>
+
+<div class="contaner border p-2">
+  <p>{{ location.description }}</p>
+  {% if items.exists %}
+    <p>You can see: {{ items | join:", " }}</p>
+  {% endif %}
+  {% if inventory.exists %}
+    <p>You have at your disposal: {{ inventory | join:", " }}</p>
+  {% endif %}
+  <p>You can:</p>
+  <p>
+    {% for exit, pk in exits %}
+      <a href="{% url 'game:move' session_pk=session.pk room_pk=pk %}">
+        {{ exit }}<br />
+      </a>
+    {% endfor %}
+    {% for item in items %}
+      <a href="{% url 'game:take' session_pk=session.pk item_pk=item.pk %}">
+        Take {{ item.name }}<br />
+      </a>
+    {% endfor %}
+    {% for item in containers %}
+      <a href="{% url 'game:open' session_pk=session.pk item_pk=item.pk %}">
+        Open {{ item.name }}</br />
+      </a>
+    {% endfor %}
+  </p>
+</div>
+
+{% endblock %}
