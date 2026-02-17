@@ -5,7 +5,7 @@
 {% block content %}
 
 <div class="container">
-  <div class="row row-cols-3 row-cols-md-3 g-4">
+  <div class="card-group">
     <div class="col">
       <div class="card">
         <div class="card-body">
@@ -15,34 +15,30 @@
         <ul class="list-group list-group-flush">
             {% for room in game.rooms.base %}
               <li class="list-group-item">
-                <table class="table table-borderless table-sm m-0">
+                <table class="table table-sm m-0">
                 <tr>
-                  <td class="w-100">{{ room.name }}</td>
+                  <td class="w-100 border-0">{{ room.name }}</td>
                   <td
+                    class="border-0"
                     data-bs-toggle="popover"
                     data-bs-trigger="hover focus"
                     data-bs-placement="top"
                     data-bs-content="{% if room.pk == game.start_room.pk %}this is the starting room{% else %}set the starting room{% endif %}"
                   >
                     {% if room.pk == game.start_room.pk %}
-                      <svg width="1.25em" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0 0 13.5 3h-6a2.25 2.25 0 0 0-2.25 2.25v13.5A2.25 2.25 0 0 0 7.5 21h6a2.25 2.25 0 0 0 2.25-2.25V15m3 0 3-3m0 0-3-3m3 3H9" />
-                      </svg>
+                        {% include "icons/set_start_room.html" %}
                     {% else %}
                       <a href="{% url 'room:set_starting' room.pk %}">
-                        <svg width="1.25em" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
-                          <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0 0 13.5 3h-6a2.25 2.25 0 0 0-2.25 2.25v13.5A2.25 2.25 0 0 0 7.5 21h6a2.25 2.25 0 0 0 2.25-2.25V15m3 0 3-3m0 0-3-3m3 3H9" />
-                        </svg>
-
+                        {% include "icons/set_start_room.html" %}
                       </a>
                     {% endif %}
                   </td>
-                  <td>
+                  <td class="border-0">
                     <a href="{% url 'room:edit' room.pk %}">
                       {% include "icons/edit.html" %}
                     </a>
                   </td>
-                  <td>
+                  <td class="border-0">
                     <a href="{% url 'room:delete' room.pk %}">
                       {% include "icons/delete.html" %}
                     </a>
@@ -51,6 +47,31 @@
                 </table>
               </li>
             {% endfor %}
+        </ul>
+      </div>
+      <div class="card mt-1">
+        <div class="card-body">
+          <h5 class="card-title">End States</h5>
+          <a href="{% url 'game:new_end_state' game.pk %}" class="card-link">+ New End State</a>
+        </div>
+        <ul class="list-group list-group-flush">
+          {% for state in game.end_states.base %}
+            <li class="list-group-item">
+              <table class="table table-borderless table-sm m-0">
+                <tr>
+                  <td class="border-0">{{ state.name }}</td>
+                  <td class="border-0">
+                    <a href="{% url 'game:edit_end_state' state.pk %}">
+                      {% include "icons/edit.html" %}
+                    </a>
+                  </td>
+                  <td class="border-0"><a href="{% url 'game:delete_end_state' state.pk %}">
+                      {% include "icons/delete.html" %}
+                  </a></td>
+                </tr>
+              </table>
+            </li>
+          {% endfor %}
         </ul>
       </div>
     </div>
@@ -66,15 +87,15 @@
             <li class="list-group-item">
               <table class="table table-borderless table-sm m-0">
                 <tr>
-                  <td class="w-100">
+                  <td class="w-100 border-0">
                     {{ exit.room_1.name }} &lt;-&gt; {{ exit.room_2.name }}
                   </td>
-                  <td>
+                  <td class="border-0">
                     <a href="{% url 'room:edit_exit' game_pk=game.pk exit_pk=exit.pk %}">
                       {% include "icons/edit.html" %}
                     </a>
                   </td>
-                  <td><a href="{% url 'room:delete_exit' exit.pk %}">
+                  <td class="border-0"><a href="{% url 'room:delete_exit' exit.pk %}">
                       {% include "icons/delete.html" %}
                   </a></td>
                 </tr>
@@ -97,7 +118,7 @@
               <table class="table table-borderless table-sm m-0">
                 <tr>
                   <td
-                    class="w-100"
+                    class="w-100 border-0"
                     data-bs-toggle="popover"
                     data-bs-trigger="hover focus"
                     data-bs-placement="left"
@@ -105,40 +126,12 @@
                   >
                     {{ item.name }}
                   </td>
-                  <td>
+                  <td class="border-0">
                     <a href="{% url 'item:edit' item.pk %}">
                       {% include "icons/edit.html" %}
                     </a>
                   </td>
-                  <td><a href="{% url 'item:delete' item.pk %}">
-                      {% include "icons/delete.html" %}
-                  </a></td>
-                </tr>
-              </table>
-            </li>
-          {% endfor %}
-        </ul>
-      </div>
-    </div>
-
-    <div class="col">
-      <div class="card">
-        <div class="card-body">
-          <h5 class="card-title">End States</h5>
-          <a href="{% url 'game:new_end_state' game.pk %}" class="card-link">+ New End State</a>
-        </div>
-        <ul class="list-group list-group-flush">
-          {% for state in game.end_states.base %}
-            <li class="list-group-item">
-              <table class="table table-borderless table-sm m-0">
-                <tr>
-                  <td>{{ state.name }}</td>
-                  <td>
-                    <a href="{% url 'game:edit_end_state' state.pk %}">
-                      {% include "icons/edit.html" %}
-                    </a>
-                  </td>
-                  <td><a href="{% url 'game:delete_end_state' state.pk %}">
+                  <td class="border-0"><a href="{% url 'item:delete' item.pk %}">
                       {% include "icons/delete.html" %}
                   </a></td>
                 </tr>
