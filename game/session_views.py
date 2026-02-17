@@ -131,6 +131,7 @@ def start_new_session(request, game_pk):
     return _session_redirect(session.pk)
 
 
+@login_required
 def play_game(request, session_pk):
     session = get_object_or_404(models.Session, pk=session_pk)
     game = session.game
@@ -162,6 +163,7 @@ def play_game(request, session_pk):
     )
 
 
+@login_required
 def move_room(request, session_pk, room_pk):
     session = get_object_or_404(models.Session, pk=session_pk)
     room = get_object_or_404(session.rooms.all(), pk=room_pk)
@@ -175,6 +177,7 @@ def move_room(request, session_pk, room_pk):
     return _session_redirect(session_pk)
 
 
+@login_required
 def take_item(request, session_pk, item_pk):
     session = get_object_or_404(models.Session, pk=session_pk)
     item = get_object_or_404(session.items.all(), pk=item_pk)
@@ -185,6 +188,7 @@ def take_item(request, session_pk, item_pk):
     return _session_redirect(session_pk)
 
 
+@login_required
 def open_item(request, session_pk, item_pk):
     session = get_object_or_404(models.Session, pk=session_pk)
     container = get_object_or_404(

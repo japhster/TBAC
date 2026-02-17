@@ -1,3 +1,4 @@
+from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404, render
 
 from tbac import links, helpers
@@ -8,8 +9,9 @@ from game.models import Game
 # Create your views here.
 
 
+@login_required
 def create_item(request, game_pk):
-    game = get_object_or_404(Game, pk=game_pk)
+    game = get_object_or_404(Game, pk=game_pk, created_by=request.user)
     form = forms.ItemForm(request.POST or None, game_pk=game_pk)
 
     if request.method == "POST" and form.is_valid():
@@ -36,8 +38,9 @@ def create_item(request, game_pk):
     )
 
 
+@login_required
 def edit_item(request, item_pk):
-    item = get_object_or_404(models.Item, pk=item_pk)
+    item = get_object_or_404(models.Item, pk=item_pk, game__created_by=request.user)
     form = forms.ItemForm(
         request.POST or None,
         game_pk=item.game.pk,
@@ -75,8 +78,9 @@ def edit_item(request, item_pk):
     )
 
 
+@login_required
 def delete_item(request, item_pk):
-    item = get_object_or_404(models.Item, pk=item_pk)
+    item = get_object_or_404(models.Item, pk=item_pk, game__created_by=request.user)
     game_pk = item.game.pk
     item.delete()
     return helpers.custom_redirect("game:dashboard", kwargs={"game_pk": item.game.pk})

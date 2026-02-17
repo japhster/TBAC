@@ -1,3 +1,4 @@
+from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, render, reverse
 
@@ -8,8 +9,9 @@ from tbac import links, helpers
 # Create your views here.
 
 
+@login_required
 def create_room(request, game_pk):
-    game = get_object_or_404(Game, pk=game_pk)
+    game = get_object_or_404(Game, pk=game_pk, created_by=request.user)
     form = forms.RoomForm(request.POST or None, game_pk=game_pk)
 
     dashboard_link = reverse("game:dashboard", kwargs={"game_pk": game_pk})
@@ -35,8 +37,9 @@ def create_room(request, game_pk):
     )
 
 
+@login_required
 def edit_room(request, room_pk):
-    room = get_object_or_404(models.Room, pk=room_pk)
+    room = get_object_or_404(models.Room, pk=room_pk, game__created_by=request.user)
     form = forms.RoomForm(
         request.POST or None,
         initial={
@@ -70,14 +73,16 @@ def edit_room(request, room_pk):
     )
 
 
+@login_required
 def set_as_starting_room(request, room_pk):
-    game = get_object_or_404(Game, rooms__id=room_pk)
+    game = get_object_or_404(Game, rooms__id=room_pk, created_by=request.user)
     game.start_room_id = room_pk
     game.save()
 
     return helpers.custom_redirect("game:dashboard", kwargs={"game_pk": game.pk})
 
 
+@login_required
 def delete_room(request, room_pk):
     room = get_object_or_404(models.Room.objects.select_related("game"), pk=room_pk)
     game_pk = room.game.pk
@@ -86,8 +91,9 @@ def delete_room(request, room_pk):
     return helpers.custom_redirect("game:dashboard", kwargs={"game_pk": game_pk})
 
 
+@login_required
 def create_exit(request, game_pk):
-    game = get_object_or_404(Game, pk=game_pk)
+    game = get_object_or_404(Game, pk=game_pk, created_by=request.user)
     form = forms.ExitForm(request.POST or None, game_pk=game_pk)
 
     if request.method == "POST" and form.is_valid():
@@ -111,8 +117,11 @@ def create_exit(request, game_pk):
     )
 
 
+@login_required
 def edit_exit(request, game_pk, exit_pk):
-    room_exit = get_object_or_404(models.Exit, pk=exit_pk)
+    room_exit = get_object_or_404(
+        models.Exit, pk=exit_pk, game__created_by=request.user
+    )
     form = forms.ExitForm(
         request.POST or None,
         game_pk=game_pk,
@@ -144,9 +153,12 @@ def edit_exit(request, game_pk, exit_pk):
     )
 
 
+@login_required
 def delete_exit(request, exit_pk):
     room_exit = get_object_or_404(
-        models.Exit.objects.select_related("room_1__game"), pk=exit_pk
+        models.Exit.objects.select_related("room_1__game"),
+        pk=exit_pk,
+        game__created_by=request.user,
     )
     game_pk = room_exit.room_1.game.pk
     room_exit.delete()

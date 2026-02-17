@@ -13,10 +13,13 @@ from tbac import helpers
 @login_required
 def game_list(request):
     return render(
-        request, "game/list.html", context={"games": models.Game.objects.playable(user=request.user)}
+        request,
+        "game/list.html",
+        context={"games": models.Game.objects.playable(user=request.user)},
     )
 
 
+@login_required
 def my_games(request):
     return render(
         request,
@@ -28,8 +31,9 @@ def my_games(request):
     )
 
 
+@login_required
 def game_detail(request, game_pk, room_pk=None):
-    game = get_object_or_404(models.Game, pk=game_pk)
+    game = get_object_or_404(models.Game, pk=game_pk, created_by=request.user)
 
     if room_pk is not None:
         room = game.rooms.get(pk=room_pk)
@@ -64,8 +68,9 @@ def create_game(request):
     return render(request, "game/game_form.html", context={"form": form})
 
 
+@login_required
 def edit_game(request, game_pk):
-    game = get_object_or_404(models.Game, pk=game_pk)
+    game = get_object_or_404(models.Game, pk=game_pk, created_by=request.user)
 
     form = forms.GameForm(
         request.POST or None,
@@ -101,9 +106,9 @@ def game_dashboard(request, game_pk):
     )
 
     publish_link = (
-        "publish", reverse("game:publish", kwargs={"game_pk": game_pk})
-    ) if not game.is_published else (
-        "unpublish", reverse("game:unpublish", kwargs={"game_pk": game_pk})
+        ("publish", reverse("game:publish", kwargs={"game_pk": game_pk}))
+        if not game.is_published
+        else ("unpublish", reverse("game:unpublish", kwargs={"game_pk": game_pk}))
     )
 
     return render(
@@ -138,8 +143,10 @@ def unpublish_game(request, game_pk):
     game.save()
     return helpers.custom_redirect("game:dashboard", {"game_pk": game_pk})
 
+
+@login_required
 def new_end_state(request, game_pk):
-    game = get_object_or_404(models.Game, pk=game_pk)
+    game = get_object_or_404(models.Game, pk=game_pk, created_by=request.user)
     form = forms.EndStateForm(
         request.POST or None,
         game_pk=game.pk,
@@ -170,12 +177,14 @@ def new_end_state(request, game_pk):
     )
 
 
+@login_required
 def edit_end_state(request, end_state_pk):
     end_state = get_object_or_404(
         models.EndState.objects.select_related("game", "location").prefetch_related(
             "owned_items"
         ),
         pk=end_state_pk,
+        game__created_by=request.user,
     )
     form = forms.EndStateForm(
         request.POST or None,
@@ -214,9 +223,12 @@ def edit_end_state(request, end_state_pk):
     )
 
 
+@login_required
 def delete_end_state(request, end_state_pk):
     end_state = get_object_or_404(
-        models.EndState.select_related("game"), pk=end_state_pk
+        models.EndState.select_related("game"),
+        pk=end_state_pk,
+        game__created_by=request.user,
     )
     game_pk = end_state.game.pk
     end_state.delete()
