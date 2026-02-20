@@ -25,7 +25,7 @@ from . import views
 urlpatterns = [
     path("", lambda r: HttpResponseRedirect(reverse("game:list"))),
     path("admin/", admin.site.urls),
-    # path("accounts/", include("django.contrib.auth.urls")),
+    path("login/", views.login_view, name="login"),
     path("logout/", views.logout_view, name="logout"),
     path("game/", include("game.urls")),
     path("room/", include("room.urls")),
