@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+
+{% block page_title %}Login{% endblock %}
+
+{% block content %}
+
+<div class="container">
+  <form method="POST">
+    {% csrf_token %}
+    <table class="table">
+      <tr>
+        <th>Username</th><td>{{ form.username }} {{ form.username.errors.as_text }}</td>
+      </tr>
+      <tr>
+        <th>Password</th><td>{{ form.password }} {{ form.password.errors.as_text }}</td>
+      </tr>
+      <tr><th colspan=2 class="text-center"><button type="submit" class="btn btn-primary">Create</button></th></tr>
+    </table>
+  </form>
+</div>
+
+{% endblock %}
