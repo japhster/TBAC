@@ -48,7 +48,6 @@ class CreateRoomTestCase(BaseLoggedInTestCase):
         self.assertEqual(room.game, self.game)
         self.assertEqual(room.visited_description, "")
 
-
     def test_create_room_with_required_items(self):
         existing_room = models.Room.objects.create(
             name="Room with Item", game=self.game
@@ -108,7 +107,9 @@ class SetAsStartingRoomTestCase(BaseLoggedInTestCase):
         self.assertEqual(response.status_code, 404)
 
     def test_overwrites_existing_start_room(self):
-        self.game.start_room = models.Room.objects.create(name="Start Room", game=self.game)
+        self.game.start_room = models.Room.objects.create(
+            name="Start Room", game=self.game
+        )
         self.game.save()
 
         response = self.client.get(

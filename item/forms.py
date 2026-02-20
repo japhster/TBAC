@@ -44,11 +44,7 @@ class ItemForm(forms.Form):
         contained_within = cd.get("contained_within")
         is_starting_item = cd.get("is_starting_item", False)
 
-        if (
-            room is None
-            and contained_within is None
-            and not is_starting_item
-        ):
+        if room is None and contained_within is None and not is_starting_item:
             raise forms.ValidationError(
                 "The item must either be in a room or container or be a starting item."
             )

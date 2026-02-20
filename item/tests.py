@@ -85,7 +85,7 @@ class CreateItemTestCase(BaseLoggedInTestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(
             response.context["form"].non_field_errors()[0],
-            "The item does not need a room if it is a starting item."
+            "The item does not need a room if it is a starting item.",
         )
 
     def test_create_item_cannot_have_both_room_and_contained_within(self):
@@ -101,7 +101,7 @@ class CreateItemTestCase(BaseLoggedInTestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(
             response.context["form"].non_field_errors()[0],
-            "The item does not need a room if it is in a container."
+            "The item does not need a room if it is in a container.",
         )
 
     def test_create_item_cannot_have_both_contained_within_and_is_starting_item(self):
@@ -120,7 +120,7 @@ class CreateItemTestCase(BaseLoggedInTestCase):
         self.assertEqual(
             response.context["form"].non_field_errors()[0],
             "The item should not be a starting item if it is in a container"
-            " (The container should be considered a starting item)."
+            " (The container should be considered a starting item).",
         )
 
     def test_create_item_must_have_room_or_contained_within_or_is_starting_item(self):
@@ -131,5 +131,5 @@ class CreateItemTestCase(BaseLoggedInTestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(
             response.context["form"].non_field_errors()[0],
-            "The item must either be in a room or container or be a starting item."
+            "The item must either be in a room or container or be a starting item.",
         )
