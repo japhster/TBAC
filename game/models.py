@@ -162,3 +162,55 @@ class Session(models.Model):
             available_exit_data.append((exit_label, moving_to.pk))
 
         return available_exit_data
+
+
+class TriggerableEffect(models.Model):
+    name = models.CharField(max_length=250)
+    description = models.CharField(max_length=1000)
+
+    game = models.ForeignKey(
+        "game.Game", related_name="triggerable_effects", on_delete=models.CASCADE
+    )
+    is_starting_quest = models.BooleanField(default=False)
+    is_hidden = models.BooleanField(default=False)
+
+    # tasks
+    room_entered = models.ForeignKey(
+        "room.Room", related_name="effects_upon_entry", on_delete=models.CASCADE
+    )
+    items_owned = models.ManyToManyField(
+        "item.Item", related_name="effects_upon_acquisition"
+    )
+    puzzles_solved = models.ManyToManyField(
+        "item.Puzzle", related_name="effects_upon_solving"
+    )
+
+    # rewards
+    items_gained = models.ManyToManyField("item.Item", related_name="gained_through")
+    exits_unlocked = models.ManyToManyField("room.Exit", related_name="unlocked_by")
+    effects_locked = models.ManyToManyField("TriggerableEffect", related_name="locked_by")
+    effects_accepted = models.ManyToManyField("TriggerableEffect", related_name="triggered_by")
+
+    # session tracking
+    session = models.ForeignKey(
+        "game.Session", related_name="triggerable_effects", on_delete=models.CASCADE
+    )
+    is_accepted = models.BooleanField(default=False)
+    is_achieved = models.BooleanField(default=False)
+
+    def complete(self):
+        if (
+            self.is_accepted
+            and not self.is_achieved
+            and self.room_entered == self.session.current_location
+            and all(item.in_inventory for item in self.items_owned.all())
+            and all(puzzle.is_solved for puzzle in self.puzzles_solved.all())
+        ):
+            self.items_gained.update(in_inventory=True)
+            self.exits_unlocked.update(is_locked=False)
+            self.effects_nullified.update(is_nullified=False)
+            self.is_triggered = True
+            self.save()
+            return True
+
+        return False

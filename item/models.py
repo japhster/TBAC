@@ -91,3 +91,51 @@ class Item(models.Model):
             return self.container_open_name
 
         return self.name
+
+
+class Puzzle(models.Model):
+    """
+    A puzzle with a specific answer
+    e.g.
+     - a multi-digit code
+     - a riddle
+     - an anagram
+    """
+
+    name = models.CharField(max_length=250)
+    description = models.CharField(max_length=1000)
+    solution = models.CharField(max_length=250)
+    game = models.ForeignKey(
+        "game.Game", related_name="puzzles", on_delete=models.CASCADE
+    )
+    room = models.ForeignKey(
+        "room.Room", related_name="puzzles", on_delete=models.CASCADE
+    )
+    solved_name = models.CharField(max_length=250)
+    solved_description = models.CharField(max_length=1000)
+
+    # session tracking
+    session = models.ForeignKey(
+        "game.Session", related_name="puzzles", on_delete=models.CASCADE
+    )
+    is_solved = models.BooleanField(default=False)
+
+    def solve(self, attempt):
+        if attempt == solution:
+            self.is_solved = True
+            self.save()
+            return True
+
+        return False
+
+    def get_description(self):
+        if self.is_solved and self.solved_description:
+            return self.solved_description
+
+        return self.description
+
+    def __str__(self):
+        if self.is_solved and self.solved_name:
+            return self.sovled_name
+
+        return self.name
