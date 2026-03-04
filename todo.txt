@@ -1,0 +1,5 @@
+need to allow items to be associated with a triggerable effect
+maybe effects should drop items in rooms?
+maybe effects should be able to lock rooms?
+
+TriggerableEffect -> Quest (with is_hidden boolean field)
