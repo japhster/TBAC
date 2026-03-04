@@ -188,8 +188,12 @@ class TriggerableEffect(models.Model):
     # rewards
     items_gained = models.ManyToManyField("item.Item", related_name="gained_through")
     exits_unlocked = models.ManyToManyField("room.Exit", related_name="unlocked_by")
-    effects_locked = models.ManyToManyField("TriggerableEffect", related_name="locked_by")
-    effects_accepted = models.ManyToManyField("TriggerableEffect", related_name="triggered_by")
+    effects_locked = models.ManyToManyField(
+        "TriggerableEffect", related_name="locked_by"
+    )
+    effects_accepted = models.ManyToManyField(
+        "TriggerableEffect", related_name="triggered_by"
+    )
 
     # session tracking
     session = models.ForeignKey(
