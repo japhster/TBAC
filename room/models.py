@@ -30,6 +30,7 @@ class Room(models.Model):
         "game.Game", related_name="rooms", on_delete=models.CASCADE
     )
     name = models.CharField(max_length=250)
+    accepted_names = models.CharField(max_length=1000)
     description = models.CharField(max_length=1000)
     visited_description = models.CharField(max_length=1000, blank=True)
     exits = models.ManyToManyField("self", through="Exit")

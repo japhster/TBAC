@@ -19,6 +19,7 @@ def create_room(request, game_pk):
     if request.method == "POST" and form.is_valid():
         room = models.Room.objects.create(
             name=form.cleaned_data["name"],
+            accepted_names=form.cleaned_data["accepted_names"],
             description=form.cleaned_data["description"],
             visited_description=form.cleaned_data["visited_description"],
             game=game,
@@ -44,6 +45,7 @@ def edit_room(request, room_pk):
         request.POST or None,
         initial={
             "name": room.name,
+            "accepted_names": room.accepted_names,
             "description": room.description,
             "visited_description": room.visited_description,
             "required_items": room.required_items.values_list("pk", flat=True),
@@ -55,9 +57,9 @@ def edit_room(request, room_pk):
 
     if request.method == "POST" and form.is_valid():
         room.name = form.cleaned_data["name"]
+        room.accepted_names = form.cleaned_data["accepted_names"]
         room.description = form.cleaned_data["description"]
         room.save()
-        print(room.required_items.all(), form.cleaned_data["required_items"])
         room.required_items.set(form.cleaned_data["required_items"])
 
         return HttpResponseRedirect(dashboard_link)
@@ -120,7 +122,7 @@ def create_exit(request, game_pk):
 @login_required
 def edit_exit(request, game_pk, exit_pk):
     room_exit = get_object_or_404(
-        models.Exit, pk=exit_pk, game__created_by=request.user
+        models.Exit, pk=exit_pk, room_1__game__created_by=request.user
     )
     form = forms.ExitForm(
         request.POST or None,

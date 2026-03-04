@@ -2,7 +2,7 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404, render
 from django.db.models import Q
 
-from . import forms, models
+from . import constants, forms, interpreter, models
 from item.models import Item
 from room.models import Exit, Room
 from tbac import helpers
@@ -155,10 +155,40 @@ def play_game(request, session_pk):
             "session": session,
             "game": game,
             "location": session.current_location,
-            "exits": session.get_available_exits(),
             "inventory": session.get_inventory(),
-            "containers": session.get_openable_containers(),
-            "items": session.items.filter(room=session.current_location),
+            "form": forms.CommandForm(),
+        },
+    )
+
+
+@login_required
+def interpret_command(request, session_pk):
+    if request.method != "POST":
+        return _session_redirect(session_pk)
+
+    form = forms.CommandForm(request.POST or None)
+    if not form.is_valid():
+        return _session_redirect(session_pk)
+
+    session = get_object_or_404(models.Session, pk=session_pk)
+
+    print(form.cleaned_data)
+    command = form.cleaned_data["command"]
+    redirect_view, kwarg_key, interpreter_function = interpreter.COMMAND_MAP.get(
+        command, [None, None, None]
+    )
+    if interpreter_function is None:
+        return _session_redirect(session_pk)
+
+    pk = interpreter_function(session, form.cleaned_data["args"])
+    if pk is None:
+        return _session_redirect(session_pk)
+
+    return helpers.custom_redirect(
+        redirect_view,
+        kwargs={
+            "session_pk": session_pk,
+            kwarg_key: pk,
         },
     )
 
@@ -206,4 +236,15 @@ def open_item(request, session_pk, item_pk):
             container.in_inventory = False
             container.save()
 
+    return _session_redirect(session_pk)
+
+
+@login_required
+def drop_item(request, session_pk, item_pk):
+    session = get_object_or_404(models.Session, pk=session_pk)
+    item = get_object_or_404(session.items.all(), pk=item_pk)
+
+    item.in_inventory = False
+    item.room = session.current_location
+    item.save()
     return _session_redirect(session_pk)

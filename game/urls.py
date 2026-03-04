@@ -35,6 +35,11 @@ urlpatterns = [
     ),
     path("session/play/<int:session_pk>/", session_views.play_game, name="play"),
     path(
+        "session/play/<int:session_pk>/interpret/",
+        session_views.interpret_command,
+        name="interpreter",
+    ),
+    path(
         "session/move/<int:session_pk>/<int:room_pk>/",
         session_views.move_room,
         name="move",
@@ -43,6 +48,11 @@ urlpatterns = [
         "session/take/<int:session_pk>/<int:item_pk>/",
         session_views.take_item,
         name="take",
+    ),
+    path(
+        "session/drop/<int:session_pk>/<int:item_pk>/",
+        session_views.drop_item,
+        name="drop",
     ),
     path(
         "session/open/<int:session_pk>/<int:item_pk>/",

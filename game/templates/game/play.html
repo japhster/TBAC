@@ -11,30 +11,22 @@
 
 <div class="contaner border p-2">
   <p>{{ location.description }}</p>
-  {% if items.exists %}
-    <p>You can see: {{ items | join:", " }}</p>
-  {% endif %}
   {% if inventory.exists %}
     <p>You have at your disposal: {{ inventory | join:", " }}</p>
   {% endif %}
-  <p>You can:</p>
-  <p>
-    {% for exit, pk in exits %}
-      <a href="{% url 'game:move' session_pk=session.pk room_pk=pk %}">
-        {{ exit }}<br />
-      </a>
-    {% endfor %}
-    {% for item in items %}
-      <a href="{% url 'game:take' session_pk=session.pk item_pk=item.pk %}">
-        Take {{ item.name }}<br />
-      </a>
-    {% endfor %}
-    {% for item in containers %}
-      <a href="{% url 'game:open' session_pk=session.pk item_pk=item.pk %}">
-        Open {{ item.name }}</br />
-      </a>
-    {% endfor %}
-  </p>
+  <div class="container">
+    <p>What do you want to do?</p>
+    <form method="POST" action="{% url 'game:interpreter' session_pk=session.pk %}">
+      {% csrf_token %}
+      <div class="input-group mb-2">
+        <div class="input-group-prepend">
+          <div class="input-group-text font-weight-bold">&gt;</div>
+        </div>
+        {{ form.text }}
+      </div>
+      {{ form.text.errors.as_text }}
+    </form>
+  </div>
 </div>
 
 {% endblock %}

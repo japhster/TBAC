@@ -163,6 +163,37 @@ class Session(models.Model):
 
         return available_exit_data
 
+    def get_available_rooms(self):
+        """returns tuple pairs (exit direction label, room.pk)."""
+        exits = (
+            Exit.objects.filter(
+                models.Q(room_1=self.current_location)
+                | models.Q(room_2=self.current_location),
+            )
+            .select_related("room_1", "room_2")
+            .prefetch_related("room_1__required_items", "room_2__required_items")
+        )
+
+        current_inventory = self.get_inventory()
+
+        available_rooms = []
+
+        for location_exit in exits:
+            moving_to = (
+                location_exit.room_2
+                if self.current_location == location_exit.room_1
+                else location_exit.room_1
+            )
+
+            if moving_to.required_items.exists() and any(
+                not item.in_inventory for item in moving_to.required_items.all()
+            ):
+                continue
+
+            available_rooms.append(moving_to)
+
+        return available_rooms
+
 
 class TriggerableEffect(models.Model):
     name = models.CharField(max_length=250)

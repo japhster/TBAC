@@ -12,17 +12,17 @@ class ItemForm(forms.Form):
         widget=forms.Textarea(attrs={"class": "form-control"}),
     )
     item_type = forms.ChoiceField(
-        widget=forms.Select(attrs={"class": "form-select"}),
+        widget=forms.Select(attrs={"class": "form-control"}),
         choices=models.Item.ItemTypeChoices.choices,
     )
     room = forms.ModelChoiceField(
         queryset=Room.objects.none(),
-        widget=forms.Select(attrs={"class": "form-select"}),
+        widget=forms.Select(attrs={"class": "form-control"}),
         required=False,
     )
     contained_within = forms.ModelChoiceField(
         queryset=models.Item.objects.none(),
-        widget=forms.Select(attrs={"class": "form-select"}),
+        widget=forms.Select(attrs={"class": "form-control"}),
         required=False,
     )
     is_starting_item = forms.BooleanField(

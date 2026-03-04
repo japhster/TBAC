@@ -6,6 +6,9 @@ from item.models import Item
 
 class RoomForm(forms.Form):
     name = forms.CharField(widget=forms.TextInput(attrs={"class": "form-control"}))
+    accepted_names = forms.CharField(
+        required=False, widget=forms.TextInput(attrs={"class": "form-control"})
+    )
     description = forms.CharField(
         widget=forms.Textarea(attrs={"class": "form-control"})
     )
@@ -13,7 +16,7 @@ class RoomForm(forms.Form):
         widget=forms.Textarea(attrs={"class": "form-control"}), required=False
     )
     required_items = forms.ModelMultipleChoiceField(
-        widget=forms.SelectMultiple(attrs={"class": "form-select"}),
+        widget=forms.SelectMultiple(attrs={"class": "form-control"}),
         required=False,
         queryset=Item.objects.none(),
     )
@@ -28,11 +31,11 @@ class RoomForm(forms.Form):
 class ExitForm(forms.Form):
     room_1 = forms.ModelChoiceField(
         queryset=models.Room.objects.none(),
-        widget=forms.Select(attrs={"class": "form-select"}),
+        widget=forms.Select(attrs={"class": "form-control"}),
     )
     room_2 = forms.ModelChoiceField(
         queryset=models.Room.objects.none(),
-        widget=forms.Select(attrs={"class": "form-select"}),
+        widget=forms.Select(attrs={"class": "form-control"}),
     )
 
     one_to_two = forms.CharField(
