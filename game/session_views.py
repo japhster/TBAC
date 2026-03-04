@@ -202,6 +202,10 @@ def move_room(request, session_pk, room_pk):
         if not item.in_inventory:
             return _session_redirect(session_pk)
 
+    current_location = session.current_location
+    current_location.visited = True
+    current_location.save()
+
     session.current_location = room
     session.save()
     return _session_redirect(session_pk)

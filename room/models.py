@@ -46,6 +46,7 @@ class Room(models.Model):
         null=True,
         default=None,
     )
+    visited = models.BooleanField(default=False)
 
     objects = RoomManager()
 
