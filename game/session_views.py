@@ -280,3 +280,14 @@ def use_item(request, session_pk, item_pk):
     )
 
     return _session_redirect(session_pk)
+
+
+@login_required
+def inspect_item(request, session_pk, item_pk):
+    session = get_object_or_404(models.Session, pk=session_pk)
+    item = get_object_or_404(session.items.all(), pk=item_pk)
+
+    if item.in_inventory or item.room == session.current_location:
+        messages.add_message(request, messages.INFO, item.description)
+
+    return _session_redirect(session_pk)

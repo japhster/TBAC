@@ -59,4 +59,9 @@ urlpatterns = [
         session_views.use_item,
         name="use",
     ),
+    path(
+        "session/inspect/<int:session_pk>/<int:item_pk>/",
+        session_views.inspect_item,
+        name="inspect",
+    ),
 ]

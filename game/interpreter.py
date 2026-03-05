@@ -83,4 +83,9 @@ COMMAND_MAP = {
     ),
     constants.OPEN_COMMAND: ("game:open", "item_pk", get_item_pk),
     constants.USE_COMMAND: ("game:use", "item_pk", get_item_pk),
+    constants.INSPECT_COMMAND: (
+        "game:inspect",
+        "item_pk",
+        lambda *args, **kwargs: get_item_pk(*args, **kwargs, in_possession=False),
+    ),
 }
