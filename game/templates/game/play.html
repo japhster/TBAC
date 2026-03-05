@@ -10,13 +10,7 @@
 </div>
 
 <div class="contaner border p-2">
-  <p>
-    {% if location.visited and location.visited_description %}
-      {{ location.visited_description }}
-    {% else %}
-      {{ location.description }}
-    {% endif %}
-  </p>
+  <p>{{ location_description }}</p>
   {% if inventory.exists %}
     <p>You have at your disposal: {{ inventory | join:", " }}</p>
   {% endif %}

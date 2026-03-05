@@ -79,8 +79,6 @@ class EndState(models.Model):
     objects = EndStateManager()
 
     def end_state_met(self):
-        print(self.owned_items.all())
-
         return all(self.owned_items.all().values_list("in_inventory", flat=True)) and (
             self.location is None or self.session.current_location == self.location
         )

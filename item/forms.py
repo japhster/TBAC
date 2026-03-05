@@ -10,8 +10,12 @@ class ItemForm(forms.Form):
     )
     accepted_names = forms.CharField(
         widget=forms.TextInput(attrs={"class": "form-control"}),
+        required=False,
     )
     description = forms.CharField(
+        widget=forms.Textarea(attrs={"class": "form-control"}),
+    )
+    in_room_description = forms.CharField(
         widget=forms.Textarea(attrs={"class": "form-control"}),
     )
     item_type = forms.ChoiceField(

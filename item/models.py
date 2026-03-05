@@ -22,6 +22,7 @@ class Item(models.Model):
     name = models.CharField(max_length=250)
     accepted_names = models.CharField(max_length=1000)
     description = models.CharField(max_length=1000)
+    in_room_description = models.CharField(max_length=1000)
     item_type = models.CharField(max_length=20, choices=ItemTypeChoices.choices)
     game = models.ForeignKey(
         "game.Game", related_name="items", on_delete=models.CASCADE

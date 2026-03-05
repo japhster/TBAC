@@ -27,7 +27,6 @@ def get_item_pk(session, args, in_possession=True):
         )
     ).values_list("pk", "name", "accepted_names")
     for pk, name, accepted_names in item_list:
-        print(pk, name, accepted_names)
         accepted_names = split_accepted_names(accepted_names)
         if args == name.lower() or args in accepted_names:
             return pk

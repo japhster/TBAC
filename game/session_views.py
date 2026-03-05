@@ -48,10 +48,7 @@ def start_session(request, game_pk):
 
     form = forms.ContinueGameForm(request.POST or None)
 
-    print(request.POST)
-
     if request.method == "POST" and form.is_valid():
-        print(form.cleaned_data)
         if form.cleaned_data["continue_adventure"]:
             return _session_redirect(existing_session.pk)
         else:
@@ -150,13 +147,25 @@ def play_game(request, session_pk):
                 },
             )
 
+
+    location = session.current_location
+
+    if location.visited and location.visited_description:
+        location_description = location.visited_description
+    else:
+        location_description = location.description
+
+    location_description += " " + ". ".join(
+        location.items.all().values_list("in_room_description", flat=True)
+    )
+
     return render(
         request,
         "game/play.html",
         context={
             "session": session,
             "game": game,
-            "location": session.current_location,
+            "location_description": location_description,
             "inventory": session.get_inventory(),
             "form": forms.CommandForm(),
         },
@@ -260,25 +269,11 @@ def use_item(request, session_pk, item_pk):
     session = get_object_or_404(models.Session, pk=session_pk)
     item = get_object_or_404(session.items.all(), pk=item_pk)
 
-    print("wahoo")
-    print(item.pk)
-
     if item.in_inventory and item.item_type == models.Item.ItemTypeChoices.KEY:
         exit_to_unlock = session.exits.filter(
             Q(room_1=session.current_location) | Q(room_2=session.current_location),
             key_required=item,
         ).update(is_locked=False)
-        print(
-            session.exits.filter(
-                Q(room_1=session.current_location) | Q(room_2=session.current_location),
-                key_required=item,
-            )
-        )
-        print(
-            session.exits.filter(
-                # Q(room_1=session.current_location) | Q(room_2=session.current_location),
-                key_required__isnull=False,
-            ).values_list("key_required")
-        )
+
 
     return _session_redirect(session_pk)
