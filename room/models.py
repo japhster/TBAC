@@ -1,4 +1,5 @@
 from django.db import models
+import re
 
 # Create your models here.
 
@@ -50,6 +51,14 @@ class Room(models.Model):
 
     objects = RoomManager()
 
+    def get_accepted_names(self):
+        return [i for i in re.split(", ?", self.accepted_names.lower()) if i]
+
+    def matches(self, room_string):
+        return (
+            room_string == self.name.lower() or room_string in self.get_accepted_names()
+        )
+
     def __str__(self):
         return self.name
 
@@ -84,6 +93,9 @@ class Exit(models.Model):
             return self.one_to_two, self.room_2.pk
         else:
             return self.two_to_one, self.room_1.pk
+
+    def get_exit_room(self, room):
+        return self.room_2 if room == self.room_1 else self.room_1
 
     def __str__(self):
         return f"Exit between {self.room_1.name} and {self.room_2.name}."

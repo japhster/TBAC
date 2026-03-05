@@ -1,3 +1,4 @@
+from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404, render
 from django.db.models import Q
@@ -178,6 +179,9 @@ def interpret_command(request, session_pk):
 
     form = forms.CommandForm(request.POST or None)
     if not form.is_valid():
+        messages.add_message(
+            request, messages.INFO, constants.FAILED_TO_INTERPRET_COMMAND_MESSAGE
+        )
         return _session_redirect(session_pk)
 
     session = get_object_or_404(models.Session, pk=session_pk)
@@ -189,7 +193,12 @@ def interpret_command(request, session_pk):
     if interpreter_function is None:
         return _session_redirect(session_pk)
 
-    pk = interpreter_function(session, form.cleaned_data["args"])
+    pk = interpreter_function(
+        request=request,
+        session=session,
+        command=command,
+        args=form.cleaned_data["args"],
+    )
     if pk is None:
         return _session_redirect(session_pk)
 
@@ -262,5 +271,12 @@ def use_item(request, session_pk, item_pk):
             Q(room_1=session.current_location) | Q(room_2=session.current_location),
             key_required=item,
         ).update(is_locked=False)
+        messages.add_message(
+            request, messages.INFO, f"You used the {item.name} to unlock the way."
+        )
+
+    messages.add_message(
+        request, messages.INFO, f"You don't know how to use the {item.name}"
+    )
 
     return _session_redirect(session_pk)

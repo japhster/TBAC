@@ -50,11 +50,6 @@ urlpatterns = [
         name="take",
     ),
     path(
-        "session/drop/<int:session_pk>/<int:item_pk>/",
-        session_views.drop_item,
-        name="drop",
-    ),
-    path(
         "session/open/<int:session_pk>/<int:item_pk>/",
         session_views.open_item,
         name="open",

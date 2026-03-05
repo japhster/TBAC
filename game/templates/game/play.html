@@ -14,6 +14,15 @@
   {% if inventory.exists %}
     <p>You have at your disposal: {{ inventory | join:", " }}</p>
   {% endif %}
+  {% if messages %}
+    <div class="container">
+      {% for message in messages %}
+        {% if message.level == DEFAULT_MESSAGE_LEVELS.INFO %}
+          <p>{{ message }}</p>
+        {% endif %}
+      {% endfor %}
+    </div>
+  {% endif %}
   <div class="container">
     <p>What do you want to do?</p>
     <form method="POST" action="{% url 'game:interpreter' session_pk=session.pk %}">

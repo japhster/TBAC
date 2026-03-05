@@ -162,7 +162,6 @@ class Session(models.Model):
         return available_exit_data
 
     def get_available_rooms(self):
-        """returns tuple pairs (exit direction label, room.pk)."""
         exits = (
             Exit.objects.filter(
                 models.Q(room_1=self.current_location)
@@ -193,6 +192,16 @@ class Session(models.Model):
             available_rooms.append(moving_to)
 
         return available_rooms
+
+    def get_exits(self):
+        return (
+            Exit.objects.filter(
+                models.Q(room_1=self.current_location)
+                | models.Q(room_2=self.current_location),
+            )
+            .select_related("room_1", "room_2")
+            .prefetch_related("room_1__required_items", "room_2__required_items")
+        )
 
 
 class TriggerableEffect(models.Model):

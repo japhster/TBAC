@@ -63,14 +63,16 @@ class CommandForm(forms.Form):
                 break
 
         if text_list[0].upper() not in constants.ALL_COMMANDS:
-            command = constants.MOVE_COMMAND
-            args = " ".join(text_list)
-        else:
-            command = text_list[0].upper()
-            for master_command, synonyms in constants.COMMAND_OPTIONS.items():
-                if command in synonyms:
-                    command = master_command
-                    break
-            args = " ".join(text_list[1:])
+            raise forms.ValidationError({"text": "Couldn't figure out the command."})
 
-        return {"command": command, "args": args}
+        command = text_list[0].upper()
+        for master_command, synonyms in constants.COMMAND_OPTIONS.items():
+            if command in synonyms:
+                command = master_command
+                break
+        args = " ".join(text_list[1:])
+
+        return {
+            "command": command,
+            "args": args,
+        }

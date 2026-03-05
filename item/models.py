@@ -1,5 +1,5 @@
 from django.db import models
-import uuid
+import re
 
 # Create your models here.
 
@@ -87,6 +87,12 @@ class Item(models.Model):
                 name="must_have_one_location",
             ),
         ]
+
+    def get_accepted_names(self):
+        return [i for i in re.split(", ?", self.accepted_names.lower()) if i]
+
+    def matches(self, room_string):
+        return room_string == self.name or room_string in self.get_accepted_names()
 
     def __str__(self):
         if self.container_is_open and self.container_open_name:
