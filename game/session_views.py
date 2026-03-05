@@ -254,17 +254,6 @@ def open_item(request, session_pk, item_pk):
 
 
 @login_required
-def drop_item(request, session_pk, item_pk):
-    session = get_object_or_404(models.Session, pk=session_pk)
-    item = get_object_or_404(session.items.all(), pk=item_pk)
-
-    item.in_inventory = False
-    item.room = session.current_location
-    item.save()
-    return _session_redirect(session_pk)
-
-
-@login_required
 def use_item(request, session_pk, item_pk):
     session = get_object_or_404(models.Session, pk=session_pk)
     item = get_object_or_404(session.items.all(), pk=item_pk)

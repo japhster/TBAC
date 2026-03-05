@@ -40,7 +40,6 @@ COMMAND_MAP = {
         "item_pk",
         lambda *args, **kwargs: get_item_pk(*args, **kwargs, in_possession=False),
     ),
-    constants.DROP_COMMAND: ("game:drop", "item_pk", get_item_pk),
     constants.OPEN_COMMAND: ("game:open", "item_pk", get_item_pk),
     constants.USE_COMMAND: ("game:use", "item_pk", get_item_pk),
 }
