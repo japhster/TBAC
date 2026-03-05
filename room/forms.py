@@ -1,6 +1,6 @@
 from django import forms
 
-from . import models
+from tbac import models
 from item.models import Item
 
 
@@ -45,6 +45,15 @@ class ExitForm(forms.Form):
         widget=forms.TextInput(attrs={"class": "form-control"})
     )
 
+    is_locked = forms.BooleanField(
+        widget=forms.CheckboxInput(attrs={"class": "form-check-input"}),
+        required=False,
+    )
+    key_required = forms.ModelChoiceField(
+        queryset=models.Item.objects.none(),
+        widget=forms.Select(attrs={"class": "form-control"}),
+    )
+
     def __init__(self, *args, game_pk, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields["room_1"].queryset = models.Room.objects.base().filter(
@@ -52,4 +61,8 @@ class ExitForm(forms.Form):
         )
         self.fields["room_2"].queryset = models.Room.objects.base().filter(
             game_id=game_pk
+        )
+        self.fields["key_required"].queryset = models.Item.objects.base().filter(
+            game_id=game_pk,
+            item_type=models.Item.ItemTypeChoices.KEY,
         )

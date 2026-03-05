@@ -179,6 +179,8 @@ class Session(models.Model):
         available_rooms = []
 
         for location_exit in exits:
+            if location_exit.is_locked:
+                continue
             moving_to = (
                 location_exit.room_2
                 if self.current_location == location_exit.room_1
@@ -207,10 +209,19 @@ class TriggerableEffect(models.Model):
 
     # tasks
     room_entered = models.ForeignKey(
-        "room.Room", related_name="effects_upon_entry", on_delete=models.CASCADE
+        "room.Room",
+        related_name="effects_upon_entry",
+        on_delete=models.CASCADE,
+        null=True,
     )
     items_owned = models.ManyToManyField(
         "item.Item", related_name="effects_upon_acquisition"
+    )
+    item_used = models.ForeignKey(
+        "item.Item",
+        related_name="effects_upon_use",
+        on_delete=models.CASCADE,
+        null=True,
     )
     puzzles_solved = models.ManyToManyField(
         "item.Puzzle", related_name="effects_upon_solving"
@@ -219,9 +230,6 @@ class TriggerableEffect(models.Model):
     # rewards
     items_gained = models.ManyToManyField("item.Item", related_name="gained_through")
     exits_unlocked = models.ManyToManyField("room.Exit", related_name="unlocked_by")
-    effects_locked = models.ManyToManyField(
-        "TriggerableEffect", related_name="locked_by"
-    )
     effects_accepted = models.ManyToManyField(
         "TriggerableEffect", related_name="triggered_by"
     )
@@ -249,3 +257,8 @@ class TriggerableEffect(models.Model):
             return True
 
         return False
+
+    def trigger_effects(self):
+        self.items_gained.update(in_inventory=True)
+        self.exits_unlocked.update(is_locked=False)
+        self.effects_accepted.all().update(is_accepted=True)

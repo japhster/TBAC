@@ -114,6 +114,8 @@ def start_new_session(request, game_pk):
         room_exit.room_1_id = room_map[room_exit.room_1_id]
         room_exit.room_2_id = room_map[room_exit.room_2_id]
         room_exit.session = session
+        if room_exit.is_locked:
+            room_exit.key_required_id = item_map[room_exit.key_required_id]
         room_exit.save()
 
     for end_state in game.end_states.base():
@@ -172,7 +174,6 @@ def interpret_command(request, session_pk):
 
     session = get_object_or_404(models.Session, pk=session_pk)
 
-    print(form.cleaned_data)
     command = form.cleaned_data["command"]
     redirect_view, kwarg_key, interpreter_function = interpreter.COMMAND_MAP.get(
         command, [None, None, None]
@@ -251,4 +252,33 @@ def drop_item(request, session_pk, item_pk):
     item.in_inventory = False
     item.room = session.current_location
     item.save()
+    return _session_redirect(session_pk)
+
+
+@login_required
+def use_item(request, session_pk, item_pk):
+    session = get_object_or_404(models.Session, pk=session_pk)
+    item = get_object_or_404(session.items.all(), pk=item_pk)
+
+    print("wahoo")
+    print(item.pk)
+
+    if item.in_inventory and item.item_type == models.Item.ItemTypeChoices.KEY:
+        exit_to_unlock = session.exits.filter(
+            Q(room_1=session.current_location) | Q(room_2=session.current_location),
+            key_required=item,
+        ).update(is_locked=False)
+        print(
+            session.exits.filter(
+                Q(room_1=session.current_location) | Q(room_2=session.current_location),
+                key_required=item,
+            )
+        )
+        print(
+            session.exits.filter(
+                # Q(room_1=session.current_location) | Q(room_2=session.current_location),
+                key_required__isnull=False,
+            ).values_list("key_required")
+        )
+
     return _session_redirect(session_pk)

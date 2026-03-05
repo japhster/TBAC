@@ -11,7 +11,7 @@
 
 <div class="contaner border p-2">
   <p>
-    {% if location.visited %}
+    {% if location.visited and location.visited_description %}
       {{ location.visited_description }}
     {% else %}
       {{ location.description }}

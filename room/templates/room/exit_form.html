@@ -31,6 +31,22 @@
           {{ form.two_to_one }} {{ form.two_to_one.errors.as_text }}
         </th>
       </tr>
+    </table>
+    <table class="table">
+      <tr>
+        <th>Is Locked</th>
+        <td colspan=2>
+          {{ form.is_locked }}
+          {{ form.is_locked.errors.as_text }}
+        </td>
+      </tr>
+      <tr>
+        <th>Unlocked By</th>
+        <td colspan=2>
+          {{ form.key_required }}
+          {{ form.key_required.errors.as_text }}
+        </td>
+      </tr>
       <tr>
         <th colspan=3 class="text-center">
           <button type="submit" class="btn btn-primary">

@@ -17,6 +17,7 @@ def create_item(request, game_pk):
     if request.method == "POST" and form.is_valid():
         new_item = models.Item.objects.create(
             name=form.cleaned_data["name"],
+            accepted_names=form.cleaned_data["accepted_names"],
             description=form.cleaned_data["description"],
             item_type=form.cleaned_data["item_type"],
             game=game,
@@ -46,6 +47,7 @@ def edit_item(request, item_pk):
         game_pk=item.game.pk,
         initial={
             "name": item.name,
+            "accepted_names": item.accepted_names,
             "description": item.description,
             "item_type": item.item_type,
             "room": item.room,
@@ -56,6 +58,7 @@ def edit_item(request, item_pk):
 
     if request.method == "POST" and form.is_valid():
         item.name = form.cleaned_data["name"]
+        item.accepted_names = form.cleaned_data["accepted_names"]
         item.description = form.cleaned_data["description"]
         item.item_type = form.cleaned_data["item_type"]
         item.room = form.cleaned_data["room"]

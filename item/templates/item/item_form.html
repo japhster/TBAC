@@ -19,6 +19,10 @@
         <td>{{ form.name }} {{ form.name.errors.as_text }}</td>
       </tr>
       <tr>
+        <th>Accepted Name (comma separated)</th>
+        <td>{{ form.accepted_names }} {{ form.accepted_names.errors.as_text }}</td>
+      </tr>
+      <tr>
         <th>Description</th>
         <td>{{ form.description }} {{ form.description.errors.as_text }}</td>
       </tr>

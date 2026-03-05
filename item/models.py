@@ -20,6 +20,7 @@ class Item(models.Model):
         LIGHT = ("LIGHT", "Light Source")
 
     name = models.CharField(max_length=250)
+    accepted_names = models.CharField(max_length=1000)
     description = models.CharField(max_length=1000)
     item_type = models.CharField(max_length=20, choices=ItemTypeChoices.choices)
     game = models.ForeignKey(
