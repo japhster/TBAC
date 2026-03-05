@@ -147,7 +147,6 @@ def play_game(request, session_pk):
                 },
             )
 
-
     location = session.current_location
 
     if location.visited and location.visited_description:
@@ -263,6 +262,5 @@ def use_item(request, session_pk, item_pk):
             Q(room_1=session.current_location) | Q(room_2=session.current_location),
             key_required=item,
         ).update(is_locked=False)
-
 
     return _session_redirect(session_pk)
