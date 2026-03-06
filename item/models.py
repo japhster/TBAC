@@ -1,26 +1,18 @@
 from django.db import models
 import re
 
+from tbac import mixins
+
 # Create your models here.
 
 
-class ItemManager(models.Manager):
-    def base(self):
-        return self.get_queryset().filter(session__isnull=True)
-
-    def session(self, session_pk):
-        return self.get_queryset().filter(session_id=session_pk)
-
-
-class Item(models.Model):
+class Item(mixins.SearchableMixin):
     class ItemTypeChoices(models.TextChoices):
         GENERIC = ("GENERIC", "Generic Item")
         KEY = ("KEY", "Key")
         CONTAINER = ("CONTAINER", "Container")
         LIGHT = ("LIGHT", "Light Source")
 
-    name = models.CharField(max_length=250)
-    accepted_names = models.CharField(max_length=1000)
     description = models.CharField(max_length=1000)
     in_room_description = models.CharField(max_length=1000)
     item_type = models.CharField(max_length=20, choices=ItemTypeChoices.choices)
@@ -61,40 +53,7 @@ class Item(models.Model):
     in_inventory = models.BooleanField(default=False)
     container_is_open = models.BooleanField(default=False)
 
-    objects = ItemManager()
-
-    class Meta:
-        constraints = [
-            models.CheckConstraint(
-                check=(
-                    models.Q(session__isnull=False)
-                    | models.Q(
-                        room__isnull=False,
-                        is_starting_item=False,
-                        contained_within__isnull=True,
-                    )
-                    | models.Q(
-                        contained_within__isnull=False,
-                        is_starting_item=False,
-                        room__isnull=True,
-                    )
-                    | models.Q(
-                        is_starting_item=True,
-                        room__isnull=True,
-                        contained_within__isnull=True,
-                    )
-                ),
-                name="must_have_one_location",
-            ),
-        ]
-
-    def get_accepted_names(self):
-        return [i for i in re.split(", ?", self.accepted_names.lower()) if i]
-
-    def matches(self, room_string):
-        return (
-            room_string == self.name.lower() or room_string in self.get_accepted_names()
-        )
+    objects = mixins.SessionManager()
 
     def __str__(self):
         if self.container_is_open and self.container_open_name:

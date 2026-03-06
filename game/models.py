@@ -3,6 +3,7 @@ from django.db import models
 
 from item.models import Item
 from room.models import Exit
+from tbac import mixins
 
 # Create your models here.
 
@@ -23,14 +24,6 @@ class GameManager(models.Manager):
             qs = qs.filter(created_by__isnull=False)
 
         return qs
-
-
-class EndStateManager(models.Manager):
-    def base(self):
-        return self.get_queryset().filter(session__isnull=True)
-
-    def session(self, session_pk):
-        return self.get_queryset().filter(session_id=session_pk)
 
 
 class Game(models.Model):
@@ -76,7 +69,7 @@ class EndState(models.Model):
         "room.Room", related_name="+", null=True, blank=True, on_delete=models.SET_NULL
     )
 
-    objects = EndStateManager()
+    objects = mixins.SessionManager()
 
     def end_state_met(self):
         return all(self.owned_items.all().values_list("in_inventory", flat=True)) and (

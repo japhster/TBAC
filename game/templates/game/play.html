@@ -14,6 +14,17 @@
   {% if inventory.exists %}
     <p>You have at your disposal: {{ inventory | join:", " }}</p>
   {% endif %}
+  {% if enemy_descriptions %}
+    {% for desc in enemy_descriptions %}
+      <p>{{ desc }}</p>
+    {% endfor %}
+  {% endif %}
+  {% if friend_descriptions and not enemy_descriptions %}
+    {% for desc in friend_descriptions %}
+      <p>{{ desc }}</p>
+    {% endfor %}
+  {% endif %}
+
   {% if messages %}
     <div class="container">
       {% for message in messages %}

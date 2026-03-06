@@ -1,0 +1,113 @@
+from django.db import models
+
+from item.models import Item
+from tbac import mixins
+
+
+# Create your models here.
+
+
+class Friend(mixins.SearchableMixin):
+    name = models.CharField(max_length=250)
+    description = models.CharField(max_length=1000)
+    in_room_description = models.CharField(max_length=1000)
+    game = models.ForeignKey(
+        "game.Game", related_name="friends", on_delete=models.CASCADE
+    )
+    room = models.ForeignKey(
+        "room.Room", related_name="friends", on_delete=models.CASCADE
+    )
+    dialogue = models.CharField(max_length=1000)
+
+    # session tracking
+    session = models.ForeignKey(
+        "game.Session",
+        related_name="friends",
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+    )
+
+    objects = mixins.SessionManager()
+
+    def get_gift_items(self):
+        if self.session is None:
+            return Item.objects.none()
+        return self.session.items.filter(friend_gifts__friend=self)
+
+    def __str__(self):
+        return self.name
+
+
+class Enemy(mixins.SearchableMixin):
+    description = models.CharField(max_length=1000)
+    game = models.ForeignKey(
+        "game.Game", related_name="enemies", on_delete=models.CASCADE
+    )
+    room = models.ForeignKey(
+        "room.Room", related_name="enemies", on_delete=models.CASCADE
+    )
+    in_room_description = models.CharField(max_length=1000)
+
+    # session tracking
+    session = models.ForeignKey(
+        "game.Session",
+        related_name="enemies",
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+    )
+    is_dead = models.BooleanField(default=False)
+
+    objects = mixins.SessionManager()
+
+    def get_dropped_items(self):
+        if self.session is None:
+            return Item.objects.none()
+        return self.session.items.filter(enemy_drops__enemy=self)
+
+    def __str__(self):
+        return self.name
+
+
+class EnemyDrop(models.Model):
+    game = models.ForeignKey(
+        "game.Game", related_name="enemy_drops", on_delete=models.CASCADE
+    )
+    enemy = models.ForeignKey("Enemy", related_name="drops", on_delete=models.CASCADE)
+    item = models.ForeignKey(
+        "item.Item", related_name="enemy_drops", on_delete=models.CASCADE
+    )
+
+    # session tracking
+    session = models.ForeignKey(
+        "game.Session",
+        related_name="enemy_drops",
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+    )
+
+    objects = mixins.SessionManager()
+
+
+class FriendGift(models.Model):
+    game = models.ForeignKey(
+        "game.Game", related_name="friend_gifts", on_delete=models.CASCADE
+    )
+    friend = models.ForeignKey("Friend", related_name="gifts", on_delete=models.CASCADE)
+    item = models.ForeignKey(
+        "item.Item", related_name="friend_gifts", on_delete=models.CASCADE
+    )
+
+    # session tracking
+    session = models.ForeignKey(
+        "game.Session",
+        related_name="friend_drops",
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+    )
+    already_gifted = models.BooleanField(default=False)
+
+    objects = mixins.SessionManager()

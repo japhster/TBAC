@@ -128,6 +128,40 @@ def start_new_session(request, game_pk):
         end_state.save()
         end_state.owned_items.set(Item.objects.filter(pk__in=new_owned_items))
 
+    friend_map = {}
+
+    for friend in game.friends.base():
+        old_pk = friend.pk
+        friend.pk = None
+        friend.room_id = room_map[friend.room.pk]
+        friend.session = session
+        friend.save()
+        friend_map[old_pk] = friend.pk
+
+    for gift in game.friend_gifts.base():
+        gift.pk = None
+        gift.friend_id = friend_map[gift.friend.pk]
+        gift.item_id = item_map[gift.item.pk]
+        gift.session = session
+        gift.save()
+
+    enemy_map = {}
+
+    for enemy in game.enemies.base():
+        old_pk = enemy.pk
+        enemy.pk = None
+        enemy.room_id = room_map[enemy.room.pk]
+        enemy.session = session
+        enemy.save()
+        enemy_map[old_pk] = enemy.pk
+
+    for drop in game.enemy_drops.base():
+        drop.pk = None
+        drop.enemy_id = enemy_map[drop.enemy.pk]
+        drop.item_id = item_map[drop.item.pk]
+        drop.session = session
+        drop.save()
+
     return _session_redirect(session.pk)
 
 
@@ -166,6 +200,12 @@ def play_game(request, session_pk):
             "session": session,
             "game": game,
             "location_description": location_description,
+            "friend_descriptions": location.friends.values_list(
+                "in_room_description", flat=True
+            ),
+            "enemy_descriptions": location.enemies.exclude(is_dead=True).values_list(
+                "in_room_description", flat=True
+            ),
             "inventory": session.get_inventory(),
             "form": forms.CommandForm(),
         },
@@ -274,10 +314,10 @@ def use_item(request, session_pk, item_pk):
         messages.add_message(
             request, messages.INFO, f"You used the {item.name} to unlock the way."
         )
-
-    messages.add_message(
-        request, messages.INFO, f"You don't know how to use the {item.name}"
-    )
+    else:
+        messages.add_message(
+            request, messages.INFO, f"You don't know how to use the {item.name}"
+        )
 
     return _session_redirect(session_pk)
 
@@ -289,5 +329,37 @@ def inspect_item(request, session_pk, item_pk):
 
     if item.in_inventory or item.room == session.current_location:
         messages.add_message(request, messages.INFO, item.description)
+
+    return _session_redirect(session_pk)
+
+
+@login_required
+def kill_enemy(request, session_pk, enemy_pk):
+    session = get_object_or_404(models.Session, pk=session_pk)
+    enemy = get_object_or_404(session.enemies.all(), pk=enemy_pk)
+
+    if enemy.room == session.current_location and not enemy.is_dead:
+        enemy.is_dead = True
+        enemy.save()
+        enemy.get_dropped_items().update(room=session.current_location)
+        messages.add_message(request, messages.INFO, f"You slew {enemy.name}!")
+
+    return _session_redirect(session_pk)
+
+
+@login_required
+def talk_to_friend(request, session_pk, friend_pk):
+    session = get_object_or_404(models.Session, pk=session_pk)
+    friend = get_object_or_404(session.friends.all(), pk=friend_pk)
+
+    if friend.room == session.current_location:
+        print(friend.gifts.all())
+        friend.get_gift_items().filter(friend_gifts__already_gifted=False).update(
+            in_inventory=True
+        )
+        friend.gifts.update(already_gifted=True)
+        messages.add_message(
+            request, messages.INFO, friend.dialogue or f"You talked to {friend.name}."
+        )
 
     return _session_redirect(session_pk)

@@ -64,4 +64,14 @@ urlpatterns = [
         session_views.inspect_item,
         name="inspect",
     ),
+    path(
+        "session/kill/<int:session_pk>/<int:enemy_pk>/",
+        session_views.kill_enemy,
+        name="kill",
+    ),
+    path(
+        "session/talk/<int:session_pk>/<int:friend_pk>/",
+        session_views.talk_to_friend,
+        name="talk",
+    ),
 ]

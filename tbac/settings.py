@@ -35,6 +35,7 @@ INSTALLED_APPS = [
     "game.apps.GameConfig",
     "room.apps.RoomConfig",
     "item.apps.ItemConfig",
+    "npc.apps.NpcConfig",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",

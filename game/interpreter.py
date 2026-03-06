@@ -71,6 +71,47 @@ def get_item_pk(request, session, command, args, in_possession=True, in_room=Fal
     )
 
 
+def get_enemy_pk(request, session, command, args, in_room=True):
+    enemy_list = session.enemies.all()
+    if in_room:
+        enemy_list = enemy_list.filter(room=session.current_location)
+    for enemy in enemy_list:
+        if enemy.matches(args):
+            return enemy.pk
+
+    friend_pk = get_friend_pk(
+        request, session, command, args, in_room=in_room, silently=True
+    )
+    if friend_pk:
+        messages.add_message(
+            request,
+            messages.INFO,
+            f"{session.friends.get(pk=friend_pk)} is your friend!",
+        )
+    else:
+        messages.add_message(
+            request,
+            messages.INFO,
+            f"You can't figure out how to {command.lower()} {args}",
+        )
+
+
+def get_friend_pk(request, session, command, args, in_room=True, silently=False):
+    friend_list = session.friends.all()
+    if in_room:
+        friend_list = friend_list.filter(room=session.current_location)
+    for friend in friend_list:
+        if friend.matches(args):
+            return friend.pk
+
+    if not silently:
+        messages.add_message(
+            request,
+            messages.INFO,
+            f"You can't figure out how to {command.lower()} to {args}",
+        )
+
+
 COMMAND_MAP = {
     # Command string: (view name, kwarg name for view, func to retrieve pk)
     constants.MOVE_COMMAND: ("game:move", "room_pk", get_room_pk),
@@ -88,4 +129,6 @@ COMMAND_MAP = {
         "item_pk",
         lambda *args, **kwargs: get_item_pk(*args, **kwargs, in_possession=False),
     ),
+    constants.KILL_COMMAND: ("game:kill", "enemy_pk", get_enemy_pk),
+    constants.TALK_COMMAND: ("game:talk", "friend_pk", get_friend_pk),
 }

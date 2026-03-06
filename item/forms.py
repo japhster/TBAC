@@ -46,6 +46,7 @@ class ItemForm(forms.Form):
 
     def clean(self, *args, **kwargs):
         cd = super().clean(*args, **kwargs)
+        return cd
 
         room = cd.get("room")
         contained_within = cd.get("contained_within")

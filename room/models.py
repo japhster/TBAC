@@ -1,16 +1,12 @@
 from django.db import models
 import re
 
+from tbac import mixins
+
 # Create your models here.
 
 
-class ExitManager(models.Manager):
-    def base(self):
-        return self.get_queryset().filter(session__isnull=True)
-
-    def session(self, session_pk):
-        return self.get_queryset().filter(session_id=session_pk)
-
+class ExitManager(mixins.SessionManager):
     def from_room(self, *args, **kwargs):
         room = kwargs.pop("room")
         return self.filter(*args, **kwargs).filter(
@@ -18,20 +14,10 @@ class ExitManager(models.Manager):
         )
 
 
-class RoomManager(models.Manager):
-    def base(self):
-        return self.get_queryset().filter(session__isnull=True)
-
-    def session(self, session_pk):
-        return self.get_queryset().filter(session_id=session_pk)
-
-
-class Room(models.Model):
+class Room(mixins.SearchableMixin):
     game = models.ForeignKey(
         "game.Game", related_name="rooms", on_delete=models.CASCADE
     )
-    name = models.CharField(max_length=250)
-    accepted_names = models.CharField(max_length=1000)
     description = models.CharField(max_length=1000)
     visited_description = models.CharField(max_length=1000, blank=True)
     exits = models.ManyToManyField("self", through="Exit")
@@ -49,15 +35,7 @@ class Room(models.Model):
     )
     visited = models.BooleanField(default=False)
 
-    objects = RoomManager()
-
-    def get_accepted_names(self):
-        return [i for i in re.split(", ?", self.accepted_names.lower()) if i]
-
-    def matches(self, room_string):
-        return (
-            room_string == self.name.lower() or room_string in self.get_accepted_names()
-        )
+    objects = mixins.SessionManager()
 
     def __str__(self):
         return self.name
