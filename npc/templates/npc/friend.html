@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+
+
+{% block page_title %}{{ friend.name }}{% endblock %}
+
+{% block content %}
+<div class="container text-center">
+  <table class="table">
+    <thead><tr><th colspan=2>Details</th></tr></thead>
+    <tr>
+      <th width=50%>Accepted Names</th>
+      <td>{{ friend.accepted_names }}</td>
+    </tr>
+    <tr>
+      <th>Description</th>
+      <td>{{ friend.description }}</td>
+    </tr>
+    <tr>
+      <th>In Room Description</th>
+      <td>{{ friend.in_room_description }}</td>
+    </tr>
+    <tr>
+      <th>Room</th>
+      <td>{{ friend.room.name }}</td>
+    </tr>
+    <tr>
+      <th>dialogue</th>
+      <td>{{ friend.dialogue }}</td>
+    </tr>
+  </table>
+  <table class="table">
+    <thead>
+      <tr><th colspan=2>Gifts</th></tr>
+      <tr><th width=50%>Item</th><th>actions</th></tr>
+    </thead>
+    <tbody>
+      {% for gift in friend.gifts.all %}
+        <tr>
+          <th>{{ gift.item.name }}</th>
+          <td>
+            <a href="{% url 'npc:remove_gift' gift.pk %}">
+              {% include "icons/delete.html" %}
+            </a>
+          </td>
+        </tr>
+      {% empty %}
+        <tr><th colspan=2>No Gifts added</th></tr>
+      {% endfor %}
+        <tr>
+          <form action="{% url 'npc:add_gift' friend_pk=friend.pk %}" method="POST">
+            {% csrf_token %}
+            <td>{{ item_form.item }} {{ item_form.item.errors.as_text }}</td>
+            <td>
+              <button type="submit" class="btn btn-primary">Add</button>
+            </td>
+          </form>
+        </tr>
+    </tbody>
+  </table>
+</div>
+
+{% endblock %}

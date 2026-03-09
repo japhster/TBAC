@@ -30,4 +30,5 @@ urlpatterns = [
     path("game/", include("game.urls")),
     path("room/", include("room.urls")),
     path("item/", include("item.urls")),
+    path("npc/", include("npc.urls")),
 ]

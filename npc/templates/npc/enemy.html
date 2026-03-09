@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+
+
+{% block page_title %}{{ enemy.name }}{% endblock %}
+
+{% block content %}
+<div class="container text-center">
+  <table class="table">
+    <thead><tr><th colspan=2>Details</th></tr></thead>
+    <tr>
+      <th class="w-50">Accepted Names</th>
+      <td>{{ enemy.accepted_names }}</td>
+    </tr>
+    <tr>
+      <th>Description</th>
+      <td>{{ enemy.description }}</td>
+    </tr>
+    <tr>
+      <th>In Room Description</th>
+      <td>{{ enemy.in_room_description }}</td>
+    </tr>
+    <tr>
+      <th>Room</th>
+      <td>{{ enemy.room.name }}</td>
+    </tr>
+  </table>
+  <table class="table">
+    <thead>
+      <tr><th colspan=2>Drops</th></tr>
+      <tr><th width=50%>Item</th><th>actions</th></tr>
+    </thead>
+    <tbody>
+      {% for drop in enemy.drops.all %}
+        <tr>
+          <th>{{ drop.item.name }}</th>
+          <td>
+            <a href="{% url 'npc:remove_drop' drop.pk %}">
+              {% include "icons/delete.html" %}
+            </a>
+          </td>
+        </tr>
+      {% empty %}
+        <tr>
+          <th colspan=2>No Drops added</th>
+      {% endfor %}
+        <tr>
+          <form action="{% url 'npc:add_drop' enemy_pk=enemy.pk %}" method="POST">
+            {% csrf_token %}
+            <td>{{ item_form.item }} {{ item_form.item.errors.as_text }}</td>
+            <td>
+              <button type="submit" class="btn btn-primary">Add</button>
+            </td>
+          </form>
+        </tr>
+    </tbody>
+  </table>
+</div>
+
+{% endblock %}

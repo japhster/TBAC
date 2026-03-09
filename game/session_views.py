@@ -353,8 +353,7 @@ def talk_to_friend(request, session_pk, friend_pk):
     friend = get_object_or_404(session.friends.all(), pk=friend_pk)
 
     if friend.room == session.current_location:
-        print(friend.gifts.all())
-        friend.get_gift_items().filter(friend_gifts__already_gifted=False).update(
+        friend.get_gift_items().filter(friend_gift__already_gifted=False).update(
             in_inventory=True
         )
         friend.gifts.update(already_gifted=True)

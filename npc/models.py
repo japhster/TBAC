@@ -3,7 +3,6 @@ from django.db import models
 from item.models import Item
 from tbac import mixins
 
-
 # Create your models here.
 
 
@@ -32,8 +31,8 @@ class Friend(mixins.SearchableMixin):
 
     def get_gift_items(self):
         if self.session is None:
-            return Item.objects.none()
-        return self.session.items.filter(friend_gifts__friend=self)
+            return self.game.items.base().filter(friend_gift__friend=self)
+        return self.session.items.filter(friend_gift__friend=self)
 
     def __str__(self):
         return self.name
@@ -63,8 +62,8 @@ class Enemy(mixins.SearchableMixin):
 
     def get_dropped_items(self):
         if self.session is None:
-            return Item.objects.none()
-        return self.session.items.filter(enemy_drops__enemy=self)
+            return self.game.items.base().filter(enemy_drop__enemy=self)
+        return self.session.items.filter(enemy_drop__enemy=self)
 
     def __str__(self):
         return self.name
@@ -75,8 +74,8 @@ class EnemyDrop(models.Model):
         "game.Game", related_name="enemy_drops", on_delete=models.CASCADE
     )
     enemy = models.ForeignKey("Enemy", related_name="drops", on_delete=models.CASCADE)
-    item = models.ForeignKey(
-        "item.Item", related_name="enemy_drops", on_delete=models.CASCADE
+    item = models.OneToOneField(
+        "item.Item", related_name="enemy_drop", on_delete=models.CASCADE
     )
 
     # session tracking
@@ -96,8 +95,8 @@ class FriendGift(models.Model):
         "game.Game", related_name="friend_gifts", on_delete=models.CASCADE
     )
     friend = models.ForeignKey("Friend", related_name="gifts", on_delete=models.CASCADE)
-    item = models.ForeignKey(
-        "item.Item", related_name="friend_gifts", on_delete=models.CASCADE
+    item = models.OneToOneField(
+        "item.Item", related_name="friend_gift", on_delete=models.CASCADE
     )
 
     # session tracking

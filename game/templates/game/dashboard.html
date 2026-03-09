@@ -142,6 +142,73 @@
       </div>
     </div>
 
+    <div class="col">
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title">Friends</h5>
+          <a href="{% url 'npc:new_friend' game.pk %}" class="card-link">+ New Friend</a>
+        </div>
+        <ul class="list-group list-group-flush">
+          {% for friend in game.friends.base %}
+            <li class="list-group-item">
+              <table class="table table-borderless table-sm m-0">
+                <tr>
+                  <td
+                    class="w-100 border-0"
+                  >
+                    <a href="{% url 'npc:friend' friend.pk %}">
+                      {{ friend.name }}
+                    </a>
+                  </td>
+                  <td class="border-0">
+                    <a href="{% url 'npc:edit_friend' friend.pk %}">
+                      {% include "icons/edit.html" %}
+                    </a>
+                  </td>
+                  <td class="border-0"><a href="{% url 'npc:delete_friend' friend.pk %}">
+                      {% include "icons/delete.html" %}
+                  </a></td>
+                </tr>
+              </table>
+            </li>
+          {% endfor %}
+        </ul>
+      </div>
+    </div>
+
+    <div class="col">
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title">Enemies</h5>
+          <a href="{% url 'npc:new_enemy' game.pk %}" class="card-link">+ New Enemy</a>
+        </div>
+        <ul class="list-group list-group-flush">
+          {% for enemy in game.enemies.base %}
+            <li class="list-group-item">
+              <table class="table table-borderless table-sm m-0">
+                <tr>
+                  <td
+                    class="w-100 border-0"
+                  >
+                    <a href="{% url 'npc:enemy' enemy.pk %}">
+                      {{ enemy.name }}
+                    </a>
+                  </td>
+                  <td class="border-0">
+                    <a href="{% url 'npc:edit_enemy' enemy.pk %}">
+                      {% include "icons/edit.html" %}
+                    </a>
+                  </td>
+                  <td class="border-0"><a href="{% url 'npc:delete_enemy' enemy.pk %}">
+                      {% include "icons/delete.html" %}
+                  </a></td>
+                </tr>
+              </table>
+            </li>
+          {% endfor %}
+        </ul>
+      </div>
+    </div>
 </div>
 
 {% endblock %}
