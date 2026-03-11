@@ -341,13 +341,18 @@ def use_item(request, session_pk, item_pk):
     item = get_object_or_404(session.items.all(), pk=item_pk)
 
     if item.in_inventory and item.item_type == models.Item.ItemTypeChoices.KEY:
-        exit_to_unlock = session.exits.filter(
+        unlocked = session.exits.filter(
             Q(room_1=session.current_location) | Q(room_2=session.current_location),
             key_required=item,
         ).update(is_locked=False)
-        messages.add_message(
-            request, messages.INFO, f"You used the {item.name} to unlock the way."
-        )
+        if unlocked:
+            messages.add_message(
+                request, messages.INFO, f"You used the {item.name} to unlock the way."
+            )
+        else:
+            messages.add_message(
+                request, messages.INFO, f"That doesn't seem to do unlock anything here."
+            )
     else:
         messages.add_message(
             request, messages.INFO, f"You don't know how to use the {item.name}"
