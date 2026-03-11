@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+
+{% block page_title %}Dialogue with {{ dialogue.friend.name }}{% endblock %}
+
+{% block content %}
+  <div class="container text-center">
+    <table class="table">
+      <thead><tr><th colspan=2>Details</th></tr></thead>
+      <tbody>
+        <tr>
+          <th>Friend</th>
+          <td>
+            <a href="{% url 'npc:friend' dialogue.friend.pk %}">
+              {{ friend.name }}
+            </a>
+          </td>
+        </tr>
+        {% if dialogue.requires_dialogue %}
+          <tr>
+            <th>response to</th>
+            <td>
+              <a href="{% url 'npc:dialogue' dialogue.requires_dialogue.pk %}">
+                {{ dialogue.requires_dialogue.text|truncatechars:50 }}
+              </a>
+            </td>
+          </tr>
+        {% endif %}
+        {% if dialogue.talking_point %}
+          <tr>
+            <th>Talking Point</th>
+            <td>{{ dialogue.talking_point }}</td>
+          </tr>
+        {% endif %}
+        <tr>
+          <th width=50%>Text</th>
+          <td>{{ dialogue.text }}</td>
+        </tr>
+        <tr>
+      </tbody>
+    </table>
+
+    <table class="table">
+      <thead>
+        <tr><th colspan=2>Responses</th></tr>
+        <tr>
+          <th>
+            <a href="{% url 'npc:new_response' dialogue.pk %}">
+              + Add new response
+            </a>
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for option in dialogue.sub_options.all %}
+          <tr>
+            <td>
+              <a href="{% url 'npc:dialogue' option.pk %}">
+                {{ option.talking_point|truncatechars:50 }}
+              </a>
+            </td>
+          </tr>
+        {% empty %}
+          <tr><th>No Responses added</th></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    
+    <table class="table">
+      <thead>
+        <tr><th colspan=2>Gifts</th></tr>
+        <tr><th width=50%>Item</th><th>actions</th></tr>
+      </thead>
+      <tbody>
+        {% for gift in dialogue.gifts.all %}
+          <tr>
+            <th>{{ gift.item.name }}</th>
+            <td>
+              <a href="{% url 'npc:remove_gift' gift.pk %}">
+                {% include "icons/delete.html" %}
+              </a>
+            </td>
+          </tr>
+        {% endfor %}
+          <tr>
+            <form action="{% url 'npc:add_gift' dialogue.pk %}" method="POST">
+              {% csrf_token %}
+              <td>{{ item_form.item }} {{ item_form.item.errors.as_text }}</td>
+              <td>
+                <button type="submit" class="btn btn-primary">Add</button>
+              </td>
+            </form>
+          </tr>
+      </tbody>
+    </table>
+  </div>
+{% endblock %}

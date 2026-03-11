@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+
+{% block page_title %}
+  {% if editing %}
+    Dialogue Editor
+  {% else %}
+    {{ friend.name }}
+  {% endif %}
+{% endblock %}
+
+{% block content %}
+<div class="container">
+  <form method="POST">
+    {% csrf_token %}
+    <table class="table">
+      {% if parent_option %}
+        <tr>
+          <th>Response to</th>
+          <td>{{ parent_option.text|truncatechars:50 }}
+        </tr>
+        <tr>
+          <th>Talking Point</th>
+          <td>{{ form.talking_point }} {{ form.talking_point.errors.as_text }}</td>
+        </tr>
+      {% endif %}
+      <tr>
+        <th>Text</th>
+        <td>{{ form.text }} {{ form.text.errors.as_text }}</td>
+      </tr>
+      <tr>
+        <th colspan=2 class="text-center">
+          {% for error in form.non_field_errors %}
+            <p>{{ error }}</p>
+          {% endfor %}
+          <button type="submit" class="btn btn-primary">
+            {% if editing %}Update{% else %}Add{% endif %}
+          </button>
+        </th>
+      </tr>
+    </table>
+  </form>
+</div>
+
+{% endblock %}

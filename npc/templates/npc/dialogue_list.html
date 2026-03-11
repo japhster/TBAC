@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block page_title %}Dialogue with {{ friend.name }}{% endblock %}
+
+{% block content %}
+  <div class="container text-center">
+    <table class="table">
+      <thead><tr><th>Dialogue Options</th></tr></thead>
+      <tbody>
+        {% for pk, text in dialogue_options %}
+          <tr>
+            <th>
+              <a href="{% url 'npc:dialogue' pk %}">
+                {{ text|truncatechars:50 }}
+              </a>
+            </th>
+          </tr>
+        {% empty %}
+          <tr>
+            <th>
+              <a href="{% url 'npc:new_dialogue' friend.pk %}">
+                Add the first line of dialogue
+              </a>
+            </th>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+{% endblock %}

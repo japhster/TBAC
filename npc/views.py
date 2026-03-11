@@ -1,4 +1,5 @@
 from django.contrib.auth.decorators import login_required
+from django.http import Http404
 from django.shortcuts import get_object_or_404, render, reverse
 
 from . import forms
@@ -15,6 +16,10 @@ def _friend_redirect(friend_pk):
     return helpers.custom_redirect("npc:friend", kwargs={"friend_pk": friend_pk})
 
 
+def _dialogue_redirect(dialogue_pk):
+    return helpers.custom_redirect("npc:dialogue", kwargs={"dialogue_pk": dialogue_pk})
+
+
 @login_required
 def friend_detail(request, friend_pk):
     friend = get_object_or_404(
@@ -23,13 +28,11 @@ def friend_detail(request, friend_pk):
         .prefetch_related("gifts", "gifts__item"),
         pk=friend_pk,
     )
-    item_form = forms.ItemForm(game_pk=friend.game.pk)
     return render(
         request,
         "npc/friend.html",
         context={
             "friend": friend,
-            "item_form": item_form,
             "links": [
                 links.game_dashboard(friend.game.pk),
                 ("edit", reverse("npc:edit_friend", kwargs={"friend_pk": friend_pk})),
@@ -54,7 +57,6 @@ def create_friend(request, game_pk):
             description=form.cleaned_data["description"],
             room=form.cleaned_data["room"],
             in_room_description=form.cleaned_data["in_room_description"],
-            dialogue=form.cleaned_data["dialogue"],
         )
         return _friend_redirect(friend.pk)
 
@@ -85,7 +87,6 @@ def edit_friend(request, friend_pk):
             "description": friend.description,
             "room": friend.room,
             "in_room_description": friend.in_room_description,
-            "dialogue": friend.dialogue,
         },
     )
     if request.method == "POST" and form.is_valid():
@@ -94,7 +95,6 @@ def edit_friend(request, friend_pk):
         friend.description = form.cleaned_data["description"]
         friend.room = form.cleaned_data["room"]
         friend.in_room_description = form.cleaned_data["in_room_description"]
-        friend.dialogue = form.cleaned_data["dialogue"]
         friend.save()
 
         return _friend_redirect(friend.pk)
@@ -112,31 +112,35 @@ def edit_friend(request, friend_pk):
 
 
 @login_required
-def add_gift_to_friend(request, friend_pk):
+def add_gift_to_dialogue(request, dialogue_pk):
     if request.method != "POST":
-        return _friend_redirect(friend.pk)
+        return _dialogue_redirect(dialogue_pk)
 
-    friend = get_object_or_404(
-        models.Friend.objects.select_related("game"),
-        pk=friend_pk,
-        game__created_by=request.user,
+    dialogue = get_object_or_404(
+        models.FriendDialogueOption.objects.select_related("friend__game"),
+        pk=dialogue_pk,
+        friend__game__created_by=request.user,
     )
+    friend = dialogue.friend
     form = forms.ItemForm(request.POST, game_pk=friend.game.pk)
 
     if form.is_valid():
         models.FriendGift.objects.create(
-            game=friend.game, friend=friend, item=form.cleaned_data["item"]
+            game=friend.game,
+            friend=friend,
+            item=form.cleaned_data["item"],
+            dialogue_option=dialogue,
         )
 
-    return _friend_redirect(friend.pk)
+    return _dialogue_redirect(dialogue_pk)
 
 
 @login_required
-def remove_gift_from_friend(request, gift_pk):
+def remove_gift_from_dialogue(request, gift_pk):
     gift = get_object_or_404(models.FriendGift, pk=gift_pk)
-    friend_pk = gift.friend.pk
+    dialogue_pk = gift.dialogue_option.pk
     gift.delete()
-    return _friend_redirect(friend_pk)
+    return _dialogue_redirect(dialogue_pk)
 
 
 @login_required
@@ -281,3 +285,122 @@ def delete_enemy(request, enemy_pk):
     enemy.delete()
 
     return helpers.redirect_to_game_dashboard(game_pk)
+
+
+@login_required
+def dialogue_list(request, friend_pk):
+    return render(
+        request,
+        "npc/dialogue_list.html",
+        context={
+            "friend": get_object_or_404(
+                models.Friend, pk=friend_pk, game__created_by=request.user
+            ),
+            "dialogue_options": models.FriendDialogueOption.objects.filter(
+                friend_id=friend_pk,
+                friend__game__created_by=request.user,
+            ).values_list("pk", "text"),
+            "links": [
+                (
+                    "back to friend",
+                    reverse("npc:friend", kwargs={"friend_pk": friend_pk}),
+                ),
+            ],
+        },
+    )
+
+
+@login_required
+def dialogue_detail(request, dialogue_pk):
+    dialogue = get_object_or_404(
+        models.FriendDialogueOption.objects.select_related("friend").prefetch_related(
+            "gifts", "sub_options"
+        ),
+        pk=dialogue_pk,
+        friend__game__created_by=request.user,
+    )
+
+    return render(
+        request,
+        "npc/dialogue.html",
+        context={
+            "dialogue": dialogue,
+            "item_form": forms.ItemForm(game_pk=dialogue.friend.game.pk),
+            "links": [
+                (
+                    "back to dialogue list",
+                    reverse(
+                        "npc:dialogue_list", kwargs={"friend_pk": dialogue.friend.pk}
+                    ),
+                ),
+                (
+                    "edit",
+                    reverse("npc:edit_dialogue", kwargs={"dialogue_pk": dialogue_pk}),
+                ),
+            ],
+        },
+    )
+
+
+@login_required
+def create_dialogue(request, friend_pk=None, parent_pk=None):
+    if friend_pk is None and parent_pk is None:
+        raise Http404()
+
+    if friend_pk is not None:
+        friend = get_object_or_404(models.Friend, pk=friend_pk)
+        parent_option = None
+    else:
+        parent_option = get_object_or_404(models.FriendDialogueOption, pk=parent_pk)
+        friend = parent_option.friend
+    form = forms.DialogueForm(request.POST or None)
+
+    if request.method == "POST" and form.is_valid():
+        dialogue = models.FriendDialogueOption.objects.create(
+            friend=friend,
+            requires_dialogue=parent_option,
+            text=form.cleaned_data["text"],
+            talking_point=form.cleaned_data["talking_point"],
+        )
+        return _dialogue_redirect(dialogue.pk)
+
+    return render(
+        request,
+        "npc/dialogue_form.html",
+        context={
+            "form": form,
+            "parent_option": parent_option,
+            "friend": friend,
+            "editing": False,
+        },
+    )
+
+
+@login_required
+def edit_dialogue(request, dialogue_pk):
+    dialogue = get_object_or_404(models.FriendDialogueOption, pk=dialogue_pk)
+
+    form = forms.DialogueForm(
+        request.POST or None,
+        initial={
+            "text": dialogue.text,
+            "talking_point": dialogue.talking_point,
+        },
+    )
+    if request.method == "POST" and form.is_valid():
+        dialogue.text = form.cleaned_data["text"]
+        dialogue.talking_point = form.cleaned_data["talking_point"]
+        dialogue.save()
+
+        return _dialogue_redirect(dialogue_pk)
+
+    return render(
+        request,
+        "npc/dialogue_form.html",
+        context={
+            "form": form,
+            "parent_option": dialogue.requires_dialogue,
+            "friend": dialogue.friend,
+            "editing": True,
+        },
+    )

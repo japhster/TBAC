@@ -40,9 +40,6 @@ class FriendForm(forms.Form):
         widget=forms.Select(attrs={"class": "form-control"}),
         required=False,
     )
-    dialogue = forms.CharField(
-        widget=forms.Textarea(attrs={"class": "form-control"}),
-    )
 
     def __init__(self, *args, game_pk, **kwargs):
         super().__init__(*args, **kwargs)
@@ -76,3 +73,13 @@ class EnemyForm(forms.Form):
         self.fields["room"].queryset = models.Room.objects.base().filter(
             game_id=game_pk
         )
+
+
+class DialogueForm(forms.Form):
+    talking_point = forms.CharField(
+        widget=forms.TextInput(attrs={"class": "form-control"}),
+        required=False,
+    )
+    text = forms.CharField(
+        widget=forms.Textarea(attrs={"class": "form-control"}),
+    )
