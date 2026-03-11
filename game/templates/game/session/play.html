@@ -1,0 +1,42 @@
+{% extends "game/session/base.html" %}
+
+{% block window %}
+  <p>{{ location_description }}</p>
+  {% if enemy_descriptions %}
+    {% for desc in enemy_descriptions %}
+      <p>{{ desc }}</p>
+    {% endfor %}
+  {% endif %}
+  {% if friend_descriptions and not enemy_descriptions %}
+    {% for desc in friend_descriptions %}
+      <p>{{ desc }}</p>
+    {% endfor %}
+  {% endif %}
+
+  {% if inventory.exists %}
+    <p>You have at your disposal: {{ inventory | join:", " }}</p>
+  {% endif %}
+  {% if messages %}
+    <div class="container">
+      {% for message in messages %}
+        {% if message.level == DEFAULT_MESSAGE_LEVELS.INFO %}
+          <p>{{ message }}</p>
+        {% endif %}
+      {% endfor %}
+    </div>
+  {% endif %}
+
+  <div class="container">
+    <p>What do you want to do?</p>
+    <form method="POST" action="{% url 'game:interpreter' session_pk=session.pk %}">
+      {% csrf_token %}
+      <div class="input-group mb-2">
+        <div class="input-group-prepend">
+          <div class="input-group-text font-weight-bold">&gt;</div>
+        </div>
+        {{ form.text }}
+      </div>
+      {{ form.text.errors.as_text }}
+    </form>
+  </div>
+{% endblock %}

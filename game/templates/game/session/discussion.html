@@ -1,0 +1,25 @@
+{% extends "game/session/base.html" %}
+
+
+{% block window %}
+  <div class="container">
+    <p>{{ dialogue_option.text }}</p>
+
+    <ul class="list-group list-group-flush">
+      {% for option in dialogue_option.sub_options.all %}
+        <li class="list-group-item">
+          <a href="{% url 'game:discussion' session_pk=session.pk dialogue_pk=option.pk %}">
+            {{ option.talking_point }}
+          </a>
+        </li>
+      {% endfor %}
+      {% if dialogue_option.requires_dialogue is not None%}
+        <li class="list-group-item">
+          <a href="{% url 'game:discussion' session_pk=session.pk dialogue_pk=dialogue_option.requires_dialogue.pk %}">
+            Go back
+          </a>
+        </li>
+      {% endif %}
+      <li class="list-group-item"><a href="{% url 'game:play' session_pk=session.pk %}">Goodbye</a></li>
+  </div>
+{% endblock %}
