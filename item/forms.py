@@ -17,6 +17,7 @@ class ItemForm(forms.Form):
     )
     in_room_description = forms.CharField(
         widget=forms.Textarea(attrs={"class": "form-control"}),
+        required=False,
     )
     item_type = forms.ChoiceField(
         widget=forms.Select(attrs={"class": "form-control"}),
