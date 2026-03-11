@@ -3,10 +3,10 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404, render
 from django.db.models import Q
 
-from . import constants, forms, interpreter, models
+from . import constants, forms, interpreter
 from item.models import Item
 from room.models import Exit, Room
-from tbac import helpers
+from tbac import helpers, models
 
 
 def _session_redirect(session_pk):
@@ -30,6 +30,27 @@ def _copy_item(session, item, room_map, item_map):
     item_map[old_pk] = item.pk
 
     return item.pk
+
+
+def _copy_dialogue_option(session, dialogue_option, friend_map, dialogue_map):
+    old_pk = dialogue_option.pk
+    dialogue_option.pk = None
+    dialogue_option.session = session
+    dialogue_option.friend_id = friend_map[dialogue_option.friend_id]
+    if dialogue_option.requires_dialogue is not None:
+        new_requires_dialogue_pk = dialogue_map.get(
+            dialogue_option.requires_dialogue_id
+        )
+        if new_requires_dialogue_pk is None:
+            new_requires_dialogue_pk = _copy_dialogue_option(
+                session, dialogue_option.requires_dialogue, friend_map, dialogue_map
+            )
+        dialogue_option.requires_dialogue_id = new_requires_dialogue_pk
+    dialogue_option.save()
+
+    dialogue_map[old_pk] = dialogue_option.pk
+
+    return dialogue_option.pk
 
 
 @login_required
@@ -130,6 +151,8 @@ def start_new_session(request, game_pk):
 
     friend_map = {}
 
+    dialogue_map = {}
+
     for friend in game.friends.base():
         old_pk = friend.pk
         friend.pk = None
@@ -138,9 +161,20 @@ def start_new_session(request, game_pk):
         friend.save()
         friend_map[old_pk] = friend.pk
 
+    for dialogue_option in models.FriendDialogueOption.objects.filter(
+        friend__game=game
+    ):
+        _copy_dialogue_option(
+            session=session,
+            dialogue_option=dialogue_option,
+            friend_map=friend_map,
+            dialogue_map=dialogue_map,
+        )
+
     for gift in game.friend_gifts.base():
         gift.pk = None
         gift.friend_id = friend_map[gift.friend.pk]
+        gift.dialogue_option_id = dialogue_map[gift.dialogue_option.pk]
         gift.item_id = item_map[gift.item.pk]
         gift.session = session
         gift.save()
@@ -195,7 +229,7 @@ def play_game(request, session_pk):
 
     return render(
         request,
-        "game/play.html",
+        "game/session/play.html",
         context={
             "session": session,
             "game": game,
@@ -350,15 +384,45 @@ def kill_enemy(request, session_pk, enemy_pk):
 @login_required
 def talk_to_friend(request, session_pk, friend_pk):
     session = get_object_or_404(models.Session, pk=session_pk)
-    friend = get_object_or_404(session.friends.all(), pk=friend_pk)
+    friend = get_object_or_404(
+        session.friends.prefetch_related("dialogue_options", "dialogue_options__gifts"),
+        pk=friend_pk,
+    )
 
     if friend.room == session.current_location:
-        friend.get_gift_items().filter(friend_gift__already_gifted=False).update(
-            in_inventory=True
-        )
-        friend.gifts.update(already_gifted=True)
-        messages.add_message(
-            request, messages.INFO, friend.dialogue or f"You talked to {friend.name}."
-        )
+        if friend.dialogue_options.count() == 1:
+            dialogue_option = friend.dialogue_options.objects.get()
+            dialogue_option.receive_gifts()
+            messages.add_message(
+                request,
+                messages.INFO,
+                dialogue_option.text or f"You talked to {friend.name}.",
+            )
+        else:
+            dialogue = get_object_or_404(
+                friend.dialogue_options, requires_dialogue=None, talking_point=""
+            )
+            return helpers.custom_redirect(
+                "game:discussion",
+                kwargs={"session_pk": session_pk, "dialogue_pk": dialogue.pk},
+            )
 
     return _session_redirect(session_pk)
+
+
+@login_required
+def friend_discussion(request, session_pk, dialogue_pk):
+    session = get_object_or_404(models.Session, pk=session_pk)
+    dialogue = get_object_or_404(session.friend_dialogue_options, pk=dialogue_pk)
+
+    dialogue.receive_gifts()
+
+    return render(
+        request,
+        "game/session/discussion.html",
+        context={
+            "game": session.game,
+            "session": session,
+            "dialogue_option": dialogue,
+        },
+    )

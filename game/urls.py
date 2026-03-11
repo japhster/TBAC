@@ -74,4 +74,9 @@ urlpatterns = [
         session_views.talk_to_friend,
         name="talk",
     ),
+    path(
+        "session/discussion/<int:session_pk>/<int:dialogue_pk>/",
+        session_views.friend_discussion,
+        name="discussion",
+    ),
 ]
