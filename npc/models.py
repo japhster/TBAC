@@ -16,7 +16,6 @@ class Friend(mixins.SearchableMixin):
     room = models.ForeignKey(
         "room.Room", related_name="friends", on_delete=models.CASCADE
     )
-    dialogue = models.CharField(max_length=1000)
 
     # session tracking
     session = models.ForeignKey(
@@ -28,11 +27,6 @@ class Friend(mixins.SearchableMixin):
     )
 
     objects = mixins.SessionManager()
-
-    def get_gift_items(self):
-        if self.session is None:
-            return self.game.items.base().filter(friend_gift__friend=self)
-        return self.session.items.filter(friend_gift__friend=self)
 
     def __str__(self):
         return self.name
@@ -98,6 +92,12 @@ class FriendGift(models.Model):
     item = models.OneToOneField(
         "item.Item", related_name="friend_gift", on_delete=models.CASCADE
     )
+    dialogue_option = models.ForeignKey(
+        "FriendDialogueOption",
+        related_name="gifts",
+        on_delete=models.CASCADE,
+        null=True,
+    )
 
     # session tracking
     session = models.ForeignKey(
@@ -110,3 +110,41 @@ class FriendGift(models.Model):
     already_gifted = models.BooleanField(default=False)
 
     objects = mixins.SessionManager()
+
+
+class FriendDialogueOption(models.Model):
+    friend = models.ForeignKey(
+        "Friend", related_name="dialogue_options", on_delete=models.CASCADE
+    )
+    requires_dialogue = models.ForeignKey(
+        "self",
+        related_name="sub_options",
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+    )
+
+    text = models.CharField(max_length=1000)
+    talking_point = models.CharField(max_length=250)
+
+    session = models.ForeignKey(
+        "game.Session",
+        related_name="friend_dialogue_options",
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+    )
+    already_spoken = models.BooleanField(default=False)
+
+    objects = mixins.SessionManager()
+
+    def get_gift_items(self):
+        if self.session is None:
+            return self.game.items.base().filter(friend_gift__dialogue_option=self)
+        return self.session.items.filter(friend_gift__dialogue_option=self)
+
+    def receive_gifts(self):
+        self.get_gift_items().filter(friend_gift__already_gifted=False).update(
+            in_inventory=True
+        )
+        self.gifts.update(already_gifted=True)
