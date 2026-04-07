@@ -29,6 +29,10 @@
         <td>{{ form.text }} {{ form.text.errors.as_text }}</td>
       </tr>
       <tr>
+        <th>Can back out of dialogue option</th>
+        <td class="text-center">{{ form.can_back_out }} {{ form.can_back_out.errors.as_text }}</td>
+      </tr>
+      <tr>
         <th colspan=2 class="text-center">
           {% for error in form.non_field_errors %}
             <p>{{ error }}</p>

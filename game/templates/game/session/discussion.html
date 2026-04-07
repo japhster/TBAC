@@ -13,7 +13,7 @@
           </a>
         </li>
       {% endfor %}
-      {% if dialogue_option.requires_dialogue is not None%}
+      {% if dialogue_option.requires_dialogue is not None and dialogue_option.can_back_out %}
         <li class="list-group-item">
           <a href="{% url 'game:discussion' session_pk=session.pk dialogue_pk=dialogue_option.requires_dialogue.pk %}">
             Go back

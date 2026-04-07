@@ -89,7 +89,7 @@ class FriendGift(models.Model):
         "game.Game", related_name="friend_gifts", on_delete=models.CASCADE
     )
     friend = models.ForeignKey("Friend", related_name="gifts", on_delete=models.CASCADE)
-    item = models.OneToOneField(
+    item = models.ForeignKey(
         "item.Item", related_name="friend_gift", on_delete=models.CASCADE
     )
     dialogue_option = models.ForeignKey(
@@ -126,6 +126,7 @@ class FriendDialogueOption(models.Model):
 
     text = models.CharField(max_length=1000)
     talking_point = models.CharField(max_length=250)
+    can_back_out = models.BooleanField(default=True)
 
     session = models.ForeignKey(
         "game.Session",

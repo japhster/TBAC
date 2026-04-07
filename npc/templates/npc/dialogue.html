@@ -11,7 +11,7 @@
           <th>Friend</th>
           <td>
             <a href="{% url 'npc:friend' dialogue.friend.pk %}">
-              {{ friend.name }}
+              {{ dialogue.friend.name }}
             </a>
           </td>
         </tr>
@@ -34,6 +34,11 @@
         <tr>
           <th width=50%>Text</th>
           <td>{{ dialogue.text }}</td>
+        </tr>
+        <tr>
+        <tr>
+          <th width=50%>Can back out of dialogue option</th>
+          <td>{{ dialogue.can_back_out | yesno | title }}</td>
         </tr>
         <tr>
       </tbody>

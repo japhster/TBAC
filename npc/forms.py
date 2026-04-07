@@ -17,7 +17,6 @@ class ItemForm(forms.Form):
             contained_within=None,
             is_starting_item=False,
             enemy_drop=None,
-            friend_gift=None,
         )
 
 
@@ -82,4 +81,9 @@ class DialogueForm(forms.Form):
     )
     text = forms.CharField(
         widget=forms.Textarea(attrs={"class": "form-control"}),
+    )
+    can_back_out = forms.BooleanField(
+        widget=forms.CheckboxInput(attrs={"class": "form-check-input"}),
+        required=False,
+        initial=True,
     )

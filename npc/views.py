@@ -361,6 +361,7 @@ def create_dialogue(request, friend_pk=None, parent_pk=None):
             requires_dialogue=parent_option,
             text=form.cleaned_data["text"],
             talking_point=form.cleaned_data["talking_point"],
+            can_back_out=form.cleaned_data["can_back_out"],
         )
         return _dialogue_redirect(dialogue.pk)
 
@@ -385,11 +386,13 @@ def edit_dialogue(request, dialogue_pk):
         initial={
             "text": dialogue.text,
             "talking_point": dialogue.talking_point,
+            "can_back_out": dialogue.can_back_out,
         },
     )
     if request.method == "POST" and form.is_valid():
         dialogue.text = form.cleaned_data["text"]
         dialogue.talking_point = form.cleaned_data["talking_point"]
+        dialogue.can_back_out = form.cleaned_data["can_back_out"]
         dialogue.save()
 
         return _dialogue_redirect(dialogue_pk)
