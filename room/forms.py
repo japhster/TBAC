@@ -38,13 +38,6 @@ class ExitForm(forms.Form):
         widget=forms.Select(attrs={"class": "form-control"}),
     )
 
-    one_to_two = forms.CharField(
-        widget=forms.TextInput(attrs={"class": "form-control"})
-    )
-    two_to_one = forms.CharField(
-        widget=forms.TextInput(attrs={"class": "form-control"})
-    )
-
     is_locked = forms.BooleanField(
         widget=forms.CheckboxInput(attrs={"class": "form-check-input"}),
         required=False,
@@ -52,6 +45,7 @@ class ExitForm(forms.Form):
     key_required = forms.ModelChoiceField(
         queryset=models.Item.objects.none(),
         widget=forms.Select(attrs={"class": "form-control"}),
+        required=False,
     )
 
     def __init__(self, *args, game_pk, **kwargs):
@@ -66,3 +60,8 @@ class ExitForm(forms.Form):
             game_id=game_pk,
             item_type=models.Item.ItemTypeChoices.KEY,
         )
+
+    def clean(self, *args, **kwargs):
+        cleaned_data = super().clean(*args, **kwargs)
+        if cleaned_data["is_locked"] and cleaned_data["key_required"] is None:
+            raise forms.ValidationError({"key_required": "Need to specify which key can open a locked exit."})
