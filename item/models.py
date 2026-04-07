@@ -22,6 +22,7 @@ class Item(mixins.SearchableMixin):
     room = models.ForeignKey(
         "room.Room", related_name="items", on_delete=models.SET_NULL, null=True
     )
+    can_be_taken = models.BooleanField(default=True)
     contained_within = models.ForeignKey(
         "self",
         related_name="contents",

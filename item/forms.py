@@ -28,6 +28,12 @@ class ItemForm(forms.Form):
         widget=forms.Select(attrs={"class": "form-control"}),
         required=False,
     )
+    can_be_taken = forms.BooleanField(
+        widget=forms.CheckboxInput(attrs={"class": "form-check-input"}),
+        required=False,
+        initial=True,
+    )
+
     contained_within = forms.ModelChoiceField(
         queryset=models.Item.objects.none(),
         widget=forms.Select(attrs={"class": "form-control"}),

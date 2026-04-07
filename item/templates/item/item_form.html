@@ -39,6 +39,13 @@
         <td>{{ form.room }} {{ form.room.errors.as_text }}</td>
       </tr>
       <tr>
+        <th>Can Be Taken</th>
+        <td class="text-center">
+          {{ form.can_be_taken }}
+          {{ form.can_be_taken.errors.as_text }}
+        </td>
+      </tr>
+      <tr>
         <th>Contained Within</th>
         <td>
           {{ form.contained_within }}
@@ -47,7 +54,7 @@
       </tr>
       <tr>
         <th>Is Starting Item</th>
-        <td>
+        <td class="text-center">
           {{ form.is_starting_item }}
           {{ form.is_starting_item.errors.as_text }}
         </td>

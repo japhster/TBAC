@@ -316,11 +316,17 @@ def leave_room(request, session_pk):
     
     return helpers.custom_redirect("game:move", kwargs={"session_pk": session_pk, "room_pk": pk})
 
-
 @login_required
 def take_item(request, session_pk, item_pk):
     session = get_object_or_404(models.Session, pk=session_pk)
     item = get_object_or_404(session.items.all(), pk=item_pk)
+
+    if not item.can_be_taken:
+        messages.add_message(
+            request, messages.INFO, f"The {item.name} cannot be taken."
+        )
+        return _session_redirect(session_pk)
+
 
     item.in_inventory = True
     item.room = None

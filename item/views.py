@@ -23,6 +23,7 @@ def create_item(request, game_pk):
             item_type=form.cleaned_data["item_type"],
             game=game,
             room=form.cleaned_data["room"],
+            can_be_taken=form.cleaned_data["can_be_taken"],
             contained_within=form.cleaned_data["contained_within"],
             is_starting_item=form.cleaned_data["is_starting_item"],
         )
@@ -53,6 +54,7 @@ def edit_item(request, item_pk):
             "in_room_description": item.in_room_description,
             "item_type": item.item_type,
             "room": item.room,
+            "can_be_taken": item.can_be_taken,
             "contained_within": item.contained_within,
             "is_starting_item": item.is_starting_item,
         },
@@ -65,6 +67,7 @@ def edit_item(request, item_pk):
         item.in_room_description = form.cleaned_data["in_room_description"]
         item.item_type = form.cleaned_data["item_type"]
         item.room = form.cleaned_data["room"]
+        item.can_be_taken = form.cleaned_data["can_be_taken"]
         item.contained_within = form.cleaned_data["contained_within"]
         item.is_starting_item = form.cleaned_data["is_starting_item"]
         item.save()
