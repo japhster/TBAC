@@ -44,6 +44,11 @@ urlpatterns = [
         name="move",
     ),
     path(
+        "session/leave/<int:session_pk>/",
+        session_views.leave_room,
+        name="leave",
+    ),
+    path(
         "session/take/<int:session_pk>/<int:item_pk>/",
         session_views.take_item,
         name="take",

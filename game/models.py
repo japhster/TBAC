@@ -39,6 +39,7 @@ class Game(models.Model):
         on_delete=models.SET_NULL,
     )
     is_published = models.BooleanField(default=False)
+    # starting_health = models.IntegerField()
 
     objects = GameManager()
 
@@ -89,6 +90,7 @@ class Session(models.Model):
     player = models.ForeignKey(
         settings.AUTH_USER_MODEL, related_name="sessions", on_delete=models.CASCADE
     )
+    # current_health = models.IntegerField()
 
     def get_inventory(self):
         return self.items.all().filter(in_inventory=True)

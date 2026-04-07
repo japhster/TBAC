@@ -115,6 +115,7 @@ def get_friend_pk(request, session, command, args, in_room=True, silently=False)
 COMMAND_MAP = {
     # Command string: (view name, kwarg name for view, func to retrieve pk)
     constants.MOVE_COMMAND: ("game:move", "room_pk", get_room_pk),
+    constants.LEAVE_COMMAND: ("game:leave", None, None),
     constants.TAKE_COMMAND: (
         "game:take",
         "item_pk",

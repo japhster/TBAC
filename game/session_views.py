@@ -264,6 +264,9 @@ def interpret_command(request, session_pk):
     redirect_view, kwarg_key, interpreter_function = interpreter.COMMAND_MAP.get(
         command, [None, None, None]
     )
+    if kwarg_key is None and interpreter_function is None:
+        return helpers.custom_redirect(redirect_view, kwargs={"session_pk": session_pk})
+
     if interpreter_function is None:
         return _session_redirect(session_pk)
 
@@ -301,6 +304,17 @@ def move_room(request, session_pk, room_pk):
     session.current_location = room
     session.save()
     return _session_redirect(session_pk)
+
+
+@login_required
+def leave_room(request, session_pk):
+    session = get_object_or_404(models.Session, pk=session_pk)
+
+    pk = interpreter.get_room_pk(request, session, "GO", args=[])
+    if not pk:
+        return _session_redirect(session_pk)
+    
+    return helpers.custom_redirect("game:move", kwargs={"session_pk": session_pk, "room_pk": pk})
 
 
 @login_required
@@ -396,7 +410,7 @@ def talk_to_friend(request, session_pk, friend_pk):
 
     if friend.room == session.current_location:
         if friend.dialogue_options.count() == 1:
-            dialogue_option = friend.dialogue_options.objects.get()
+            dialogue_option = friend.dialogue_options.get()
             dialogue_option.receive_gifts()
             messages.add_message(
                 request,
