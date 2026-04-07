@@ -1,8 +1,0 @@
-need to allow items to be associated with a triggerable effect
-maybe effects should drop items in rooms?
-maybe effects should be able to lock rooms?
-
-TriggerableEffect -> Quest (with is_hidden boolean field)
-
-
-Update movement to take into account the options for exit one_to_two and two_to_one.
