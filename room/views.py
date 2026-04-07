@@ -102,8 +102,6 @@ def create_exit(request, game_pk):
         new_exit = models.Exit.objects.create(
             room_1=form.cleaned_data["room_1"],
             room_2=form.cleaned_data["room_2"],
-            one_to_two=form.cleaned_data["one_to_two"],
-            two_to_one=form.cleaned_data["two_to_one"],
             is_locked=form.cleaned_data["is_locked"],
             key_required=form.cleaned_data["key_required"],
         )
@@ -132,8 +130,6 @@ def edit_exit(request, game_pk, exit_pk):
         initial={
             "room_1": room_exit.room_1.pk,
             "room_2": room_exit.room_2.pk,
-            "one_to_two": room_exit.one_to_two,
-            "two_to_one": room_exit.two_to_one,
             "is_locked": room_exit.is_locked,
             "key_required": room_exit.key_required,
         },
@@ -142,8 +138,6 @@ def edit_exit(request, game_pk, exit_pk):
     if request.method == "POST" and form.is_valid():
         room_exit.room_1 = form.cleaned_data["room_1"]
         room_exit.room_2 = form.cleaned_data["room_2"]
-        room_exit.one_to_two = form.cleaned_data["one_to_two"]
-        room_exit.two_to_one = form.cleaned_data["two_to_one"]
         room_exit.is_locked = form.cleaned_data["is_locked"]
         room_exit.key_required = form.cleaned_data["key_required"]
         room_exit.save()

@@ -48,8 +48,6 @@ class Exit(models.Model):
     room_2 = models.ForeignKey(
         "Room", related_name="exists_from_2", on_delete=models.CASCADE
     )
-    one_to_two = models.CharField(max_length=250)
-    two_to_one = models.CharField(max_length=250)
     is_locked = models.BooleanField(default=False)
     key_required = models.ForeignKey(
         "item.Item", related_name="unlocks", on_delete=models.SET_NULL, null=True
@@ -65,12 +63,6 @@ class Exit(models.Model):
     )
 
     objects = ExitManager()
-
-    def get_exit_name_and_room_pk(self, room):
-        if room == self.room_1:
-            return self.one_to_two, self.room_2.pk
-        else:
-            return self.two_to_one, self.room_1.pk
 
     def get_exit_room(self, room):
         return self.room_2 if room == self.room_1 else self.room_1

@@ -98,62 +98,6 @@ class Session(models.Model):
             item_type=Item.ItemTypeChoices.CONTAINER, container_is_open=False
         )
 
-    def get_exit_names_and_room_pks(self):
-        """Used in a session to generate the list of directions a player can go."""
-        exits = (
-            Exit.objects.all()
-            .filter(
-                models.Q(room_1=self.current_location)
-                | models.Q(room_2=self.current_location),
-            )
-            .values_list("room_1__pk", "room_2__pk", "one_to_two", "two_to_one")
-        )
-
-        return [
-            (
-                (one_to_two, room_2_pk)
-                if room_1_pk == self.current_location.pk
-                else (two_to_one, room_1_pk)
-            )
-            for room_1_pk, room_2_pk, one_to_two, two_to_one in exits
-        ]
-
-    def get_available_exits(self):
-        """returns tuple pairs (exit direction label, room.pk)."""
-        exits = (
-            Exit.objects.filter(
-                models.Q(room_1=self.current_location)
-                | models.Q(room_2=self.current_location),
-            )
-            .select_related("room_1", "room_2")
-            .prefetch_related("room_1__required_items", "room_2__required_items")
-        )
-
-        current_inventory = self.get_inventory()
-
-        available_exit_data = []
-
-        for location_exit in exits:
-            moving_to = (
-                location_exit.room_2
-                if self.current_location == location_exit.room_1
-                else location_exit.room_1
-            )
-            exit_label = (
-                location_exit.one_to_two
-                if self.current_location == location_exit.room_1
-                else location_exit.two_to_one
-            )
-
-            if moving_to.required_items.exists() and any(
-                not item.in_inventory for item in moving_to.required_items.all()
-            ):
-                continue
-
-            available_exit_data.append((exit_label, moving_to.pk))
-
-        return available_exit_data
-
     def get_available_rooms(self):
         exits = (
             Exit.objects.filter(

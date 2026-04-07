@@ -32,27 +32,6 @@ def my_games(request):
 
 
 @login_required
-def game_detail(request, game_pk, room_pk=None):
-    game = get_object_or_404(models.Game, pk=game_pk, created_by=request.user)
-
-    if room_pk is not None:
-        room = game.rooms.get(pk=room_pk)
-    else:
-        room = game.start_room
-
-    possible_exits = dict(
-        exit_.get_exit_name_and_room_pk(room)
-        for exit_ in Exit.objects.from_room(room=room)
-    )
-
-    return render(
-        request,
-        "game/detail.html",
-        context={"game": game, "room": room, "exits": possible_exits},
-    )
-
-
-@login_required
 def create_game(request):
     form = forms.GameForm(request.POST or None)
     if request.method == "POST" and form.is_valid():
