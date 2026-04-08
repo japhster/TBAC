@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+
+{% block page_title %}{{ game.name }}{% endblock %}
+
+{% block content %}
+<nav>
+  <ul class="nav nav-tabs nav-fill" id="myTab" role="tablist">
+    {% for tab_id, tab_name in tabs %}
+    <li class="nav-item">
+      <a
+        class="nav-link {% if forloop.counter == 1 %}active{% endif %}"
+        id="{{ tab_id }}-tab"
+        data-toggle="tab"
+        href="#{{ tab_id }}"
+        role="tab"
+        aria-controls="{{ tab_id }}"
+        aria-selected="{% if forloop.counter == 1 %}true{% else %}false{% endif%}"
+      >
+        {{ tab_name }}
+      </a>
+    </li>
+    {% endfor %}
+  </ul>
+  <div class="tab-content" id="myTabContent">
+    {% for tab_id, _ in tabs %}
+    <div
+      class="tab-pane fade show {% if forloop.counter == 1 %}active{% endif %}"
+      id="{{ tab_id }}"
+      role="tabpanel"
+      aria-labelledby="{{ tab_id }}-tab"
+    >
+      {% with "game/dashboard/"|add:tab_id|add:".html" as href %}
+        {% include href %}
+      {% endwith %}
+    </div>
+    {% endfor %}
+  </div>
+</nav>
+{% endblock %}
+
+{% block footer %}
+  <script>
+    $(document).ready(() => {
+      $(`${window.location.hash}-tab`).tab("show");
+      window.location.hash = "";
+    })
+  </script>
+{% endblock %}

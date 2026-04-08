@@ -34,7 +34,7 @@ def friend_detail(request, friend_pk):
         context={
             "friend": friend,
             "links": [
-                links.game_dashboard(friend.game.pk),
+                links.game_dashboard(friend.game.pk, hashtag="friend"),
                 ("edit", reverse("npc:edit_friend", kwargs={"friend_pk": friend_pk})),
                 (
                     "delete",
@@ -170,7 +170,7 @@ def enemy_detail(request, enemy_pk):
             "enemy": enemy,
             "item_form": item_form,
             "links": [
-                links.game_dashboard(enemy.game.pk),
+                links.game_dashboard(enemy.game.pk, hashtag="enemy"),
                 ("edit", reverse("npc:edit_enemy", kwargs={"enemy_pk": enemy_pk})),
                 ("delete", reverse("npc:delete_enemy", kwargs={"enemy_pk": enemy_pk})),
             ],

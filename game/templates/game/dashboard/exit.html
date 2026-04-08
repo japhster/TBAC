@@ -1,0 +1,28 @@
+<div class="container w-75 text-center">
+  <table class="table mt-2" style="table-layout:fixed">
+    <thead>
+      <tr><th colspan=4>
+        <a href="{% url 'room:new_exit' game.pk %}" class="card-link">+ New Room Connection</a>
+      </th></tr>
+
+      <tr><th colspan=2>Connection Between</th><th>Is Locked?</th><th>Actions</th></tr>
+    </thead>
+    <tbody>
+      {% for exit in exits %}
+        <tr>
+          <th>{{ exit.room_1.name }}</th>
+          <th>{{ exit.room_2.name }}</th>
+          <td>{{ exit.is_locked | yesno | title }}</td>
+          <td>
+            <a href="{% url 'room:edit_exit' game_pk=game.pk exit_pk=exit.pk %}" style="text-decoration:none">
+              {% include "icons/edit.html" %}
+            </a>
+            <a href="{% url 'room:delete_exit' exit.pk %}" style="text-decoration:none">
+              {% include "icons/delete.html" %}
+            </a>
+          </td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>

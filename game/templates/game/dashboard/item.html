@@ -1,0 +1,45 @@
+<div class="container w-75 text-center">
+  <table class="table mt-2" style="table-layout:fixed">
+    <thead>
+      <tr><th colspan=2>
+        <a href="{% url 'item:new' game.pk %}" class="card-link">+ New Item</a>
+      </th></tr>
+
+      <tr><th>Item Name</th><th>Actions</th></tr>
+    </thead>
+    <tbody>
+      {% for item in game.items.base %}
+        <tr>
+          <td
+            data-toggle="popover"
+            data-trigger="hover focus"
+            data-placement="left"
+            data-content="
+              {% if item.is_starting_item %}
+                Starting Item
+              {% elif item.room %}
+                Item is found in {{ item.room.name }}
+              {% elif item.enemy_drop %}
+                Item is found on {{ item.enemy_drop.enemy.name }}
+              {% elif item.friend_gift %}
+                Item is received from a friend
+              {% else %}
+                Item is hidden in {{ item.contained_within.name }}
+              {% endif %}
+            "
+          >
+            {{ item.name }}
+          </td>
+          <td>
+            <a href="{% url 'item:edit' item.pk %}" style="text-decoration:none">
+              {% include "icons/edit.html" %}
+            </a>
+            <a href="{% url 'item:delete' item.pk %}" style="text-decoration:none">
+              {% include "icons/delete.html" %}
+            </a>
+          </td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>

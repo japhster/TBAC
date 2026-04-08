@@ -1,0 +1,27 @@
+<div class="container w-75 text-center">
+  <table class="table mt-2" style="table-layout:fixed">
+    <thead>
+      <tr><th colspan=3>
+        <a href="{% url 'npc:new_enemy' game.pk %}" class="card-link">+ New Enemy</a>
+      </th></tr>
+
+      <tr><th>Enemy</th><th>Location</th><th>Actions</th></tr>
+    </thead>
+    <tbody>
+      {% for enemy in game.enemies.base %}
+        <tr>
+          <th><a href="{% url 'npc:enemy' enemy.pk %}">{{ enemy.name }}</a></th>
+          <td>{{ enemy.room.name }}</td>
+          <td>
+            <a href="{% url 'npc:edit_enemy' enemy.pk %}" style="text-decoration:none">
+              {% include "icons/edit.html" %}
+            </a>
+            <a href="{% url 'npc:delete_enemy' enemy.pk %}" style="text-decoration:none">
+              {% include "icons/delete.html" %}
+            </a>
+          </td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>

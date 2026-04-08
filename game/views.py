@@ -32,6 +32,51 @@ def my_games(request):
 
 
 @login_required
+def game_dashboard(request, game_pk):
+    game = get_object_or_404(
+        models.Game.objects.filter(created_by=request.user)
+        .prefetch_related("rooms", "items", "friends", "enemies", "end_states")
+        .select_related("start_room"),
+        pk=game_pk,
+    )
+
+    publish_link = (
+        ("publish", reverse("game:publish", kwargs={"game_pk": game_pk}))
+        if not game.is_published
+        else ("unpublish", reverse("game:unpublish", kwargs={"game_pk": game_pk}))
+    )
+
+    all_exits = (
+        Exit.objects.base()
+        .filter(Q(room_1__game=game) | Q(room_2__game=game))
+        .select_related("room_1", "room_2")
+    )
+
+
+    return render(
+        request,
+        "game/dashboard/dashboard.html",
+        context={
+            "game": game,
+            "exits": all_exits,
+            "links": [
+                ("back", reverse("game:my_games")),
+                ("edit", reverse("game:edit", kwargs={"game_pk": game_pk})),
+                publish_link,
+            ],
+            "tabs": [
+                ("room", "Rooms"),
+                ("exit", "Room Collections"),
+                ("item", "Items"),
+                ("friend", "Friends"),
+                ("enemy", "Enemies"),
+                ("endstate", "End States"),
+            ]
+        },
+    )
+
+
+@login_required
 def create_game(request):
     form = forms.GameForm(request.POST or None)
     if request.method == "POST" and form.is_valid():
@@ -67,42 +112,6 @@ def edit_game(request, game_pk):
         )
 
     return render(request, "game/game_form.html", context={"form": form})
-
-
-@login_required
-def game_dashboard(request, game_pk):
-    game = get_object_or_404(
-        models.Game.objects.filter(created_by=request.user)
-        .prefetch_related("rooms", "items")
-        .select_related("start_room"),
-        pk=game_pk,
-    )
-
-    all_exits = (
-        Exit.objects.base()
-        .filter(Q(room_1__game=game) | Q(room_2__game=game))
-        .select_related("room_1", "room_2")
-    )
-
-    publish_link = (
-        ("publish", reverse("game:publish", kwargs={"game_pk": game_pk}))
-        if not game.is_published
-        else ("unpublish", reverse("game:unpublish", kwargs={"game_pk": game_pk}))
-    )
-
-    return render(
-        request,
-        "game/dashboard.html",
-        context={
-            "game": game,
-            "exits": all_exits,
-            "links": [
-                ("back", reverse("game:my_games")),
-                ("edit", reverse("game:edit", kwargs={"game_pk": game_pk})),
-                publish_link,
-            ],
-        },
-    )
 
 
 @login_required

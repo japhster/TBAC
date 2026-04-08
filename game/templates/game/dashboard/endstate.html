@@ -1,0 +1,27 @@
+<div class="container w-75 text-center">
+  <table class="table mt-2" style="table-layout:fixed">
+    <thead>
+      <tr><th colspan=3>
+        <a href="{% url 'game:new_end_state' game.pk %}" class="card-link">+ New End State</a>
+      </th></tr>
+
+      <tr><th>End State Name</th><th>Is Success?</th><th>Actions</th></tr>
+    </thead>
+    <tbody>
+      {% for end_state in game.end_states.base %}
+        <tr>
+          <th>{{ end_state.name }}</th>
+          <td>{{ end_state.is_success | yesno | title }}</td>
+          <td>
+            <a href="{% url 'game:edit_end_state' end_state.pk %}" style="text-decoration:none">
+              {% include "icons/edit.html" %}
+            </a>
+            <a href="{% url 'game:delete_end_state' end_state.pk %}" style="text-decoration:none">
+              {% include "icons/delete.html" %}
+            </a>
+          </td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>

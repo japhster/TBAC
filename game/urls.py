@@ -9,6 +9,7 @@ urlpatterns = [
     path("my-games/", views.my_games, name="my_games"),
     path("create/", views.create_game, name="new"),
     path("edit/<int:game_pk>/", views.edit_game, name="edit"),
+    # dashboard urls
     path("dashboard/<int:game_pk>/", views.game_dashboard, name="dashboard"),
     path("publish/<int:game_pk>/", views.publish_game, name="publish"),
     path("unpublish/<int:game_pk>/", views.unpublish_game, name="unpublish"),
