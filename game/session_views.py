@@ -313,8 +313,11 @@ def leave_room(request, session_pk):
     pk = interpreter.get_room_pk(request, session, "GO", args=[])
     if not pk:
         return _session_redirect(session_pk)
-    
-    return helpers.custom_redirect("game:move", kwargs={"session_pk": session_pk, "room_pk": pk})
+
+    return helpers.custom_redirect(
+        "game:move", kwargs={"session_pk": session_pk, "room_pk": pk}
+    )
+
 
 @login_required
 def take_item(request, session_pk, item_pk):
@@ -326,7 +329,6 @@ def take_item(request, session_pk, item_pk):
             request, messages.INFO, f"The {item.name} cannot be taken."
         )
         return _session_redirect(session_pk)
-
 
     item.in_inventory = True
     item.room = None

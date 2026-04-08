@@ -52,7 +52,6 @@ def game_dashboard(request, game_pk):
         .select_related("room_1", "room_2")
     )
 
-
     return render(
         request,
         "game/dashboard/dashboard.html",
@@ -71,7 +70,7 @@ def game_dashboard(request, game_pk):
                 ("friend", "Friends"),
                 ("enemy", "Enemies"),
                 ("endstate", "End States"),
-            ]
+            ],
         },
     )
 

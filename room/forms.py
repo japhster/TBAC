@@ -64,4 +64,6 @@ class ExitForm(forms.Form):
     def clean(self, *args, **kwargs):
         cleaned_data = super().clean(*args, **kwargs)
         if cleaned_data["is_locked"] and cleaned_data["key_required"] is None:
-            raise forms.ValidationError({"key_required": "Need to specify which key can open a locked exit."})
+            raise forms.ValidationError(
+                {"key_required": "Need to specify which key can open a locked exit."}
+            )
