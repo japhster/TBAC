@@ -65,7 +65,7 @@ def game_dashboard(request, game_pk):
             ],
             "tabs": [
                 ("room", "Rooms"),
-                ("exit", "Room Collections"),
+                ("exit", "Room Connections"),
                 ("item", "Items"),
                 ("friend", "Friends"),
                 ("enemy", "Enemies"),
