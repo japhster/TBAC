@@ -150,7 +150,6 @@ def start_new_session(request, game_pk):
         end_state.owned_items.set(Item.objects.filter(pk__in=new_owned_items))
 
     friend_map = {}
-
     dialogue_map = {}
 
     for friend in game.friends.base():
@@ -169,6 +168,25 @@ def start_new_session(request, game_pk):
             dialogue_option=dialogue_option,
             friend_map=friend_map,
             dialogue_map=dialogue_map,
+        )
+
+    for accepted_item in models.FriendAcceptsItem.objects.filter(game=game):
+        hides_dialogue_old_pks = accepted_item.hides_dialogue.values_list(
+            "pk", flat=True
+        )
+        reveals_dialogue_old_pks = accepted_item.reveals_dialogue.values_list(
+            "pk", flat=True
+        )
+        accepted_item.pk = None
+        accepted_item.item_id = item_map[accepted_item.item.pk]
+        accepted_item.friend_id = friend_map[accepted_item.friend.pk]
+        accepted_item.session = session
+        accepted_item.save()
+        accepted_item.hides_dialogue.set(
+            [dialogue_map[pk] for pk in hides_dialogue_old_pks]
+        )
+        accepted_item.reveals_dialogue.set(
+            [dialogue_map[pk] for pk in reveals_dialogue_old_pks]
         )
 
     for gift in game.friend_gifts.base():
@@ -427,7 +445,10 @@ def talk_to_friend(request, session_pk, friend_pk):
             )
         else:
             dialogue = get_object_or_404(
-                friend.dialogue_options, requires_dialogue=None, talking_point=""
+                friend.dialogue_options,
+                requires_dialogue=None,
+                talking_point="",
+                is_hidden=False,
             )
             return helpers.custom_redirect(
                 "game:discussion",
@@ -453,3 +474,21 @@ def friend_discussion(request, session_pk, dialogue_pk):
             "dialogue_option": dialogue,
         },
     )
+
+
+@login_required
+def give_item_to_friend(request, session_pk, accepted_item_pk):
+    session = get_object_or_404(models.Session, pk=session_pk)
+    accepted_item = get_object_or_404(session.friend_accepts_items, pk=accepted_item_pk)
+
+    item = accepted_item.item
+    item.in_inventory = False
+    item.save()
+    accepted_item.hides_dialogue.update(is_hidden=True)
+    accepted_item.reveals_dialogue.update(is_hidden=False)
+
+    messages.add_message(
+        request, messages.INFO, f"You gave the {item} to {accepted_item.friend}."
+    )
+
+    return _session_redirect(session_pk)

@@ -114,6 +114,40 @@ class FriendGift(models.Model):
     objects = mixins.SessionManager()
 
 
+class FriendAcceptsItem(models.Model):
+    game = models.ForeignKey(
+        "game.Game", related_name="friend_items_accepted", on_delete=models.CASCADE
+    )
+    friend = models.ForeignKey(
+        "Friend", related_name="items_accepted", on_delete=models.CASCADE
+    )
+    item = models.ForeignKey(
+        "item.Item", related_name="accepted_by_friend", on_delete=models.CASCADE
+    )
+
+    hides_dialogue = models.ManyToManyField(
+        "FriendDialogueOption", related_name="hidden_by"
+    )
+    reveals_dialogue = models.ManyToManyField(
+        "FriendDialogueOption", related_name="revealed_by"
+    )
+
+    # session tracking
+    session = models.ForeignKey(
+        "game.Session",
+        related_name="friend_accepts_items",
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+    )
+    received = models.BooleanField(default=False)
+
+    objects = mixins.SessionManager()
+
+    class Meta:
+        unique_together = [["friend", "item"]]
+
+
 class FriendDialogueOption(models.Model):
     friend = models.ForeignKey(
         "Friend", related_name="dialogue_options", on_delete=models.CASCADE
@@ -129,7 +163,9 @@ class FriendDialogueOption(models.Model):
     text = models.CharField(max_length=1000)
     talking_point = models.CharField(max_length=250)
     can_back_out = models.BooleanField(default=True)
+    is_hidden = models.BooleanField(default=False)
 
+    # session tracking
     session = models.ForeignKey(
         "game.Session",
         related_name="friend_dialogue_options",
@@ -151,3 +187,6 @@ class FriendDialogueOption(models.Model):
             in_inventory=True
         )
         self.gifts.update(already_gifted=True)
+
+    def __str__(self):
+        return self.text

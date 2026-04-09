@@ -122,7 +122,7 @@ def add_gift_to_dialogue(request, dialogue_pk):
         friend__game__created_by=request.user,
     )
     friend = dialogue.friend
-    form = forms.ItemForm(request.POST, game_pk=friend.game.pk)
+    form = forms.GiftedItemForm(request.POST, game_pk=friend.game.pk)
 
     if form.is_valid():
         models.FriendGift.objects.create(
@@ -133,6 +133,92 @@ def add_gift_to_dialogue(request, dialogue_pk):
         )
 
     return _dialogue_redirect(dialogue_pk)
+
+
+@login_required
+def add_accepted_item_to_friend(request, friend_pk):
+    friend = get_object_or_404(
+        models.Friend.objects.all(), pk=friend_pk, game__created_by=request.user
+    )
+
+    form = forms.AcceptedItemForm(
+        request.POST or None, game_pk=friend.game.pk, friend_pk=friend.pk
+    )
+
+    if request.method == "POST" and form.is_valid():
+        accepted_item = models.FriendAcceptsItem.objects.create(
+            game=friend.game,
+            friend=friend,
+            item=form.cleaned_data["item"],
+        )
+        accepted_item.reveals_dialogue.set(form.cleaned_data["reveals_dialogue"])
+        accepted_item.hides_dialogue.set(form.cleaned_data["hides_dialogue"])
+
+        return _friend_redirect(friend_pk)
+
+    return render(
+        request,
+        "npc/accepted_item_form.html",
+        context={
+            "friend": friend,
+            "form": form,
+            "links": [
+                (
+                    "back to friend",
+                    reverse("npc:friend", kwargs={"friend_pk": friend_pk}),
+                )
+            ],
+        },
+    )
+
+
+@login_required
+def edit_accepted_item(request, accepted_item_pk):
+    accepted_item = get_object_or_404(
+        models.FriendAcceptsItem.objects.all(),
+        pk=accepted_item_pk,
+        game__created_by=request.user,
+    )
+
+    friend = accepted_item.friend
+
+    form = forms.AcceptedItemForm(
+        request.POST or None,
+        game_pk=friend.game.pk,
+        friend_pk=friend.pk,
+        initial={
+            "item": accepted_item.item.pk,
+            "hides_dialogue": accepted_item.hides_dialogue.values_list("pk", flat=True),
+            "reveals_dialogue": accepted_item.reveals_dialogue.values_list(
+                "pk", flat=True
+            ),
+        },
+    )
+
+    if request.method == "POST" and form.is_valid():
+        accepted_item.item = form.cleaned_data["item"]
+        accepted_item.save()
+
+        accepted_item.hides_dialogue.set(form.cleaned_data["hides_dialogue"])
+        accepted_item.reveals_dialogue.set(form.cleaned_data["reveals_dialogue"])
+
+        return _friend_redirect(friend.pk)
+
+    return render(
+        request,
+        "npc/accepted_item_form.html",
+        context={
+            "friend": friend,
+            "form": form,
+            "links": [
+                (
+                    "back to friend",
+                    reverse("npc:friend", kwargs={"friend_pk": friend.pk}),
+                )
+            ],
+            "editing": True,
+        },
+    )
 
 
 @login_required
@@ -162,7 +248,7 @@ def enemy_detail(request, enemy_pk):
         .prefetch_related("drops", "drops__item"),
         pk=enemy_pk,
     )
-    item_form = forms.ItemForm(game_pk=enemy.game.pk)
+    item_form = forms.GiftedItemForm(game_pk=enemy.game.pk)
     return render(
         request,
         "npc/enemy.html",
@@ -260,7 +346,7 @@ def add_drop_to_enemy(request, enemy_pk):
         pk=enemy_pk,
         game__created_by=request.user,
     )
-    form = forms.ItemForm(request.POST, game_pk=enemy.game.pk)
+    form = forms.GiftedItemForm(request.POST, game_pk=enemy.game.pk)
 
     if form.is_valid():
         models.EnemyDrop.objects.create(
@@ -289,6 +375,16 @@ def delete_enemy(request, enemy_pk):
 
 @login_required
 def dialogue_list(request, friend_pk):
+
+    dialogue_options = models.FriendDialogueOption.objects.filter(
+        friend_id=friend_pk,
+        friend__game__created_by=request.user,
+    ).select_related("requires_dialogue")
+
+    has_active_start_point = dialogue_options.filter(
+        requires_dialogue=None, is_hidden=False
+    ).exists()
+
     return render(
         request,
         "npc/dialogue_list.html",
@@ -296,10 +392,8 @@ def dialogue_list(request, friend_pk):
             "friend": get_object_or_404(
                 models.Friend, pk=friend_pk, game__created_by=request.user
             ),
-            "dialogue_options": models.FriendDialogueOption.objects.filter(
-                friend_id=friend_pk,
-                friend__game__created_by=request.user,
-            ).values_list("pk", "text"),
+            "dialogue_options": dialogue_options,
+            "has_active_start_point": has_active_start_point,
             "links": [
                 (
                     "back to friend",
@@ -325,7 +419,7 @@ def dialogue_detail(request, dialogue_pk):
         "npc/dialogue.html",
         context={
             "dialogue": dialogue,
-            "item_form": forms.ItemForm(game_pk=dialogue.friend.game.pk),
+            "item_form": forms.GiftedItemForm(game_pk=dialogue.friend.game.pk),
             "links": [
                 (
                     "back to dialogue list",
@@ -355,6 +449,8 @@ def create_dialogue(request, friend_pk=None, parent_pk=None):
         friend = parent_option.friend
     form = forms.DialogueForm(request.POST or None)
 
+    is_new_starting_point = parent_option is None and friend.dialogue_options.exists()
+
     if request.method == "POST" and form.is_valid():
         dialogue = models.FriendDialogueOption.objects.create(
             friend=friend,
@@ -362,7 +458,13 @@ def create_dialogue(request, friend_pk=None, parent_pk=None):
             text=form.cleaned_data["text"],
             talking_point=form.cleaned_data["talking_point"],
             can_back_out=form.cleaned_data["can_back_out"],
+            is_hidden=form.cleaned_data["is_hidden"],
         )
+        if is_new_starting_point and not form.cleaned_data["is_hidden"]:
+            friend.dialogue_options.filter(requires_dialogue=None).exclude(
+                pk=dialogue.pk
+            ).update(is_hidden=True)
+
         return _dialogue_redirect(dialogue.pk)
 
     return render(
@@ -373,6 +475,13 @@ def create_dialogue(request, friend_pk=None, parent_pk=None):
             "parent_option": parent_option,
             "friend": friend,
             "editing": False,
+            "is_alternative_starting_point": is_alternative_starting_point,
+            "links": [
+                (
+                    "back to dialogue tree",
+                    reverse("npc:dialogue_list", kwargs={"friend_pk": friend.pk}),
+                ),
+            ],
         },
     )
 
@@ -380,6 +489,15 @@ def create_dialogue(request, friend_pk=None, parent_pk=None):
 @login_required
 def edit_dialogue(request, dialogue_pk):
     dialogue = get_object_or_404(models.FriendDialogueOption, pk=dialogue_pk)
+    friend = dialogue.friend
+
+    other_start_points = friend.dialogue_options.filter(requires_dialogue=None).exclude(
+        pk=dialogue_pk
+    )
+
+    is_alternative_starting_point = (
+        dialogue.requires_dialogue is None and other_start_points.exists()
+    )
 
     form = forms.DialogueForm(
         request.POST or None,
@@ -387,13 +505,18 @@ def edit_dialogue(request, dialogue_pk):
             "text": dialogue.text,
             "talking_point": dialogue.talking_point,
             "can_back_out": dialogue.can_back_out,
+            "is_hidden": dialogue.is_hidden,
         },
     )
     if request.method == "POST" and form.is_valid():
         dialogue.text = form.cleaned_data["text"]
         dialogue.talking_point = form.cleaned_data["talking_point"]
         dialogue.can_back_out = form.cleaned_data["can_back_out"]
+        dialogue.is_hidden = form.cleaned_data["is_hidden"]
         dialogue.save()
+
+        if is_alternative_starting_point and not form.cleaned_data["is_hidden"]:
+            other_start_points.update(is_hidden=True)
 
         return _dialogue_redirect(dialogue_pk)
 
@@ -403,7 +526,42 @@ def edit_dialogue(request, dialogue_pk):
         context={
             "form": form,
             "parent_option": dialogue.requires_dialogue,
-            "friend": dialogue.friend,
+            "friend": friend,
             "editing": True,
+            "is_alternative_starting_point": is_alternative_starting_point,
+            "links": [
+                (
+                    "back to dialogue tree",
+                    reverse("npc:dialogue_list", kwargs={"friend_pk": friend.pk}),
+                ),
+            ],
         },
+    )
+
+
+@login_required
+def hide_dialogue(request, dialogue_pk):
+    dialogue = get_object_or_404(models.FriendDialogueOption, pk=dialogue_pk)
+    dialogue.is_hidden = True
+    dialogue.save()
+
+    return helpers.custom_redirect(
+        "npc:dialogue_list", kwargs={"friend_pk": dialogue.friend_id}
+    )
+
+
+@login_required
+def show_dialogue(request, dialogue_pk):
+    dialogue = get_object_or_404(models.FriendDialogueOption, pk=dialogue_pk)
+    dialogue.is_hidden = False
+
+    if dialogue.requires_dialogue is None:
+        dialogue.friend.dialogue_options.filter(requires_dialogue=None).exclude(
+            pk=dialogue_pk
+        ).update(is_hidden=True)
+
+    dialogue.save()
+
+    return helpers.custom_redirect(
+        "npc:dialogue_list", kwargs={"friend_pk": dialogue.friend_id}
     )

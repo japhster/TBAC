@@ -84,4 +84,9 @@ urlpatterns = [
         session_views.friend_discussion,
         name="discussion",
     ),
+    path(
+        "session/give/<int:session_pk>/<int:accepted_item_pk>/",
+        session_views.give_item_to_friend,
+        name="give",
+    ),
 ]

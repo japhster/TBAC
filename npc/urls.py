@@ -10,6 +10,16 @@ urlpatterns = [
     path("friend/new/<int:game_pk>/", views.create_friend, name="new_friend"),
     path("friend/edit/<int:friend_pk>/", views.edit_friend, name="edit_friend"),
     path("friend/delete/<int:friend_pk>/", views.delete_friend, name="delete_friend"),
+    path(
+        "friend/<int:friend_pk>/accepted_items/add/",
+        views.add_accepted_item_to_friend,
+        name="add_accepted_item",
+    ),
+    path(
+        "friend/accepted_items/edit/<int:accepted_item_pk>/",
+        views.edit_accepted_item,
+        name="edit_accepted_item",
+    ),
     # enemy urls
     path("enemy/detail/<int:enemy_pk>", views.enemy_detail, name="enemy"),
     path("enemy/new/<int:game_pk>/", views.create_enemy, name="new_enemy"),
@@ -44,5 +54,15 @@ urlpatterns = [
         "dialogue/gift/remove/<int:gift_pk>/",
         views.remove_gift_from_dialogue,
         name="remove_gift",
+    ),
+    path(
+        "dialogue/<int:dialogue_pk>/hide/",
+        views.hide_dialogue,
+        name="hide_dialogue",
+    ),
+    path(
+        "dialogue/<int:dialogue_pk>/show/",
+        views.show_dialogue,
+        name="show_dialogue",
     ),
 ]

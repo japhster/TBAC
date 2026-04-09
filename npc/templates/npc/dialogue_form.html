@@ -11,6 +11,12 @@
 
 {% block content %}
 <div class="container">
+  {% if is_alternative_starting_point %}
+    <p style="font-weight:bold" class="text-center">
+      *The currently active starting point for the dialogue tree will be set to hidden if this is not hidden.*
+    </p>
+  {% endif %}
+
   <form method="POST">
     {% csrf_token %}
     <table class="table">
@@ -31,6 +37,10 @@
       <tr>
         <th>Can back out of dialogue option</th>
         <td class="text-center">{{ form.can_back_out }} {{ form.can_back_out.errors.as_text }}</td>
+      </tr>
+      <tr>
+        <th>Starts Hidden (revealed when an item is given to the friend)</th>
+        <td class="text-center">{{ form.is_hidden }} {{ form.is_hidden.errors.as_text }}</td>
       </tr>
       <tr>
         <th colspan=2 class="text-center">

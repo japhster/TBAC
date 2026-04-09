@@ -4,16 +4,65 @@
 
 {% block content %}
   <div class="container text-center">
+
+    {% if not has_active_start_point %}
+      <p style="color:#CC0000;font-weight:bold;">
+        This dialogue tree currently has no active start points
+      </p>
+    {% endif %}
+
     <table class="table">
-      <thead><tr><th>Dialogue Options</th></tr></thead>
+      <thead>
+        <tr>
+          <th colspan=4>
+            <a href="{% url 'npc:new_dialogue' friend.pk %}">+ add new start point</a>
+          </th>
+        </tr>
+        <tr>
+          <th width=49%>Dialogue Options</th>
+          <th width=17%>Is Starting Point</th>
+          <th width=17%>Starts hidden</th>
+          <th width=17%>actions</th>
+        </tr>
+      </thead>
       <tbody>
-        {% for pk, text in dialogue_options %}
+        {% for option in dialogue_options %}
           <tr>
             <th>
-              <a href="{% url 'npc:dialogue' pk %}">
-                {{ text|truncatechars:50 }}
+              <a href="{% url 'npc:dialogue' option.pk %}">
+                {{ option.text|truncatechars:50 }}
               </a>
             </th>
+            <td>{% if option.requires_dialogue is None %}Yes{% else %}No{% endif %}</td>
+            <td>{{ option.is_hidden | yesno | title }}</td>
+            <td>
+              <a href="{% url 'npc:edit_dialogue' option.pk %}" style="text-decoration:none">
+                {% include "icons/edit.html" %}
+              </a>
+              {% if option.is_hidden %}
+                <a
+                  href="{% url 'npc:show_dialogue' option.pk %}"
+                  style="text-decoration:none"
+                  data-toggle="popover"
+                  data-trigger="hover focus"
+                  data-placement="top"
+                  data-content="show dialogue"
+                >
+                  {% include "icons/show.html" %}
+                </a>
+              {% else %}
+                <a
+                  href="{% url 'npc:hide_dialogue' option.pk %}"
+                  style="text-decoration:none"
+                  data-toggle="popover"
+                  data-trigger="hover focus"
+                  data-placement="top"
+                  data-content="hide dialogue"
+                >
+                  {% include "icons/hide.html" %}
+                </a>
+              {% endif %}
+            </td>
           </tr>
         {% empty %}
           <tr>

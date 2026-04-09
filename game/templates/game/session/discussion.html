@@ -7,11 +7,13 @@
 
     <ul class="list-group list-group-flush">
       {% for option in dialogue_option.sub_options.all %}
-        <li class="list-group-item">
-          <a href="{% url 'game:discussion' session_pk=session.pk dialogue_pk=option.pk %}">
-            {{ option.talking_point }}
-          </a>
-        </li>
+        {% if not option.is_hidden %}
+          <li class="list-group-item">
+            <a href="{% url 'game:discussion' session_pk=session.pk dialogue_pk=option.pk %}">
+              {{ option.talking_point }}
+            </a>
+          </li>
+        {% endif %}
       {% endfor %}
       {% if dialogue_option.requires_dialogue is not None and dialogue_option.can_back_out %}
         <li class="list-group-item">

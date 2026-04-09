@@ -112,6 +112,27 @@ def get_friend_pk(request, session, command, args, in_room=True, silently=False)
         )
 
 
+def get_accepted_item_pk(request, session, command, args):
+    for item in session.items.filter(in_inventory=True):
+        if item.matches(args):
+            print("woohoo", item)
+            print(
+                session.friend_accepts_items.all().values_list(
+                    "item__name", "friend__name"
+                )
+            )
+            accepted_item = session.friend_accepts_items.filter(
+                friend__room=session.current_location,
+                item=item,
+            ).first()
+            if accepted_item is not None:
+                return accepted_item.pk
+
+    messages.add_message(
+        request, messages.INFO, f"You can't give {args} to anyone here."
+    )
+
+
 COMMAND_MAP = {
     # Command string: (view name, kwarg name for view, func to retrieve pk)
     constants.MOVE_COMMAND: ("game:move", "room_pk", get_room_pk),
@@ -132,4 +153,5 @@ COMMAND_MAP = {
     ),
     constants.KILL_COMMAND: ("game:kill", "enemy_pk", get_enemy_pk),
     constants.TALK_COMMAND: ("game:talk", "friend_pk", get_friend_pk),
+    constants.GIVE_COMMAND: ("game:give", "accepted_item_pk", get_accepted_item_pk),
 }

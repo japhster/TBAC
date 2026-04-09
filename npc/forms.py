@@ -3,7 +3,7 @@ from django import forms
 from tbac import models
 
 
-class ItemForm(forms.Form):
+class GiftedItemForm(forms.Form):
     item = forms.ModelChoiceField(
         queryset=models.Item.objects.none(),
         widget=forms.Select(attrs={"class": "form-control"}),
@@ -17,6 +17,39 @@ class ItemForm(forms.Form):
             contained_within=None,
             is_starting_item=False,
             enemy_drop=None,
+        )
+
+
+class AcceptedItemForm(forms.Form):
+    item = forms.ModelChoiceField(
+        queryset=models.Item.objects.none(),
+        widget=forms.Select(attrs={"class": "form-control"}),
+    )
+    hides_dialogue = forms.ModelMultipleChoiceField(
+        queryset=models.FriendDialogueOption.objects.none(),
+        widget=forms.SelectMultiple(attrs={"class": "form-control"}),
+        required=False,
+    )
+    reveals_dialogue = forms.ModelMultipleChoiceField(
+        queryset=models.FriendDialogueOption.objects.none(),
+        widget=forms.SelectMultiple(attrs={"class": "form-control"}),
+        required=False,
+    )
+
+    def __init__(self, *args, game_pk, friend_pk, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["item"].queryset = models.Item.objects.base().filter(
+            game_id=game_pk,
+        )
+        self.fields["hides_dialogue"].queryset = (
+            models.FriendDialogueOption.objects.filter(
+                friend_id=friend_pk,
+            )
+        )
+        self.fields["reveals_dialogue"].queryset = (
+            models.FriendDialogueOption.objects.filter(
+                friend_id=friend_pk,
+            )
         )
 
 
@@ -86,4 +119,8 @@ class DialogueForm(forms.Form):
         widget=forms.CheckboxInput(attrs={"class": "form-check-input"}),
         required=False,
         initial=True,
+    )
+    is_hidden = forms.BooleanField(
+        widget=forms.CheckboxInput(attrs={"class": "form-check-input"}),
+        required=False,
     )

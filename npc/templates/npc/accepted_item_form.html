@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+
+{% block page_title %}
+  {% if editing %}
+    Accepted Item Editor
+  {% else %}
+    Add Accepted item to {{ friend.name }}
+  {% endif %}
+{% endblock %}
+
+{% block content %}
+
+<div class="container">
+  <form method="POST">
+    {% csrf_token %}
+    <table class="table table-fixed">
+      <tr>
+        <th>Item</th>
+        <td>{{ form.item }} {{ form.item.errors.as_text }}</td>
+      </tr>
+      <tr>
+        <th>Hides Dialogue Options</th>
+        <td>{{ form.hides_dialogue }} {{ form.hides_dialogue.errors.as_text }}</td>
+      </tr>
+      <tr>
+        <th>Reveals Dialogue Options</th>
+        <td>{{ form.reveals_dialogue }} {{ form.reveals_dialogue.errors.as_text }}</td>
+      </tr>
+      <tr>
+        <th colspan=2 class="text-center">
+          <button type="submit" class="btn btn-primary">
+            {% if editing %}Save{% else %}Add{% endif %}
+          </button>
+        </th>
+      </tr>
+    </table>
+  </form>
+</div>
+
+{% endblock %}

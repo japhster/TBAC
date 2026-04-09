@@ -28,6 +28,25 @@
       <td><a href="{% url 'npc:dialogue_list' friend.pk %}">View dialogue</a></td>
     </tr>
   </table>
+
+  <table class="table">
+    <thead>
+      <tr><th><a href="{% url 'npc:add_accepted_item' friend.pk %}">+ new accepted item</a></th></tr>
+      <tr><th>Accepted Gifts</th></tr>
+    </thead>
+    <tbody>
+      {% for accepted_item in friend.items_accepted.all %}
+        <tr>
+          <th>
+            <a href="{% url 'npc:edit_accepted_item' accepted_item.pk %}">{{ accepted_item.item.name }}</a>
+          </th>
+        </tr>
+      {% empty %}
+        <tr>
+          <th>No Items are accepted by this friend</th>
+      {% endfor %}
+    </tbody>
+  </table>
 </div>
 
 {% endblock %}

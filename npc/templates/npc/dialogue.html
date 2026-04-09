@@ -4,7 +4,7 @@
 
 {% block content %}
   <div class="container text-center">
-    <table class="table">
+    <table class="table table-fixed">
       <thead><tr><th colspan=2>Details</th></tr></thead>
       <tbody>
         <tr>
@@ -32,13 +32,17 @@
           </tr>
         {% endif %}
         <tr>
-          <th width=50%>Text</th>
+          <th>Text</th>
           <td>{{ dialogue.text }}</td>
         </tr>
         <tr>
         <tr>
-          <th width=50%>Can back out of dialogue option</th>
+          <th>Can back out of dialogue option</th>
           <td>{{ dialogue.can_back_out | yesno | title }}</td>
+        </tr>
+        <tr>
+          <th>Starts Hidden</th>
+          <td>{{ dialogue.is_hidden | yesno | title }}</td>
         </tr>
         <tr>
       </tbody>
