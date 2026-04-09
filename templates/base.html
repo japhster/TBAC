@@ -1,4 +1,4 @@
-
+{% load static %}
 
 <!DOCTYPE html>
 
@@ -8,6 +8,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{% block title %}T-BAC{% endblock %}</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}">
   </head>
   <body>
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
@@ -46,7 +47,7 @@
       <div class="container text-center mb-3 mt-2">
         <h2>{% block page_title %}{%endblock %}</h2>
         {% if links %}
-          <table class="table" style="table-layout:fixed">
+          <table class="table table-fixed">
             <tr>
               {% for link_item in links %}
                 <th><a style="{{link_item.2}}" href="{{link_item.1}}">{{ link_item.0 }}</a></th>
