@@ -115,12 +115,6 @@ def get_friend_pk(request, session, command, args, in_room=True, silently=False)
 def get_accepted_item_pk(request, session, command, args):
     for item in session.items.filter(in_inventory=True):
         if item.matches(args):
-            print("woohoo", item)
-            print(
-                session.friend_accepts_items.all().values_list(
-                    "item__name", "friend__name"
-                )
-            )
             accepted_item = session.friend_accepts_items.filter(
                 friend__room=session.current_location,
                 item=item,
