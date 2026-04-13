@@ -3,9 +3,10 @@ from django import forms
 from . import constants
 from room.models import Room
 from item.models import Item
+from tbac import mixins
 
 
-class GameForm(forms.Form):
+class GameForm(mixins.DamageForm):
     name = forms.CharField(widget=forms.TextInput(attrs={"class": "form-control"}))
     description = forms.CharField(
         widget=forms.Textarea(attrs={"class": "form-control"})
@@ -13,6 +14,8 @@ class GameForm(forms.Form):
     starting_health = forms.IntegerField(
         initial=100, widget=forms.TextInput(attrs={"class": "form-control"})
     )
+    # min_damage = forms.IntegerField(widget=forms.TextInput(attrs={"class": "form-control"}))
+    # max_damage = forms.IntegerField(widget=forms.TextInput(attrs={"class": "form-control"}))
 
 
 class NewSessionForm(forms.Form):

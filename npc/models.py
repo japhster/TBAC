@@ -41,8 +41,8 @@ class Enemy(mixins.SearchableMixin):
         "room.Room", related_name="enemies", on_delete=models.CASCADE
     )
     in_room_description = models.CharField(max_length=1000)
-    # health = models.IntegerField()
-    # damage = models.IntegerField()
+    health = models.IntegerField(default=100)
+    damage = models.OneToOneField("game.DamageOutput", on_delete=models.CASCADE)
 
     # session tracking
     session = models.ForeignKey(

@@ -276,6 +276,10 @@ def create_enemy(request, game_pk):
             description=form.cleaned_data["description"],
             room=form.cleaned_data["room"],
             in_room_description=form.cleaned_data["in_room_description"],
+            damage=models.DamageOutput.objects.create(
+                min_damage=form.cleaned_data["min_damage"],
+                max_damage=form.cleaned_data["max_damage"],
+            ),
         )
         return _enemy_redirect(enemy.pk)
 
@@ -306,6 +310,8 @@ def edit_enemy(request, enemy_pk):
             "description": enemy.description,
             "room": enemy.room.pk,
             "in_room_description": enemy.in_room_description,
+            "min_damage": enemy.damage.min_damage,
+            "max_damage": enemy.damage.max_damage,
         },
     )
     if request.method == "POST" and form.is_valid():
@@ -315,6 +321,11 @@ def edit_enemy(request, enemy_pk):
         enemy.room = form.cleaned_data["room"]
         enemy.in_room_description = form.cleaned_data["in_room_description"]
         enemy.save()
+
+        damage = enemy.damage
+        damage.min_damage = form.cleaned_data["min_damage"]
+        damage.max_damage = form.cleaned_data["max_damage"]
+        damage.save()
 
         return _enemy_redirect(enemy.pk)
 

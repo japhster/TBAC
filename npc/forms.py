@@ -1,6 +1,6 @@
 from django import forms
 
-from tbac import models
+from tbac import models, mixins
 
 
 class GiftedItemForm(forms.Form):
@@ -80,7 +80,7 @@ class FriendForm(forms.Form):
         )
 
 
-class EnemyForm(forms.Form):
+class EnemyForm(mixins.DamageForm):
     name = forms.CharField(
         widget=forms.TextInput(attrs={"class": "form-control"}),
     )

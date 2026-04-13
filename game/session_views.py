@@ -102,6 +102,10 @@ def start_new_session(request, game_pk):
         session=session,
         name=form.cleaned_data["name"],
         health=game.starting_health,
+        base_damage=models.DamageOutput.objects.create(
+            min_damage=game.damage.min_damage,
+            max_damage=game.damage.max_damage,
+        ),
     )
 
     # a map of the old room pk to the new room pk

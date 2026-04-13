@@ -84,6 +84,10 @@ def create_game(request):
             description=form.cleaned_data["description"],
             created_by=request.user,
             starting_health=form.cleaned_data["starting_health"],
+            base_damage=models.DamageOutput(
+                min_damage=form.cleaned_data["min_damage"],
+                max_damage=form.cleaned_data["max_damage"],
+            ),
         )
         return HttpResponseRedirect(
             reverse("game:dashboard", kwargs={"game_pk": game.pk})
@@ -104,6 +108,8 @@ def edit_game(request, game_pk):
             "name": game.name,
             "description": game.description,
             "starting_health": game.starting_health,
+            "min_damage": game.base_damage.min_damage,
+            "max_damage": game.base_damage.max_damage,
         },
     )
     if request.method == "POST" and form.is_valid():
@@ -111,6 +117,11 @@ def edit_game(request, game_pk):
         game.description = form.cleaned_data["description"]
         game.starting_health = form.cleaned_data["starting_health"]
         game.save()
+        damage = game.base_damage
+        damage.min_damage = form.cleaned_data["min_damage"]
+        damage.max_damage = form.cleaned_data["max_damage"]
+        damage.save()
+
         return HttpResponseRedirect(
             reverse("game:dashboard", kwargs={"game_pk": game.pk})
         )

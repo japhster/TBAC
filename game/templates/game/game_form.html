@@ -10,15 +10,24 @@
   <form method="POST">
     {% csrf_token %}
     <table class="table">
+      <thead>
+        <tr><th colspan=2 class="text-center">Game Details</th></tr>
+      </thead>
       <tr>
         <th>Name</th><td>{{ form.name }} {{ form.name.errors.as_text }}</td>
       </tr>
       <tr>
         <th>Description</th><td>{{ form.description }} {{ form.description.errors.as_text }}</td>
       </tr>
+    </table>
+    <table class="table">
+      <thead>
+        <tr><th colspan=2 class="text-center">Player Stats</th></tr>
+      </thead>
       <tr>
         <th>Player Starting Health</th><td>{{ form.starting_health }} {{ form.starting_health.errors.as_text }}</td>
       </tr>
+      {% include "inclusions/damage_form.html" with damage_name="Base Damage" %}
       <tr>
         <th colspan=2 class="text-center">
           <button type="submit" class="btn btn-primary">{% if editing %}Save{% else %}Create{% endif %}</button>

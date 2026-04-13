@@ -5,6 +5,8 @@ from item.models import Item
 from room.models import Exit
 from tbac import mixins
 
+import random
+
 # Create your models here.
 
 
@@ -30,6 +32,7 @@ class Game(models.Model):
     name = models.CharField(max_length=250, unique=True)
     description = models.CharField(max_length=1000)
     starting_health = models.IntegerField(default=100)
+    base_damage = models.OneToOneField("DamageOutput", on_delete=models.CASCADE)
     start_room = models.OneToOneField(
         "room.Room", related_name="starts_game", null=True, on_delete=models.SET_NULL
     )
@@ -84,6 +87,7 @@ class Player(models.Model):
         "Session", related_name="players", on_delete=models.CASCADE
     )
     health = models.IntegerField()
+    base_damage = models.OneToOneField("DamageOutput", on_delete=models.CASCADE)
 
     def __str__(self):
         return self.name
@@ -218,3 +222,14 @@ class TriggerableEffect(models.Model):
         self.items_gained.update(in_inventory=True)
         self.exits_unlocked.update(is_locked=False)
         self.effects_accepted.all().update(is_accepted=True)
+
+
+class DamageOutput(models.Model):
+    min_damage = models.IntegerField()
+    max_damage = models.IntegerField()
+
+    def get_damage(self):
+        return random.randint(self.min_damage, self.max_damage)
+
+    def __str__(self):
+        return f"({self.min_damage} - {self.max_damage})"
