@@ -31,18 +31,28 @@ class SearchableMixin(models.Model):
 
 
 class DamageForm(forms.Form):
+    DAMAGE_REQUIRED = True
+
     min_damage = forms.IntegerField(
-        widget=forms.TextInput(attrs={"class": "form-control"})
+        widget=forms.TextInput(attrs={"class": "form-control"}),
     )
     max_damage = forms.IntegerField(
-        widget=forms.TextInput(attrs={"class": "form-control"})
+        widget=forms.TextInput(attrs={"class": "form-control"}),
     )
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if not self.DAMAGE_REQUIRED:
+            self.fields["min_damage"].required = False
+            self.fields["max_damage"].required = False
 
     def clean(self, *args, **kwargs):
         cd = super().clean(*args, **kwargs)
-        if cd["min_damage"] > cd["max_damage"]:
+        if (cd.get("min_damage") or 0) > (cd.get("max_damage") or 0):
             raise forms.ValidationError(
                 {
                     "min_damage": "Minimum damage must be less than or equal to the maximum damage."
                 }
             )
+
+        return cd

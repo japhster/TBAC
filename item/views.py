@@ -1,9 +1,9 @@
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404, render
 
-from tbac import links, helpers
+from tbac import helpers, links, models
 
-from . import models, forms
+from . import forms
 from game.models import Game
 
 # Create your views here.
@@ -27,6 +27,12 @@ def create_item(request, game_pk):
             contained_within=form.cleaned_data["contained_within"],
             is_starting_item=form.cleaned_data["is_starting_item"],
         )
+        if new_item.item_type == models.Item.ItemTypeChoices.WEAPON:
+            new_item.damage = models.DamageOutput.objects.create(
+                min_damage=form.cleaned_data["min_damage"],
+                max_damage=form.cleaned_data["max_damage"],
+            )
+            new_item.save()
 
         return helpers.custom_redirect("game:dashboard", kwargs={"game_pk": game_pk})
 
@@ -57,6 +63,14 @@ def edit_item(request, item_pk):
             "can_be_taken": item.can_be_taken,
             "contained_within": item.contained_within,
             "is_starting_item": item.is_starting_item,
+            **(
+                {
+                    "min_damage": item.damage.min_damage if item.damage else 0,
+                    "max_damage": item.damage.max_damage if item.damage else 0,
+                } 
+                if item.item_type == models.Item.ItemTypeChoices.WEAPON
+                else {}
+            )
         },
     )
 
@@ -71,6 +85,11 @@ def edit_item(request, item_pk):
         item.contained_within = form.cleaned_data["contained_within"]
         item.is_starting_item = form.cleaned_data["is_starting_item"]
         item.save()
+        if item.item_type == models.Item.ItemTypeChoices.WEAPON:
+            damage = item.damage
+            damage.min_damage = form.cleaned_data["min_damage"]
+            damage.max_damage = form.cleaned_data["max_damage"]
+
 
         return helpers.custom_redirect(
             "game:dashboard", kwargs={"game_pk": item.game.pk}

@@ -1,11 +1,11 @@
 <div class="container w-75 text-center">
   <table class="table table-fixed mt-2">
     <thead>
-      <tr><th colspan=2>
+      <tr><th colspan=3>
         <a href="{% url 'item:new' game.pk %}" class="card-link">+ New Item</a>
       </th></tr>
 
-      <tr><th>Item Name</th><th>Actions</th></tr>
+      <tr><th>Item Name</th><th>Item Type</th><th>Actions</th></tr>
     </thead>
     <tbody>
       {% for item in game.items.base %}
@@ -29,7 +29,11 @@
             "
           >
             {{ item.name }}
+            {% if item.item_type == "WEAPON" %}
+              {{ item.damage }}
+            {% endif %}
           </td>
+          <td>{{ item.get_item_type_display }}</td>
           <td>
             <a href="{% url 'item:edit' item.pk %}" style="text-decoration:none">
               {% include "icons/edit.html" %}
@@ -40,7 +44,7 @@
           </td>
         </tr>
       {% empty %}
-        <tr><th colspan=2>No Items have been added</th></tr>
+        <tr><th colspan=3>No Items have been added</th></tr>
       {% endfor %}
     </tbody>
   </table>

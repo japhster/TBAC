@@ -8,10 +8,11 @@ from tbac import mixins
 
 class Item(mixins.SearchableMixin):
     class ItemTypeChoices(models.TextChoices):
-        GENERIC = ("GENERIC", "Generic Item")
+        GENERIC = ("GENERIC", "Generic")
         KEY = ("KEY", "Key")
         CONTAINER = ("CONTAINER", "Container")
         LIGHT = ("LIGHT", "Light Source")
+        WEAPON = ("WEAPON", "Weapon")
 
     description = models.CharField(max_length=1000)
     in_room_description = models.CharField(max_length=1000)
@@ -43,6 +44,8 @@ class Item(mixins.SearchableMixin):
     container_discard_after_open = models.BooleanField(default=True)
     container_open_name = models.CharField(max_length=250, blank=True)
 
+    # specific details for weapons
+    damage = models.OneToOneField("game.DamageOutput", null=True, on_delete=models.CASCADE)
     # session tracking
     session = models.ForeignKey(
         "game.Session",

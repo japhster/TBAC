@@ -14,6 +14,7 @@
   <form method="POST">
     {% csrf_token %}
     <table class="table">
+      <thead><tr><th colspan=2 class="text-center">Item Details</th></tr></thead>
       <tr>
         <th>Name</th>
         <td>{{ form.name }} {{ form.name.errors.as_text }}</td>
@@ -46,19 +47,20 @@
         </td>
       </tr>
       <tr>
-        <th>Contained Within</th>
-        <td>
-          {{ form.contained_within }}
-          {{ form.contained_within.errors.as_text }}
-        </td>
-      </tr>
-      <tr>
         <th>Is Starting Item</th>
         <td class="text-center">
           {{ form.is_starting_item }}
           {{ form.is_starting_item.errors.as_text }}
         </td>
       </tr>
+      <tr class="hideable-item-row" item-type="CONTAINER">
+        <th>Contained Within</th>
+        <td>
+          {{ form.contained_within }}
+          {{ form.contained_within.errors.as_text }}
+        </td>
+      </tr>
+      {% include "inclusions/damage_form.html" with item_type="WEAPON" %}
       <tr>
         <th colspan=2 class="text-center">
           {% for error in form.non_field_errors %}
@@ -72,5 +74,29 @@
     </table>
   </form>
 </div>
+
+{% endblock %}
+
+{% block footer %}
+
+  <script>
+    function showRelevantRows(selectedValue) {
+      const $rows = $('.hideable-item-row');
+      // Hide everything first
+      $rows.hide();
+        // Show only the rows that match the item-type attribute
+        $rows.filter('[item-type="' + selectedValue + '"]').show();
+    }
+
+    $(document).ready(function() {
+      selectedValue = $('#type-filter').val();
+      showRelevantRows(selectedValue);
+      $('#type-filter').on('change', function() {
+        selectedValue = $(this).val();
+        console.log("ah", selectedValue);
+        showRelevantRows(selectedValue);
+      });
+    });
+  </script>
 
 {% endblock %}

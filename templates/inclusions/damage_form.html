@@ -1,7 +1,15 @@
 
+{% if item_type %}
+<tr class="hideable-item-row" item-type="{{ item_type }}">
+{% else %}
 <tr>
+{% endif %}
   <th>Mininum {{ damage_name | default:"Damage" }}</th><td>{{ form.min_damage }} {{ form.min_damage.errors.as_text }}</td>
 </tr>
+{% if item_type %}
+<tr class="hideable-item-row" item-type="{{ item_type }}">
+{% else %}
 <tr>
+{% endif %}
   <th>Maximum {{ damage_name | default:"Damage" }}</th><td>{{ form.max_damage }} {{ form.max_damage.errors.as_text }}</td>
 </tr>
