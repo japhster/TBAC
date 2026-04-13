@@ -83,12 +83,15 @@ def create_game(request):
             name=form.cleaned_data["name"],
             description=form.cleaned_data["description"],
             created_by=request.user,
+            starting_health=form.cleaned_data["starting_health"],
         )
         return HttpResponseRedirect(
             reverse("game:dashboard", kwargs={"game_pk": game.pk})
         )
 
-    return render(request, "game/game_form.html", context={"form": form})
+    return render(
+        request, "game/game_form.html", context={"form": form, "editing": False}
+    )
 
 
 @login_required
@@ -100,17 +103,23 @@ def edit_game(request, game_pk):
         initial={
             "name": game.name,
             "description": game.description,
+            "starting_health": game.starting_health,
         },
     )
     if request.method == "POST" and form.is_valid():
         game.name = form.cleaned_data["name"]
         game.description = form.cleaned_data["description"]
+        game.starting_health = form.cleaned_data["starting_health"]
         game.save()
         return HttpResponseRedirect(
             reverse("game:dashboard", kwargs={"game_pk": game.pk})
         )
 
-    return render(request, "game/game_form.html", context={"form": form})
+    return render(
+        request,
+        "game/game_form.html",
+        context={"form": form, "editing": True, "name": game.name},
+    )
 
 
 @login_required

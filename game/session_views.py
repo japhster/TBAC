@@ -87,9 +87,21 @@ def start_new_session(request, game_pk):
     game = get_object_or_404(
         models.Game.objects.prefetch_related("rooms", "items"), pk=game_pk
     )
+    form = forms.NewSessionForm(request.POST or None)
+    if request.method != "POST" or not form.is_valid():
+        return render(
+            request, "game/new_session.html", context={"game": game, "form": form}
+        )
+
     session = models.Session.objects.create(
         game=game,
         player=request.user,
+    )
+
+    player = models.Player.objects.create(
+        session=session,
+        name=form.cleaned_data["name"],
+        health=game.starting_health,
     )
 
     # a map of the old room pk to the new room pk

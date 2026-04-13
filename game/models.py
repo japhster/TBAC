@@ -29,6 +29,7 @@ class GameManager(models.Manager):
 class Game(models.Model):
     name = models.CharField(max_length=250, unique=True)
     description = models.CharField(max_length=1000)
+    starting_health = models.IntegerField(default=100)
     start_room = models.OneToOneField(
         "room.Room", related_name="starts_game", null=True, on_delete=models.SET_NULL
     )
@@ -39,7 +40,6 @@ class Game(models.Model):
         on_delete=models.SET_NULL,
     )
     is_published = models.BooleanField(default=False)
-    # starting_health = models.IntegerField()
 
     objects = GameManager()
 
@@ -78,6 +78,17 @@ class EndState(models.Model):
         )
 
 
+class Player(models.Model):
+    name = models.CharField(max_length=250)
+    session = models.OneToOneField(
+        "Session", related_name="players", on_delete=models.CASCADE
+    )
+    health = models.IntegerField()
+
+    def __str__(self):
+        return self.name
+
+
 class Session(models.Model):
     game = models.ForeignKey("Game", related_name="sessions", on_delete=models.CASCADE)
     current_location = models.ForeignKey(
@@ -90,7 +101,6 @@ class Session(models.Model):
     player = models.ForeignKey(
         settings.AUTH_USER_MODEL, related_name="sessions", on_delete=models.CASCADE
     )
-    # current_health = models.IntegerField()
 
     def get_inventory(self):
         return self.items.all().filter(in_inventory=True)

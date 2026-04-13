@@ -10,6 +10,13 @@ class GameForm(forms.Form):
     description = forms.CharField(
         widget=forms.Textarea(attrs={"class": "form-control"})
     )
+    starting_health = forms.IntegerField(
+        initial=100, widget=forms.TextInput(attrs={"class": "form-control"})
+    )
+
+
+class NewSessionForm(forms.Form):
+    name = forms.CharField(widget=forms.TextInput(attrs={"class": "form-control"}))
 
 
 class EndStateForm(forms.Form):
