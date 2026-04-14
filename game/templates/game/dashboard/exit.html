@@ -17,7 +17,7 @@
             <a href="{% url 'room:edit_exit' game_pk=game.pk exit_pk=exit.pk %}" style="text-decoration:none">
               {% include "icons/edit.html" %}
             </a>
-            <a href="{% url 'room:delete_exit' exit.pk %}" style="text-decoration:none">
+            <a class="delete-button" data-name="exit" href="{% url 'room:delete_exit' exit.pk %}" style="text-decoration:none">
               {% include "icons/delete.html" %}
             </a>
           </td>

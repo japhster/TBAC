@@ -233,7 +233,7 @@ def edit_end_state(request, end_state_pk):
 @login_required
 def delete_end_state(request, end_state_pk):
     end_state = get_object_or_404(
-        models.EndState.select_related("game"),
+        models.EndState.objects.select_related("game"),
         pk=end_state_pk,
         game__created_by=request.user,
     )

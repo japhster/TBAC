@@ -16,7 +16,7 @@
             <a href="{% url 'npc:edit_enemy' enemy.pk %}" style="text-decoration:none">
               {% include "icons/edit.html" %}
             </a>
-            <a href="{% url 'npc:delete_enemy' enemy.pk %}" style="text-decoration:none">
+            <a class="delete-button" data-name="{{ enemy.name }}" href="{% url 'npc:delete_enemy' enemy.pk %}" style="text-decoration:none">
               {% include "icons/delete.html" %}
             </a>
           </td>

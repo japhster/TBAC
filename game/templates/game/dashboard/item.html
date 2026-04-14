@@ -38,7 +38,7 @@
             <a href="{% url 'item:edit' item.pk %}" style="text-decoration:none">
               {% include "icons/edit.html" %}
             </a>
-            <a href="{% url 'item:delete' item.pk %}" style="text-decoration:none">
+            <a class="delete-button" data-name="{{ item.name }}" href="{% url 'item:delete' item.pk %}" style="text-decoration:none">
               {% include "icons/delete.html" %}
             </a>
           </td>
