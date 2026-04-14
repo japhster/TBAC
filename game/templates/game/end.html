@@ -10,8 +10,16 @@
 </div>
 
 <div class="contaner border p-2">
-  <h3>{{ end_state.name }}</h3>
-  <p>{{ end_state.message }}</p>
+  {% if end_state is not None %}
+    <h3>{{ end_state.name }}</h3>
+    <p>{{ end_state.message }}</p>
+  {% else %}
+    <h3>Killed!</h3>
+    <p>
+      You were killed{% if killed_by is not None %} by {{ killed_by.name }}{% endif %}! Perhaps next time you should be more careful!
+    </p>
+  {% endif %}
+
 </div>
 
 {% endblock %}

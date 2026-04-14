@@ -53,7 +53,7 @@ class GameListTestCase(BaseLoggedInTestCase):
         models.Session.objects.create(
             game=self.game_1,
             current_location=self.game_1.start_room,
-            player=self.user,
+            user=self.user,
         )
 
         self._test_num_games(2)

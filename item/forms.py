@@ -60,11 +60,15 @@ class ItemForm(mixins.DamageForm):
         if cd["item_type"] == models.Item.ItemTypeChoices.WEAPON:
             if cd.get("min_damage") is None:
                 raise forms.ValidationError(
-                    {"min_damage": "Minimum damage is required if item type is 'Weapon'."}
+                    {
+                        "min_damage": "Minimum damage is required if item type is 'Weapon'."
+                    }
                 )
             if cd.get("max_damage") is None:
                 raise forms.ValidationError(
-                    {"max_damage": "Maximum damage is required if item type is 'Weapon'."}
+                    {
+                        "max_damage": "Maximum damage is required if item type is 'Weapon'."
+                    }
                 )
 
         return cd

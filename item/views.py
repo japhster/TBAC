@@ -67,10 +67,10 @@ def edit_item(request, item_pk):
                 {
                     "min_damage": item.damage.min_damage if item.damage else 0,
                     "max_damage": item.damage.max_damage if item.damage else 0,
-                } 
+                }
                 if item.item_type == models.Item.ItemTypeChoices.WEAPON
                 else {}
-            )
+            ),
         },
     )
 
@@ -89,7 +89,6 @@ def edit_item(request, item_pk):
             damage = item.damage
             damage.min_damage = form.cleaned_data["min_damage"]
             damage.max_damage = form.cleaned_data["max_damage"]
-
 
         return helpers.custom_redirect(
             "game:dashboard", kwargs={"game_pk": item.game.pk}

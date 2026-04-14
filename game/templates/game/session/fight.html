@@ -1,0 +1,71 @@
+{% extends "game/session/base.html" %}
+
+
+{% block window %}
+  <div class="container">
+    <h2>Fight!</h2>
+    <p>
+      {{ enemy.in_room_description }}
+    </p>
+    <div class="container w-75">
+      <table class="table">
+        <thead>
+          <tr><th class="text-center" colspan=2>Health</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>
+              <div class="progress">
+                <div
+                  class="progress-bar {% if player_health_bar_width <= 20 %}bg-danger{% else %}bg-success{% endif %}"
+                  role="progressbar"
+                  style="width: {{player_health_bar_width}}%;"
+                  aria-valuenow="{{ player.current_health }}"
+                  aria-valuemin="0"
+                  aria-valuemax="{{ player.health }}"
+                >
+                  {{ player.current_health }}hp
+                </div>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <table class="table">
+        <thead>
+          <tr><th class="text-center" colspan=2>Enemies</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th>{{ enemy.name }}:</th>
+            <td>
+              <div class="progress">
+                <div
+                  class="progress-bar bg-success"
+                  role="progressbar"
+                  style="width: {{enemy_health_bar_width}}%;"
+                  aria-valuenow="{{ enemy.current_health }}"
+                  aria-valuemin="0"
+                  aria-valuemax="{{ enemy.health }}"
+                >
+                  {{ enemy.current_health }}hp
+                </div>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <p style="font-weight:bold" class="text-center">Attack Options</p>
+      <ul class="list-group list-group-flush">
+        {% for option in fight_options %}
+          <li class="list-group-item">
+            <a href="{% url 'game:attack' session_pk=session.pk enemy_pk=enemy.pk attack_pk=option.attack_pk %}">
+              {{ option.attack_name }} {{ option.attack_damage }}
+            </a>
+          </li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+{% endblock %}

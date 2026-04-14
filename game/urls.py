@@ -70,9 +70,24 @@ urlpatterns = [
         name="inspect",
     ),
     path(
-        "session/kill/<int:session_pk>/<int:enemy_pk>/",
-        session_views.kill_enemy,
-        name="kill",
+        "session/fight/<int:session_pk>/<int:enemy_pk>/",
+        session_views.fight_enemy,
+        name="fight",
+    ),
+    path(
+        "session/attack/<int:session_pk>/<int:enemy_pk>/<int:attack_pk>/",
+        session_views.attack_enemy,
+        name="attack",
+    ),
+    path(
+        "session/enemy_attack/<int:session_pk>/<int:enemy_pk>/",
+        session_views.enemy_attack,
+        name="enemy_attack",
+    ),
+    path(
+        "session/fight/<int:session_pk>/<int:enemy_pk>/success/",
+        session_views.fight_won,
+        name="fight_won",
     ),
     path(
         "session/talk/<int:session_pk>/<int:friend_pk>/",

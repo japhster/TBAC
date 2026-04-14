@@ -145,7 +145,7 @@ COMMAND_MAP = {
         "item_pk",
         lambda *args, **kwargs: get_item_pk(*args, **kwargs, in_possession=False),
     ),
-    constants.KILL_COMMAND: ("game:kill", "enemy_pk", get_enemy_pk),
+    constants.FIGHT_COMMAND: ("game:fight", "enemy_pk", get_enemy_pk),
     constants.TALK_COMMAND: ("game:talk", "friend_pk", get_friend_pk),
     constants.GIVE_COMMAND: ("game:give", "accepted_item_pk", get_accepted_item_pk),
 }

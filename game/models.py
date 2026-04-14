@@ -17,7 +17,7 @@ class GameManager(models.Manager):
         qs = self.filter(*args, **kwargs)
         if user:
             qs = qs.filter(
-                models.Q(is_published=True) | models.Q(sessions__player=user)
+                models.Q(is_published=True) | models.Q(sessions__user=user)
             )
         if "start_room" not in kwargs:
             qs = qs.filter(start_room__isnull=False)
@@ -84,10 +84,12 @@ class EndState(models.Model):
 class Player(models.Model):
     name = models.CharField(max_length=250)
     session = models.OneToOneField(
-        "Session", related_name="players", on_delete=models.CASCADE
+        "Session", related_name="player", on_delete=models.CASCADE
     )
     health = models.IntegerField()
     base_damage = models.OneToOneField("DamageOutput", on_delete=models.CASCADE)
+
+    current_health = models.IntegerField(default=0)
 
     def __str__(self):
         return self.name
@@ -102,7 +104,7 @@ class Session(models.Model):
         limit_choices_to=models.Q(session__isnull=False),
         null=True,
     )
-    player = models.ForeignKey(
+    user = models.ForeignKey(
         settings.AUTH_USER_MODEL, related_name="sessions", on_delete=models.CASCADE
     )
 
@@ -232,4 +234,6 @@ class DamageOutput(models.Model):
         return random.randint(self.min_damage, self.max_damage)
 
     def __str__(self):
+        if self.min_damage == self.max_damage:
+            return f"({self.min_damage})"
         return f"({self.min_damage} - {self.max_damage})"

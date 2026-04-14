@@ -52,6 +52,7 @@ class Enemy(mixins.SearchableMixin):
         null=True,
         blank=True,
     )
+    current_health = models.IntegerField(default=0)
     is_dead = models.BooleanField(default=False)
 
     objects = mixins.SessionManager()

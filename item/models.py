@@ -45,7 +45,9 @@ class Item(mixins.SearchableMixin):
     container_open_name = models.CharField(max_length=250, blank=True)
 
     # specific details for weapons
-    damage = models.OneToOneField("game.DamageOutput", null=True, on_delete=models.CASCADE)
+    damage = models.OneToOneField(
+        "game.DamageOutput", null=True, on_delete=models.CASCADE
+    )
     # session tracking
     session = models.ForeignKey(
         "game.Session",

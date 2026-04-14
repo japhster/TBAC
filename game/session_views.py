@@ -25,6 +25,11 @@ def _copy_item(session, item, room_map, item_map):
                 session, item.contained_within, room_map, item_map
             )
         item.contained_within_id = new_container_pk
+    if item.item_type == models.Item.ItemTypeChoices.WEAPON:
+        item.damage = models.DamageOutput.objects.create(
+            min_damage=item.damage.min_damage,
+            max_damage=item.damage.max_damage,
+        )
     item.save()
 
     item_map[old_pk] = item.pk
@@ -64,7 +69,7 @@ def start_session(request, game_pk):
     game = get_object_or_404(models.Game.objects.all(), pk=game_pk)
 
     try:
-        existing_session = models.Session.objects.get(game=game, player=request.user)
+        existing_session = models.Session.objects.get(game=game, user=request.user)
     except models.Session.DoesNotExist:
         return helpers.custom_redirect("game:new_session", kwargs={"game_pk": game_pk})
 
@@ -95,16 +100,17 @@ def start_new_session(request, game_pk):
 
     session = models.Session.objects.create(
         game=game,
-        player=request.user,
+        user=request.user,
     )
 
     player = models.Player.objects.create(
         session=session,
         name=form.cleaned_data["name"],
         health=game.starting_health,
+        current_health=game.starting_health,
         base_damage=models.DamageOutput.objects.create(
-            min_damage=game.damage.min_damage,
-            max_damage=game.damage.max_damage,
+            min_damage=game.base_damage.min_damage,
+            max_damage=game.base_damage.max_damage,
         ),
     )
 
@@ -220,6 +226,11 @@ def start_new_session(request, game_pk):
         enemy.pk = None
         enemy.room_id = room_map[enemy.room.pk]
         enemy.session = session
+        enemy.damage = models.DamageOutput.objects.create(
+            min_damage=enemy.damage.min_damage,
+            max_damage=enemy.damage.max_damage,
+        )
+        enemy.current_health = enemy.health
         enemy.save()
         enemy_map[old_pk] = enemy.pk
 
@@ -249,6 +260,17 @@ def play_game(request, session_pk):
                     "end_state": end_state,
                 },
             )
+            
+    if session.player.current_health == 0:
+        return render(
+            request,
+            "game/end.html",
+            context={
+                "session": session,
+                "game": session.game,
+                "end_state": None,
+            },
+        )
 
     location = session.current_location
 
@@ -429,9 +451,114 @@ def inspect_item(request, session_pk, item_pk):
 
 
 @login_required
-def kill_enemy(request, session_pk, enemy_pk):
+def fight_enemy(request, session_pk, enemy_pk):
     session = get_object_or_404(models.Session, pk=session_pk)
     enemy = get_object_or_404(session.enemies.all(), pk=enemy_pk)
+
+    if enemy.current_health == 0:
+        return helpers.custom_redirect(
+            "game:fight_won",
+            kwargs={"session_pk": session_pk, "enemy_pk": enemy_pk}
+        )
+
+    player = session.player
+
+    fight_options = [
+        {
+            "attack_pk": 0,
+            "attack_name": "Punch",
+            "attack_damage": player.base_damage,
+        }
+    ] + (
+        [
+            {
+                "attack_pk": weapon.pk,
+                "attack_name": weapon.name,
+                "attack_damage": weapon.damage,
+            }
+            for weapon in session.items.filter(
+                item_type=models.Item.ItemTypeChoices.WEAPON
+            )
+        ]
+    )
+
+    return render(
+        request,
+        "game/session/fight.html",
+        context={
+            "session": session,
+            "enemy": enemy,
+            "player": player,
+            "fight_options": fight_options,
+            "enemy_health_bar_width": (enemy.current_health / enemy.health) * 100,
+            "player_health_bar_width": (player.current_health / player.health) * 100,
+        },
+    )
+
+
+@login_required
+def attack_enemy(request, session_pk, enemy_pk, attack_pk):
+    session = get_object_or_404(models.Session, pk=session_pk)
+    enemy = get_object_or_404(session.enemies.all(), pk=enemy_pk)
+
+    if attack_pk == 0:
+        attack_damage = session.player.base_damage
+    else:
+        weapon = session.items.get(pk=attack_pk)
+        attack_damage = weapon.damage
+
+    enemy.current_health = max(enemy.current_health - attack_damage.get_damage(), 0)
+    enemy.save()
+
+    if enemy.current_health == 0:
+        return helpers.custom_redirect(
+            "game:fight_won",
+            kwargs={"session_pk": session_pk, "enemy_pk": enemy_pk}
+        )
+    
+    return helpers.custom_redirect(
+        "game:enemy_attack",
+        kwargs={"session_pk": session_pk, "enemy_pk": enemy_pk}
+    )
+
+@login_required
+def enemy_attack(request, session_pk, enemy_pk):
+    session = get_object_or_404(models.Session, pk=session_pk)
+    enemy = get_object_or_404(session.enemies.all(), pk=enemy_pk)
+
+    player = session.player
+
+    player.current_health = max(player.current_health - enemy.damage.get_damage(), 0)
+    player.save()
+
+    if player.current_health == 0:
+        return render(
+            request,
+            "game/end.html",
+            context={
+                "session": session,
+                "game": session.game,
+                "end_state": None,
+                "killed_by": enemy,
+            },
+        )
+    
+    return helpers.custom_redirect(
+        "game:fight",
+        kwargs={"session_pk": session_pk, "enemy_pk": enemy_pk}
+    )
+
+@login_required
+def fight_won(request, session_pk, enemy_pk):
+    session = get_object_or_404(models.Session, pk=session_pk)
+    enemy = get_object_or_404(session.enemies.filter(current_health=0), pk=enemy_pk)
+
+    if enemy.is_dead:
+        messages.add_message(
+            request,
+            messages.INFO,
+            f"You already slew {enemy.name}",
+        )
 
     if enemy.room == session.current_location and not enemy.is_dead:
         enemy.is_dead = True
