@@ -1,8 +1,8 @@
 import re
-
 from django import forms
 from django.db import models
 
+from . import helpers
 
 class SessionManager(models.Manager):
     def base(self):
@@ -21,10 +21,12 @@ class SearchableMixin(models.Model):
 
     def matches(self, target_string):
         target_string = target_string.lower()
-        return (
-            target_string == self.name.lower()
-            or target_string in self.get_accepted_names()
-        )
+        matching_names = [
+            helpers.strip_stop_words(name)
+            for name in self.get_accepted_names() + [self.name.lower()]
+        ]
+
+        return target_string in matching_names
 
     class Meta:
         abstract = True

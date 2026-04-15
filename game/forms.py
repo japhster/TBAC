@@ -3,7 +3,7 @@ from django import forms
 from . import constants
 from room.models import Room
 from item.models import Item
-from tbac import mixins
+from tbac import helpers, mixins
 
 
 class GameForm(mixins.DamageForm):
@@ -54,7 +54,6 @@ class ContinueGameForm(forms.Form):
 
 
 class CommandForm(forms.Form):
-    STOP_WORDS = ["to", "the"]
     text = forms.CharField(
         widget=forms.TextInput(
             attrs={"class": "form-control", "autofocus": "autofocus"}
@@ -65,22 +64,20 @@ class CommandForm(forms.Form):
         cleaned_data = super().clean(*args, **kwargs)
 
         text = cleaned_data["text"].strip().lower()
-        text_list = text.split()
-        while True:
-            if len(text_list) > 1 and text_list[1] in self.STOP_WORDS:
-                text_list = [text_list[0]] + text_list[2:]
-            else:
-                break
 
-        if text_list[0].upper() not in constants.ALL_COMMANDS:
+        command, *args = text.split()
+
+        command = command.upper()
+
+        if command not in constants.ALL_COMMANDS:
             raise forms.ValidationError({"text": "Couldn't figure out the command."})
 
-        command = text_list[0].upper()
         for master_command, synonyms in constants.COMMAND_OPTIONS.items():
             if command in synonyms:
                 command = master_command
                 break
-        args = " ".join(text_list[1:])
+
+        args = helpers.strip_stop_words(args)
 
         return {
             "command": command,
