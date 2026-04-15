@@ -260,7 +260,7 @@ def play_game(request, session_pk):
                     "end_state": end_state,
                 },
             )
-            
+
     if session.player.current_health == 0:
         return render(
             request,
@@ -457,8 +457,7 @@ def fight_enemy(request, session_pk, enemy_pk):
 
     if enemy.current_health == 0:
         return helpers.custom_redirect(
-            "game:fight_won",
-            kwargs={"session_pk": session_pk, "enemy_pk": enemy_pk}
+            "game:fight_won", kwargs={"session_pk": session_pk, "enemy_pk": enemy_pk}
         )
 
     player = session.player
@@ -512,14 +511,13 @@ def attack_enemy(request, session_pk, enemy_pk, attack_pk):
 
     if enemy.current_health == 0:
         return helpers.custom_redirect(
-            "game:fight_won",
-            kwargs={"session_pk": session_pk, "enemy_pk": enemy_pk}
+            "game:fight_won", kwargs={"session_pk": session_pk, "enemy_pk": enemy_pk}
         )
-    
+
     return helpers.custom_redirect(
-        "game:enemy_attack",
-        kwargs={"session_pk": session_pk, "enemy_pk": enemy_pk}
+        "game:enemy_attack", kwargs={"session_pk": session_pk, "enemy_pk": enemy_pk}
     )
+
 
 @login_required
 def enemy_attack(request, session_pk, enemy_pk):
@@ -542,11 +540,11 @@ def enemy_attack(request, session_pk, enemy_pk):
                 "killed_by": enemy,
             },
         )
-    
+
     return helpers.custom_redirect(
-        "game:fight",
-        kwargs={"session_pk": session_pk, "enemy_pk": enemy_pk}
+        "game:fight", kwargs={"session_pk": session_pk, "enemy_pk": enemy_pk}
     )
+
 
 @login_required
 def fight_won(request, session_pk, enemy_pk):

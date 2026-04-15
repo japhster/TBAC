@@ -16,9 +16,7 @@ class GameManager(models.Manager):
         user = kwargs.pop("user", None)
         qs = self.filter(*args, **kwargs)
         if user:
-            qs = qs.filter(
-                models.Q(is_published=True) | models.Q(sessions__user=user)
-            )
+            qs = qs.filter(models.Q(is_published=True) | models.Q(sessions__user=user))
         if "start_room" not in kwargs:
             qs = qs.filter(start_room__isnull=False)
 
