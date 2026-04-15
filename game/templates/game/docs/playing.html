@@ -1,0 +1,185 @@
+{% extends "base.html" %}
+
+{% block page_title %}Playing Text-Based Adventures{% endblock %}
+
+{% block content %}
+  <div class="container">
+    <p>
+      This document details the actions that are available to you as you explore and
+      progress through the wonderful worlds created in this app.
+    </p>
+    <div class="container">
+      <h4>Movement</h4>
+      <p>
+        <span class="font-weight-bold">Available Commands: </span>
+        {{ commands.MOVE | join:" | " | title }}
+      </p>
+      <p>
+        This is how you move between the locations of the world. There are two main ways movement works.
+        You can either write the name of the room you're moving towards or you can write a direction you're moving in.
+        This is dependant on the way the author of the adventure has set up the world so use the descriptions of the rooms
+        you find yourself in to determine which methods you can use.
+      </p>
+      <p>
+        <span class="font-weight-bold">Examples: </span>
+        "Go East" | "Move to the Forest"
+      </p>
+      <h5>Leaving rooms</h5>
+      <p>
+        <span class="font-weight-bold">Available Commands: </span>
+        {{ commands.LEAVE | join:" | " | title }}
+      </p>
+      <p>
+        The third type of movement a different command. This command requires no spcification of the room
+        you wish to move to, but you will only be able to use this in room with a single exit and it will move you
+        to the only other room available to you.
+      </p>
+      <p>
+        <span class="font-weight-bold">Examples: </span>
+        "Leave" | "Exit"
+      </p>
+    </div>
+    <hr />
+
+    <div class="container mt-5">
+      <h4>Picking Up Items</h4>
+      <p>
+        <span class="font-weight-bold">Available Commands: </span>
+        {{ commands.TAKE | join:" | " | title }}
+      </p>
+      <p>
+        This set of commands allows to to take the items that you might find in the world.
+        Use a command word alongside the name of the item you want to pick up and you will add
+        the item to your inventory.
+      </p>
+      <p>
+        <span class="font-weight-bold">Examples: </span>
+        "Take Sword"
+      </p>
+    </div>
+    <hr />
+
+    <div class="container mt-5">
+      <h4>Opening Containers</h4>
+      <p>
+        <span class="font-weight-bold">Available Commands: </span>
+        {{ commands.OPEN | join:" | " | title }}
+      </p>
+      <p>
+        Some items within the world will be containers. These can be picked up and
+        then opened with this command. The contents of the container will then be added to your inventory.
+      </p>
+      <p>
+        <span class="font-weight-bold">Examples: </span>
+        "Open Box"
+      </p>
+    </div>
+    <hr />
+
+    <div class="container mt-5">
+      <h4>Using Items</h4>
+      <p>
+        <span class="font-weight-bold">Available Commands: </span>
+        {{ commands.USE | join:" | " | title }}
+      </p>
+      <p>
+        Currently the only items that have a "use" function are keys. If you have a key
+        in your inventory and use this command in the room that the key unlocks a door;
+        the door will be unlocked.
+      </p>
+      <p>
+        <span class="font-weight-bold">Examples: </span>
+        "Use key"
+      </p>
+    </div>
+    <hr />
+
+    <div class="container mt-5">
+      <h4>Inspecting Items</h4>
+      <p>
+        <span class="font-weight-bold">Available Commands: </span>
+        {{ commands.INSPECT | join:" | " | title }}
+      </p>
+      <p>
+        Items you hold or are in the current room can be described. This might reveal
+        extra information that is not contained within the description of the room with
+        the item in it.
+      </p>will be unlocked.
+      </p>
+      <p>
+        <span class="font-weight-bold">Examples: </span>
+        "Inspect the sword" | "describe the map"
+      </p>
+    </div>
+    <hr />
+
+    <div class="container mt-5">
+      <h4>Fighting Enemies</h4>
+      <p>
+        <span class="font-weight-bold">Available Commands: </span>
+        {{ commands.FIGHT | join:" | " | title }}
+      </p>
+      <p>
+        Enemies can be fought in the game. Usually when entering a room enemies will
+        automatically attack you in which case you don't need to use this command.
+        However it is possible for the creator of the game to allow you to decide whether or not
+        you want to engage them in combat. If this is the case then the room's description will
+        indicate there is an enemy that you could fight. Using the name of the enemy along with the
+        fight command will engage them in combat.
+      </p>
+      <p>
+        <span class="font-weight-bold">Examples: </span>
+        "fight thug" | "attack bandit"
+      </p>
+    </div>
+    <hr />
+
+    <div class="container mt-5">
+      <h4>Talking to Friends</h4>
+      <p>
+        <span class="font-weight-bold">Available Commands: </span>
+        {{ commands.TALK | join:" | " | title }}
+      </p>
+      <p>
+        When you find a friend in a location you're in, you can usually engage them in
+        conversation.
+      </p>
+      <p>
+        There are two types of conversations that can occur. Sometimes
+        a friend will only have one thing they can say, in which case they will say the
+        thing and you will be able to enter another command immediately. On the other hand,
+        they may allow you to respond to their speech in which case dialogue options will
+        appear and you can interact with them until you wish to leave - by selecting "Goodbye".
+      </p>
+      <p>
+        In some cases conversing with a friend might result in you gaining some items, when
+        you exit conversation with such friends, you'll find those items in your inventory.
+      </p>
+      <p>
+        <span class="font-weight-bold">Examples: </span>
+        "talk to the queen"
+      </p>
+    </div>
+    <hr />
+
+    <div class="container mt-5">
+      <h4>Giving Items to Friends</h4>
+      <p>
+        <span style="font-weight:bold">Available Commands: </span>
+        {{ commands.GIVE | join:" | " | title }}
+      </p>
+      <p>
+        Some friends will accept items you hold - this will usually be indicated by dialogue
+        lines you can access by talking to them. If you use this command along with the name
+        of the item in the location the friend is in, it will give them the item.
+      </p>
+      <p>
+        You'll often find that giving items to friends provides you with different dialogue if you
+        talk to them again. 
+      </p>
+    </div>
+    <hr />
+
+
+  </div>
+{% endblock %}

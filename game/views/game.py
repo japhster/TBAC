@@ -3,7 +3,7 @@ from django.db.models import Q
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, reverse, get_object_or_404
 
-from . import forms, models
+from .. import forms, models
 from room.models import Exit
 from tbac import helpers
 

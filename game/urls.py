@@ -1,6 +1,6 @@
 from django.urls import path
 
-from . import session_views, views
+from . import views
 
 app_name = "game"
 
@@ -25,83 +25,99 @@ urlpatterns = [
     # session urls
     path(
         "session/start/<int:game_pk>/",
-        session_views.start_session,
+        views.start_session,
         name="start_session",
     ),
     path(
         "session/new/<int:game_pk>/",
-        session_views.start_new_session,
+        views.start_new_session,
         name="new_session",
     ),
-    path("session/play/<int:session_pk>/", session_views.play_game, name="play"),
+    path("session/play/<int:session_pk>/", views.play_game, name="play"),
     path(
         "session/play/<int:session_pk>/interpret/",
-        session_views.interpret_command,
+        views.interpret_command,
         name="interpreter",
     ),
     path(
         "session/move/<int:session_pk>/<int:room_pk>/",
-        session_views.move_room,
+        views.move_room,
         name="move",
     ),
     path(
         "session/leave/<int:session_pk>/",
-        session_views.leave_room,
+        views.leave_room,
         name="leave",
     ),
     path(
         "session/take/<int:session_pk>/<int:item_pk>/",
-        session_views.take_item,
+        views.take_item,
         name="take",
     ),
     path(
         "session/open/<int:session_pk>/<int:item_pk>/",
-        session_views.open_item,
+        views.open_item,
         name="open",
     ),
     path(
         "session/use/<int:session_pk>/<int:item_pk>/",
-        session_views.use_item,
+        views.use_item,
         name="use",
     ),
     path(
         "session/inspect/<int:session_pk>/<int:item_pk>/",
-        session_views.inspect_item,
+        views.inspect_item,
         name="inspect",
     ),
     path(
         "session/fight/<int:session_pk>/<int:enemy_pk>/",
-        session_views.fight_enemy,
+        views.fight_enemy,
         name="fight",
     ),
     path(
         "session/attack/<int:session_pk>/<int:enemy_pk>/<int:attack_pk>/",
-        session_views.attack_enemy,
+        views.attack_enemy,
         name="attack",
     ),
     path(
         "session/enemy_attack/<int:session_pk>/<int:enemy_pk>/",
-        session_views.enemy_attack,
+        views.enemy_attack,
         name="enemy_attack",
     ),
     path(
         "session/fight/<int:session_pk>/<int:enemy_pk>/success/",
-        session_views.fight_won,
+        views.fight_won,
         name="fight_won",
     ),
     path(
         "session/talk/<int:session_pk>/<int:friend_pk>/",
-        session_views.talk_to_friend,
+        views.talk_to_friend,
         name="talk",
     ),
     path(
         "session/discussion/<int:session_pk>/<int:dialogue_pk>/",
-        session_views.friend_discussion,
+        views.friend_discussion,
         name="discussion",
     ),
     path(
         "session/give/<int:session_pk>/<int:accepted_item_pk>/",
-        session_views.give_item_to_friend,
+        views.give_item_to_friend,
         name="give",
+    ),
+    # doc views
+    path(
+        "docs/list/",
+        views.docs_list,
+        name="docs_list",
+    ),
+    path(
+        "docs/playing/",
+        views.playing_documentation,
+        name="docs_playing",
+    ),
+    path(
+        "docs/creating/home/",
+        views.creating_documentation_home,
+        name="docs_creating_home",
     ),
 ]

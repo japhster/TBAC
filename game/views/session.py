@@ -3,7 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404, render
 from django.db.models import Q
 
-from . import constants, forms, interpreter
+from .. import constants, forms, interpreter
 from item.models import Item
 from room.models import Exit, Room
 from tbac import helpers, models
