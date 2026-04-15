@@ -52,6 +52,8 @@ class Exit(models.Model):
     key_required = models.ForeignKey(
         "item.Item", related_name="unlocks", on_delete=models.SET_NULL, null=True
     )
+    leave_room_1 = models.CharField(max_length=250)
+    leave_room_2 = models.CharField(max_length=250)
 
     # session tracking
     session = models.ForeignKey(
@@ -64,8 +66,12 @@ class Exit(models.Model):
 
     objects = ExitManager()
 
-    def get_exit_room(self, room):
-        return self.room_2 if room == self.room_1 else self.room_1
+    def get_exit_room_and_direction(self, room):
+        return (
+            (self.room_2, self.leave_room_1)
+            if room == self.room_1
+            else (self.room_1, self.leave_room_2)
+        )
 
     def __str__(self):
         return f"Exit between {self.room_1.name} and {self.room_2.name}."

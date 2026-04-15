@@ -104,6 +104,8 @@ def create_exit(request, game_pk):
             room_2=form.cleaned_data["room_2"],
             is_locked=form.cleaned_data["is_locked"],
             key_required=form.cleaned_data["key_required"],
+            leave_room_1=form.cleaned_data["leave_room_1"],
+            leave_room_2=form.cleaned_data["leave_room_2"],
         )
 
         return helpers.custom_redirect("game:dashboard", kwargs={"game_pk": game_pk})
@@ -132,6 +134,8 @@ def edit_exit(request, game_pk, exit_pk):
             "room_2": room_exit.room_2.pk,
             "is_locked": room_exit.is_locked,
             "key_required": room_exit.key_required,
+            "leave_room_1": room_exit.leave_room_1,
+            "leave_room_2": room_exit.leave_room_2,
         },
     )
 
@@ -140,6 +144,8 @@ def edit_exit(request, game_pk, exit_pk):
         room_exit.room_2 = form.cleaned_data["room_2"]
         room_exit.is_locked = form.cleaned_data["is_locked"]
         room_exit.key_required = form.cleaned_data["key_required"]
+        room_exit.leave_room_1 = form.cleaned_data["leave_room_1"]
+        room_exit.leave_room_2 = form.cleaned_data["leave_room_2"]
         room_exit.save()
 
         return helpers.custom_redirect("game:dashboard", kwargs={"game_pk": game_pk})
@@ -160,7 +166,7 @@ def delete_exit(request, exit_pk):
     room_exit = get_object_or_404(
         models.Exit.objects.select_related("room_1__game"),
         pk=exit_pk,
-        game__created_by=request.user,
+        room_1__game__created_by=request.user,
     )
     game_pk = room_exit.room_1.game.pk
     room_exit.delete()

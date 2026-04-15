@@ -37,6 +37,12 @@ class ExitForm(forms.Form):
         queryset=models.Room.objects.none(),
         widget=forms.Select(attrs={"class": "form-control"}),
     )
+    leave_room_1 = forms.CharField(
+        widget=forms.TextInput(attrs={"class": "form-control", "placeholder": "e.g. east"})
+    )
+    leave_room_2 = forms.CharField(
+        widget=forms.TextInput(attrs={"class": "form-control", "placeholder": "e.g. west"})
+    )
 
     is_locked = forms.BooleanField(
         widget=forms.CheckboxInput(attrs={"class": "form-check-input"}),

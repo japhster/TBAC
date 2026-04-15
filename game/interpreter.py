@@ -16,35 +16,35 @@ def get_room_pk(request, session, command, args):
     blocked_rooms = []
 
     for exit_ in exits:
-        moving_to = exit_.get_exit_room(session.current_location)
+        moving_to, direction = exit_.get_exit_room_and_direction(session.current_location)
         if exit_.is_locked:
-            locked_rooms.append(moving_to)
+            locked_rooms.append((moving_to, direction))
             continue
         if moving_to.required_items.exists() and any(
             not item.in_inventory for item in moving_to.required_items.all()
         ):
-            blocked_rooms.append(moving_to)
+            blocked_rooms.append((moving_to, direction))
             continue
 
-        available_rooms.append(moving_to)
+        available_rooms.append((moving_to, direction))
 
     if len(available_rooms) == 1 and not args:
-        return available_rooms[0].pk
+        return available_rooms[0][0].pk
     elif len(available_rooms) > 1 and not args:
         messages.add_message(request, messages.INFO, "You're not sure where to go.")
         return
 
-    for room in available_rooms:
-        if room.matches(args):
+    for room, direction in available_rooms:
+        if room.matches(args) or direction.lower() == args.lower():
             return room.pk
 
     for room in locked_rooms:
-        if room.matches(args):
+        if room.matches(args) or direction.lower() == args.lower():
             messages.add_message(request, messages.INFO, f"That way is locked.")
             return
 
     for room in blocked_rooms:
-        if room.matches(args):
+        if room.matches(args) or direction.lower() == args.lower():
             messages.add_message(
                 request, messages.INFO, f"That way requires something to access."
             )
