@@ -13,7 +13,7 @@
 <div class="container">
   <form method="POST">
     {% csrf_token %}
-    <table class="table">
+    <table class="table table-fixed">
       <tr>
         <th>Name</th>
         <td>{{ form.name }} {{ form.name.errors.as_text }}</td>
@@ -35,6 +35,10 @@
         <td>{{ form.room }} {{ form.room.errors.as_text }}</td>
       </tr>
       {% include "inclusions/damage_form.html" %}
+      <tr>
+        <th>Auto Fight</th>
+        <td class="text-center">{{ form.auto_fight }} {{ form.auto_fight.errors.as_text }}</td>
+      </tr>
       <tr>
         <th colspan=2 class="text-center">
           {% for error in form.non_field_errors %}

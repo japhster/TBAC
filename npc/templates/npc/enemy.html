@@ -23,6 +23,10 @@
       <th>Room</th>
       <td>{{ enemy.room.name }}</td>
     </tr>
+    <tr>
+      <th>Auto Fight</th>
+      <td>{{ enemy.auto_fight | yesno | title }}</td>
+    </tr>
   </table>
   <table class="table">
     <thead>

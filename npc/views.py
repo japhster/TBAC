@@ -280,6 +280,7 @@ def create_enemy(request, game_pk):
                 min_damage=form.cleaned_data["min_damage"],
                 max_damage=form.cleaned_data["max_damage"],
             ),
+            auto_fight=form.cleaned_data["auto_fight"],
         )
         return _enemy_redirect(enemy.pk)
 
@@ -312,6 +313,7 @@ def edit_enemy(request, enemy_pk):
             "in_room_description": enemy.in_room_description,
             "min_damage": enemy.damage.min_damage,
             "max_damage": enemy.damage.max_damage,
+            "auto_fight": enemy.auto_fight,
         },
     )
     if request.method == "POST" and form.is_valid():
@@ -320,6 +322,7 @@ def edit_enemy(request, enemy_pk):
         enemy.description = form.cleaned_data["description"]
         enemy.room = form.cleaned_data["room"]
         enemy.in_room_description = form.cleaned_data["in_room_description"]
+        enemy.auto_fight = form.cleaned_data["auto_fight"]
         enemy.save()
 
         damage = enemy.damage

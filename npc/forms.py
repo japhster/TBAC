@@ -99,6 +99,11 @@ class EnemyForm(mixins.DamageForm):
         widget=forms.Select(attrs={"class": "form-control"}),
         required=False,
     )
+    auto_fight = forms.BooleanField(
+        widget=forms.CheckboxInput(attrs={"class": "form-check-input"}),
+        required=False,
+        initial=True
+    )
 
     def __init__(self, *args, game_pk, **kwargs):
         super().__init__(*args, **kwargs)

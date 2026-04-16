@@ -274,6 +274,10 @@ def play_game(request, session_pk):
 
     location = session.current_location
 
+    auto_fight_enemies = session.enemies.filter(room=location, auto_fight=True, is_dead=False).values_list("pk", flat=True)
+    if auto_fight_enemies.exists():
+        return helpers.custom_redirect("game:fight", kwargs={"session_pk": session.pk, "enemy_pk": auto_fight_enemies.first()})
+
     if location.visited and location.visited_description:
         location_description = location.visited_description
     else:
@@ -476,7 +480,8 @@ def fight_enemy(request, session_pk, enemy_pk):
                 "attack_damage": weapon.damage,
             }
             for weapon in session.items.filter(
-                item_type=models.Item.ItemTypeChoices.WEAPON
+                item_type=models.Item.ItemTypeChoices.WEAPON,
+                in_inventory=True,
             )
         ]
     )
