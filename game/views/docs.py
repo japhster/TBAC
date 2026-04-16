@@ -1,5 +1,5 @@
 from django.shortcuts import render, reverse
-from .. import constants
+from .. import constants, docs_content
 
 
 def docs_list(request):
@@ -20,7 +20,7 @@ def playing_documentation(request):
         request,
         "game/docs/playing.html",
         context={
-            "commands": constants.COMMAND_OPTIONS,
+            "content": docs_content.PLAYING_SECTIONS,
         },
     )
 
