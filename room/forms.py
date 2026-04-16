@@ -38,10 +38,14 @@ class ExitForm(forms.Form):
         widget=forms.Select(attrs={"class": "form-control"}),
     )
     leave_room_1 = forms.CharField(
-        widget=forms.TextInput(attrs={"class": "form-control", "placeholder": "e.g. east"})
+        widget=forms.TextInput(
+            attrs={"class": "form-control", "placeholder": "e.g. east"}
+        )
     )
     leave_room_2 = forms.CharField(
-        widget=forms.TextInput(attrs={"class": "form-control", "placeholder": "e.g. west"})
+        widget=forms.TextInput(
+            attrs={"class": "form-control", "placeholder": "e.g. west"}
+        )
     )
 
     is_locked = forms.BooleanField(

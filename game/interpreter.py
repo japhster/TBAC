@@ -16,7 +16,9 @@ def get_room_pk(request, session, command, args):
     blocked_rooms = []
 
     for exit_ in exits:
-        moving_to, direction = exit_.get_exit_room_and_direction(session.current_location)
+        moving_to, direction = exit_.get_exit_room_and_direction(
+            session.current_location
+        )
         if exit_.is_locked:
             locked_rooms.append((moving_to, direction))
             continue

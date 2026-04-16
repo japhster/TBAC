@@ -4,6 +4,7 @@ from django.db import models
 
 from . import helpers
 
+
 class SessionManager(models.Manager):
     def base(self):
         return self.get_queryset().filter(session__isnull=True)
