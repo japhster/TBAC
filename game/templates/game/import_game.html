@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block page_title %}Import Game{% endblock %}
+
+{% block content %}
+
+  <div class="container text-center">
+    <form method="POST" enctype="multipart/form-data">
+      {% csrf_token %}
+      <table class="table">
+        <tbody>
+          {% for error in form.non_field_errors %}
+            <tr><th colspan=2>{{ error }}</th></tr>
+          {% endfor %}
+          <tr>
+            <th>Upload File</th><td>{{ form.file }} {{ form.file.errors.as_text }}</td>
+          </tr>
+          <tr>
+          <tr>
+            <th colspan=2 class="text-center">
+              <button type="submit" class="btn btn-primary">Import</button>
+            </th>
+          </tr>
+        </tbody>
+      </table>
+    </form>
+  </div>
+
+{% endblock %}
+        

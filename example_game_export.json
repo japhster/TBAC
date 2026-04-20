@@ -1,0 +1,616 @@
+{
+  "game": {
+    "name": "A Queen's Quest",
+    "description": "You are in the Royal City of Zaradias. Work is scarce but new jobs will have just been posted on the town square's notice board.",
+    "starting_health": 100,
+    "base_damage__min_damage": 10,
+    "base_damage__max_damage": 10,
+    "start_room": 2221
+  },
+  "end_states": [
+    {
+      "is_success": true,
+      "name": "Rewarded!",
+      "message": "You did it! You found the prince and discovered the truth of the royal family. You feel it's right to not tell anyone what transpired and the heaps of gold you now possess will go a long way in keeping this resolution.",
+      "owned_items": [
+        303
+      ],
+      "location": 2241
+    },
+    {
+      "is_success": false,
+      "name": "Banished!",
+      "message": "You probably could have handled that more tactfully! Ah well, a life time of banishment doesn't seem so bad. Perhaps the Prince will allow you to stay with him.",
+      "owned_items": [
+        302
+      ],
+      "location": 2241
+    },
+    {
+      "is_success": true,
+      "name": "Multiple Items",
+      "message": "Woah you have a lot!",
+      "owned_items": [
+        303,
+        419
+      ],
+      "location": null
+    }
+  ],
+  "rooms": [
+    {
+      "pk": 2221,
+      "name": "Home",
+      "accepted_names": "house,my house",
+      "description": "Your house isn't much, it's home, but it could do with some more luxuries.",
+      "visited_description": "You're home.",
+      "required_items": []
+    },
+    {
+      "pk": 2222,
+      "name": "Thunder Road",
+      "accepted_names": "road,outside",
+      "description": "It's a very noisy road with a lot of foot traffic and carts travelling up and down. No one is in the mood for chatter as they go about their day. It's also the road on which you find your house. Most of the people you see are heading towards the Zaralaam square.",
+      "visited_description": "",
+      "required_items": []
+    },
+    {
+      "pk": 2231,
+      "name": "Zaralaam Square",
+      "accepted_names": "square",
+      "description": "It's the centre of the city where everyone gathers to do anything. The Notice board is here where you should be able to pick up a job. You recognise the familiar sight of Thunder road and on the opposite side of the square is a dark looking side street which everyone seems to ignore. A short road to the south leads to the city exit through the Tri-Horned Gate. Opposite the gate lies a beautiful sparkling road know as Stardust Road",
+      "visited_description": "",
+      "required_items": []
+    },
+    {
+      "pk": 2232,
+      "name": "Side Street",
+      "accepted_names": "Street,Mud",
+      "description": "It's a dark and dodgy side street of the main square where nefarious dealings take place.",
+      "visited_description": "",
+      "required_items": []
+    },
+    {
+      "pk": 2233,
+      "name": "Tri-Horned Gate",
+      "accepted_names": "gate",
+      "description": "An imposing structure of stone with a metal gate blocking entrance and exit to the city Three large spikes of metal exit the stone work one on each side of the gate and the third above it. Two guards stand either side of the gate. By walking away from the gate you can get back to the Zaralaam Square. Going through the gate takes you to the outskirts of the city.",
+      "visited_description": "",
+      "required_items": []
+    },
+    {
+      "pk": 2234,
+      "name": "City Outskirts",
+      "accepted_names": "outskirts",
+      "description": "You can see the outside of the gate and you notice the matching spikes of metal protruding from this side too. You've never left the city before but this is not the time for such trepidations. You can tell by the map you hold that to the south is the Endless Forest and somewhere within its huge - seemingly infinite - expanse hides the Thug's hideout.",
+      "visited_description": "You stand outside the City of Zaradias. Infront of you is the Tri-horned Gate.",
+      "required_items": [
+        300
+      ]
+    },
+    {
+      "pk": 2235,
+      "name": "Stardust Road",
+      "accepted_names": "stardust",
+      "description": "The long road sparkles in the light it leads to the Impressive Palace of the Sun, with it's giant doors visible all the way down the road. On the opposite end of the road lies the Zaralaam Square.",
+      "visited_description": "",
+      "required_items": []
+    },
+    {
+      "pk": 2237,
+      "name": "Deep Forest",
+      "accepted_names": "Deeper,Forest,Deep,deep into the forest,deeper into the forest",
+      "description": "You are so deep in the forest it's hard to figure out which way you're going and where you've come from. It may be your imagination but you think you can see it gets brighter up ahead, which makes you believe there must be a clearing near. You know that heading in the opposite direction of this possible clearing must take you back to the forest entrance.",
+      "visited_description": "You are in the deepest depths of the forest, one way leads you to a clearing and the other leads you back to the entrance of the forest.",
+      "required_items": []
+    },
+    {
+      "pk": 2238,
+      "name": "Thug's Hideout",
+      "accepted_names": "Clearing,Thugs hideout, hideout",
+      "description": "It's a clearing all right, but as soon as you step into it you see a large pavilion walled with cloth. Two smaller tents sit in front and to the side of the pavilion marking a center point upon which sits a large fire with a roasting spit over it. Facing the fire, an entrance lies in the wall of the main structure - marked by a sigil identical to the on you can see on the map you retrieved.",
+      "visited_description": "It's the clearing that holds the camp of the Thugs. There's the main pavilion or you can go back deep into the forest.",
+      "required_items": []
+    },
+    {
+      "pk": 2239,
+      "name": "Thug's Pavilion",
+      "accepted_names": "Pavilion",
+      "description": "It's lighter than you expected inside on account of four wooden posts with torches attached to them in the corners of the shelter. In the center of the back wall sits an ornately carved wooden chair.",
+      "visited_description": "",
+      "required_items": []
+    },
+    {
+      "pk": 2240,
+      "name": "Palace Doors",
+      "accepted_names": "Palace",
+      "description": "Two huge, ornate marble doors stand in front of you firmly closed. You know behind those doors lies the Zeradias Palace the home of the Queen. Behind you lies the sparkling surface of Stardust Road.",
+      "visited_description": "",
+      "required_items": []
+    },
+    {
+      "pk": 2241,
+      "name": "Palace",
+      "accepted_names": "",
+      "description": "A gigantic room with bright white marble columns holding up an incredible painted ceiling depicting the map of the surrounding kingdom. Paintings of the royal family line the walls - you can make out the man you met earlier who you now know to be the Prince. A red carpet fringed with gold marks the way to the silver throne.",
+      "visited_description": "",
+      "required_items": []
+    },
+    {
+      "pk": 2601,
+      "name": "Endless Forest",
+      "accepted_names": "forest",
+      "description": "It's so dark and constricting it's hard to tell where you are. The only way you know which way to go is some slight light coming from a direction you know must be the city outskirts.",
+      "visited_description": "",
+      "required_items": []
+    }
+  ],
+  "exits": [
+    {
+      "room_1": 2221,
+      "room_2": 2222,
+      "is_locked": false,
+      "key_required": null,
+      "leave_room_1": "",
+      "leave_room_2": ""
+    },
+    {
+      "room_1": 2222,
+      "room_2": 2231,
+      "is_locked": false,
+      "key_required": null,
+      "leave_room_1": "east",
+      "leave_room_2": "west"
+    },
+    {
+      "room_1": 2231,
+      "room_2": 2232,
+      "is_locked": false,
+      "key_required": null,
+      "leave_room_1": "east",
+      "leave_room_2": "west"
+    },
+    {
+      "room_1": 2231,
+      "room_2": 2233,
+      "is_locked": false,
+      "key_required": null,
+      "leave_room_1": "south",
+      "leave_room_2": "north"
+    },
+    {
+      "room_1": 2231,
+      "room_2": 2235,
+      "is_locked": false,
+      "key_required": null,
+      "leave_room_1": "north",
+      "leave_room_2": "south"
+    },
+    {
+      "room_1": 2233,
+      "room_2": 2234,
+      "is_locked": false,
+      "key_required": null,
+      "leave_room_1": "south",
+      "leave_room_2": "north"
+    },
+    {
+      "room_1": 2237,
+      "room_2": 2238,
+      "is_locked": false,
+      "key_required": null,
+      "leave_room_1": "south",
+      "leave_room_2": "north"
+    },
+    {
+      "room_1": 2238,
+      "room_2": 2239,
+      "is_locked": false,
+      "key_required": null,
+      "leave_room_1": "",
+      "leave_room_2": ""
+    },
+    {
+      "room_1": 2235,
+      "room_2": 2240,
+      "is_locked": false,
+      "key_required": null,
+      "leave_room_1": "north",
+      "leave_room_2": "south"
+    },
+    {
+      "room_1": 2240,
+      "room_2": 2241,
+      "is_locked": false,
+      "key_required": null,
+      "leave_room_1": "",
+      "leave_room_2": ""
+    },
+    {
+      "room_1": 2234,
+      "room_2": 2601,
+      "is_locked": false,
+      "key_required": null,
+      "leave_room_1": "south",
+      "leave_room_2": "north"
+    },
+    {
+      "room_1": 2601,
+      "room_2": 2237,
+      "is_locked": false,
+      "key_required": null,
+      "leave_room_1": "south",
+      "leave_room_2": "north"
+    }
+  ],
+  "items": [
+    {
+      "pk": 299,
+      "name": "Notice board",
+      "accepted_names": "board,job board,jobs",
+      "description": "It's one of the notice boards for the city, on it is only posted one job:\r\n\r\n\"Prince Alsei has gone missing, please help me find and rescue my son. A reward will be offered.\" - Queen Rose",
+      "in_room_description": "",
+      "item_type": "GENERIC",
+      "room": 2231,
+      "can_be_taken": false,
+      "contained_within": null,
+      "is_starting_item": false,
+      "container_is_locked": false,
+      "container_key_required": null,
+      "container_discard_after_open": true,
+      "container_open_name": "",
+      "damage__min_damage": null,
+      "damage__max_damage": null
+    },
+    {
+      "pk": 300,
+      "name": "Map",
+      "accepted_names": "paper,piece of paper",
+      "description": "A map that leads the way to the thug's hideout somewhere outside of the city.",
+      "in_room_description": "A piece of paper fell out of the thug's pocket as he fell to the ground.",
+      "item_type": "GENERIC",
+      "room": null,
+      "can_be_taken": true,
+      "contained_within": null,
+      "is_starting_item": false,
+      "container_is_locked": false,
+      "container_key_required": null,
+      "container_discard_after_open": true,
+      "container_open_name": "",
+      "damage__min_damage": null,
+      "damage__max_damage": null
+    },
+    {
+      "pk": 301,
+      "name": "Prince's Favour",
+      "accepted_names": "favour,handkerchief",
+      "description": "It's a handkerchief embroidered with the letters AZ given to you by the Prince.",
+      "in_room_description": "",
+      "item_type": "GENERIC",
+      "room": null,
+      "can_be_taken": true,
+      "contained_within": null,
+      "is_starting_item": false,
+      "container_is_locked": false,
+      "container_key_required": null,
+      "container_discard_after_open": true,
+      "container_open_name": "",
+      "damage__min_damage": null,
+      "damage__max_damage": null
+    },
+    {
+      "pk": 302,
+      "name": "Banishment Letter",
+      "accepted_names": "",
+      "description": "A letter detailing your banishment from the city and the terms that you may never return.",
+      "in_room_description": "",
+      "item_type": "GENERIC",
+      "room": null,
+      "can_be_taken": true,
+      "contained_within": null,
+      "is_starting_item": false,
+      "container_is_locked": false,
+      "container_key_required": null,
+      "container_discard_after_open": true,
+      "container_open_name": "",
+      "damage__min_damage": null,
+      "damage__max_damage": null
+    },
+    {
+      "pk": 303,
+      "name": "Gold",
+      "accepted_names": "",
+      "description": "Gold!",
+      "in_room_description": "",
+      "item_type": "GENERIC",
+      "room": null,
+      "can_be_taken": true,
+      "contained_within": null,
+      "is_starting_item": false,
+      "container_is_locked": false,
+      "container_key_required": null,
+      "container_discard_after_open": true,
+      "container_open_name": "",
+      "damage__min_damage": null,
+      "damage__max_damage": null
+    },
+    {
+      "pk": 419,
+      "name": "The Sword of Destiny",
+      "accepted_names": "sword",
+      "description": "It's the sword that was spoken about in the histories of the land! It is a mighty weapon indeed.",
+      "in_room_description": "A sword lies on the ground.",
+      "item_type": "WEAPON",
+      "room": 2240,
+      "can_be_taken": true,
+      "contained_within": null,
+      "is_starting_item": false,
+      "container_is_locked": false,
+      "container_key_required": null,
+      "container_discard_after_open": true,
+      "container_open_name": "",
+      "damage__min_damage": 20,
+      "damage__max_damage": 50
+    }
+  ],
+  "friends": [
+    {
+      "pk": 34,
+      "name": "Queen Rose",
+      "accepted_names": "Queen,Rose",
+      "description": "The most magisterial lady you've ever seen.",
+      "in_room_description": "Upon the throne sits the most majestic lady you've ever seen - one who could only be the Queen.",
+      "room": 2241
+    },
+    {
+      "pk": 35,
+      "name": "Prince Alsei",
+      "accepted_names": "Prince,Alsei,Thug",
+      "description": "A Regal-looking young man.",
+      "in_room_description": "Upon the chair sits a regal looking man, not obviously threatening to you but instead looking cautious.",
+      "room": 2239
+    },
+    {
+      "pk": 36,
+      "name": "Guards",
+      "accepted_names": "",
+      "description": "Two armoured guards stand at their post.",
+      "in_room_description": "Two armoured guards stand at their posts either side of the Gate.",
+      "room": 2233
+    },
+    {
+      "pk": 37,
+      "name": "Royal Guard",
+      "accepted_names": "Guard",
+      "description": "An ornately armoured guard.",
+      "in_room_description": "An ornately armoured guard stands at attention to the left of the doors.",
+      "room": 2240
+    }
+  ],
+  "enemies": [
+    {
+      "pk": 30,
+      "name": "Thug Leader",
+      "accepted_names": "thug,person",
+      "room": 2232,
+      "description": "Not a friendly member of society, this person seems to be holding a dagger and looking shiftily at you.",
+      "in_room_description": "A dagger-wielding person stands in the shadows.",
+      "health": 100,
+      "damage__min_damage": 10,
+      "damage__max_damage": 10,
+      "auto_fight": true
+    },
+    {
+      "pk": 31,
+      "name": "Thug",
+      "accepted_names": "",
+      "room": 2238,
+      "description": "A large-chested man who has clearly spent a lot of his life in hiding.",
+      "in_room_description": "Standing to the side of the Pavilion, resting on a wooden post, stands a man dressed in the same clothing as the thug you fought in the city.",
+      "health": 100,
+      "damage__min_damage": 10,
+      "damage__max_damage": 10,
+      "auto_fight": false
+    }
+  ],
+  "enemy_drops": [
+    {
+      "enemy": 30,
+      "item": 300
+    }
+  ],
+  "friend_gifts": [
+    {
+      "friend": 34,
+      "item": 302,
+      "dialogue_option": 50
+    },
+    {
+      "friend": 34,
+      "item": 303,
+      "dialogue_option": 51
+    },
+    {
+      "friend": 35,
+      "item": 301,
+      "dialogue_option": 55
+    },
+    {
+      "friend": 35,
+      "item": 301,
+      "dialogue_option": 57
+    },
+    {
+      "friend": 35,
+      "item": 301,
+      "dialogue_option": 58
+    }
+  ],
+  "friend_accepts_items": [
+    {
+      "friend": 34,
+      "item": 301,
+      "hides_dialogue": [
+        110
+      ],
+      "reveals_dialogue": [
+        45
+      ]
+    }
+  ],
+  "friend_dialogue_options": [
+    {
+      "pk": 45,
+      "friend": 34,
+      "requires_dialogue": null,
+      "text": "My son's Handkerchief? How did you get this?",
+      "talking_point": "",
+      "can_back_out": true,
+      "is_hidden": true
+    },
+    {
+      "pk": 46,
+      "friend": 34,
+      "requires_dialogue": 45,
+      "text": "You have? Where is he, is he safe?",
+      "talking_point": "I have spoken to the prince.",
+      "can_back_out": true,
+      "is_hidden": false
+    },
+    {
+      "pk": 47,
+      "friend": 34,
+      "requires_dialogue": 45,
+      "text": "You will only get that once my son is returned to me.",
+      "talking_point": "Where is the reward?",
+      "can_back_out": true,
+      "is_hidden": false
+    },
+    {
+      "pk": 48,
+      "friend": 34,
+      "requires_dialogue": 46,
+      "text": "What?! how can that be possible? You must take him to me.",
+      "talking_point": "He is. But he doesn't want to come home.",
+      "can_back_out": true,
+      "is_hidden": false
+    },
+    {
+      "pk": 49,
+      "friend": 34,
+      "requires_dialogue": 48,
+      "text": "How can this be? I don't understand.",
+      "talking_point": "He wishes to live a more normal life away from the royal family.",
+      "can_back_out": true,
+      "is_hidden": false
+    },
+    {
+      "pk": 50,
+      "friend": 34,
+      "requires_dialogue": 48,
+      "text": "That's an outrageous accusation to throw at your ruler. Begone and never return!",
+      "talking_point": "He Hates you!",
+      "can_back_out": false,
+      "is_hidden": false
+    },
+    {
+      "pk": 51,
+      "friend": 34,
+      "requires_dialogue": 49,
+      "text": "Very well, I will await this day. Thank you for giving me this saddening news but it is heartening to hear that he is safe and in good health. Here is your reward.",
+      "talking_point": "It just is. You must accept this and maybe one day he will return to you.",
+      "can_back_out": false,
+      "is_hidden": false
+    },
+    {
+      "pk": 52,
+      "friend": 35,
+      "requires_dialogue": null,
+      "text": "Who are you, how did you get here and why are you disturbing me?",
+      "talking_point": "",
+      "can_back_out": true,
+      "is_hidden": false
+    },
+    {
+      "pk": 53,
+      "friend": 35,
+      "requires_dialogue": 52,
+      "text": "The Queen? Why would she want want me? She never cared about me before...",
+      "talking_point": "I'm on a quest set by the Queen to save the Prince. Where are you hiding him!",
+      "can_back_out": true,
+      "is_hidden": false
+    },
+    {
+      "pk": 54,
+      "friend": 35,
+      "requires_dialogue": 53,
+      "text": "Ah, let me introduce myself, I am Prince Alsei. I have abandoned the Palace and am hiding out here with my friends while I decide what to do next.",
+      "talking_point": "What? It's the prince she's after not you!",
+      "can_back_out": true,
+      "is_hidden": false
+    },
+    {
+      "pk": 55,
+      "friend": 35,
+      "requires_dialogue": 54,
+      "text": "Very well, here is my handkerchief, take this to the queen and tell her I refuse to return.",
+      "talking_point": "What? Prove it!",
+      "can_back_out": false,
+      "is_hidden": false
+    },
+    {
+      "pk": 56,
+      "friend": 35,
+      "requires_dialogue": 54,
+      "text": "I grew tired of royal existence and wanted to experience a true life. My mother never really loved me - or at least she never showed me any real affection. She would ignore me in any non-public setting and only ever displayed love when it meant tricking the public. Ever since my farther Zaralaam passed away I believe she has become depressed and cannot pull herself out of it. It's not her fault of course but that is why I need time away from the palace and royalty.",
+      "talking_point": "I see! What reason do you have for not returning to the Queen?",
+      "can_back_out": true,
+      "is_hidden": false
+    },
+    {
+      "pk": 57,
+      "friend": 35,
+      "requires_dialogue": 56,
+      "text": "Yes, but I will not return with you now, and you'll be needing a token of myself to prove you found me. Take this to my mother and tell her I insist on staying away.",
+      "talking_point": "That is rather bleak",
+      "can_back_out": false,
+      "is_hidden": false
+    },
+    {
+      "pk": 58,
+      "friend": 35,
+      "requires_dialogue": 56,
+      "text": "No. I will not. Take this and leave. Tell my mother if you wish.",
+      "talking_point": "But you must return. You are the Prince.",
+      "can_back_out": false,
+      "is_hidden": false
+    },
+    {
+      "pk": 59,
+      "friend": 36,
+      "requires_dialogue": null,
+      "text": "One of us has been tasked with always telling the truth and one of us has been tasked with always lying. This much I can tell you for certain though: without a map you have very little chance of getting anywhere outside of this gate.",
+      "talking_point": "",
+      "can_back_out": true,
+      "is_hidden": false
+    },
+    {
+      "pk": 60,
+      "friend": 37,
+      "requires_dialogue": null,
+      "text": "You will not gain entry to this palace without a favour from a member of the royal family!",
+      "talking_point": "",
+      "can_back_out": true,
+      "is_hidden": false
+    },
+    {
+      "pk": 110,
+      "friend": 34,
+      "requires_dialogue": null,
+      "text": "Go away. Unless you have proof of the safety of my son I'm not interested in you.",
+      "talking_point": "",
+      "can_back_out": true,
+      "is_hidden": false
+    }
+  ]
+}

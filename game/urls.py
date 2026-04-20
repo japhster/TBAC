@@ -22,6 +22,8 @@ urlpatterns = [
         views.delete_end_state,
         name="delete_end_state",
     ),
+    path("export/<int:game_pk>/", views.export_game, name="export"),
+    path("import/", views.import_game, name="import"),
     # session urls
     path(
         "session/start/<int:game_pk>/",

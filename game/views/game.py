@@ -1,9 +1,10 @@
+from django import forms as django_forms
 from django.contrib.auth.decorators import login_required
 from django.db.models import Q
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, JsonResponse
 from django.shortcuts import render, reverse, get_object_or_404
 
-from .. import forms, models
+from .. import forms, models, data_parsers
 from room.models import Exit
 from tbac import helpers
 
@@ -26,7 +27,10 @@ def my_games(request):
         "game/my_games.html",
         context={
             "games": models.Game.objects.filter(created_by=request.user),
-            "links": [("+ new game", reverse("game:new"))],
+            "links": [
+                ("+ new game", reverse("game:new")),
+                ("import game", reverse("game:import")),
+            ],
         },
     )
 
@@ -62,6 +66,7 @@ def game_dashboard(request, game_pk):
                 ("back", reverse("game:my_games")),
                 ("edit", reverse("game:edit", kwargs={"game_pk": game_pk})),
                 publish_link,
+                ("export", reverse("game:export", kwargs={"game_pk": game_pk})),
             ],
             "tabs": [
                 ("room", "Rooms"),
@@ -242,4 +247,41 @@ def delete_end_state(request, end_state_pk):
 
     return HttpResponseRedirect(
         reverse("game:dashboard", kwargs={"game_pk": end_state.game.pk})
+    )
+
+
+@login_required
+def export_game(request, game_pk):
+    game = get_object_or_404(models.Game, pk=game_pk, created_by=request.user)
+    data = data_parsers.get_export_data(game)
+    response = JsonResponse(data, json_dumps_params={"indent": 2})
+    response["Content-Type"] = "application/force-download"
+    response["Content-Disposition"] = f'attachment; filename="{game.name}.json"'
+    return response
+
+
+@login_required
+def import_game(request):
+    form = forms.GameImportForm(request.POST or None, request.FILES or None)
+    if request.method == "POST" and form.is_valid():
+        try:
+            new_game = data_parsers.import_game(
+                request.FILES["file"], imported_by=request.user
+            )
+            return HttpResponseRedirect(
+                reverse("game:dashboard", kwargs={"game_pk": new_game.pk})
+            )
+        except django_forms.ValidationError as e:
+            for message in e.messages:
+                form.add_error(None, message)
+
+    return render(
+        request,
+        "game/import_game.html",
+        context={
+            "form": form,
+            "links": [
+                ("back to my games", reverse("game:my_games")),
+            ],
+        },
     )

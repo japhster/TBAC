@@ -83,3 +83,7 @@ class CommandForm(forms.Form):
             "command": command,
             "args": args,
         }
+
+
+class GameImportForm(forms.Form):
+    file = forms.FileField()
