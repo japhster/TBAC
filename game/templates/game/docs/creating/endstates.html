@@ -1,0 +1,20 @@
+
+<div class="container">
+  <h3>End States</h3>
+  <p>
+    An end state defines the way in which an adventure can end. Currently the trigger for an end state can be defined as a set of items the player owns and optionally the player must be in a specified location. Once achieved, an adventure is no longer playable and the player must restart from the start if they wish to play more.
+  </p>
+  <p>
+    The end state created can be either a successful end or a loss depending on your choice. It is not necessary to create a failure end state for the player dying in combat, this is handled automatically.
+  </p>
+  <p>
+    Regardless of whether it's a success or failure, the end state needs an achievement message which will be displayed on screen once achieved.
+  </p>
+  <h3>Example</h3>
+  <p>
+    The monarch has tasked the player with retrieving the heir to the throne from the clutches of some bandits. You add a dialogue option to the monarch that allows the player to be rude to them, but by doing so the monarch banishes them and gives them a letter of banishment item. You create a failure end state that requires the player to have this letter in their inventory and add a message saying "That's what you get for insulting royalty!".
+  </p>
+  <p>
+    Once releasing the prince from the bandits the player talks to the king and retrieves a reward in gold. You create a success end state that requires the player to have the gold.
+  </p>
+</div>

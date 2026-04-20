@@ -28,5 +28,15 @@ def playing_documentation(request):
 def creating_documentation_home(request):
     return render(
         request,
-        "game/docs/creating_home.html",
+        "game/docs/creating/home.html",
+        context={
+            "content": [
+                ("ROOMS", "Rooms", "game/docs/creating/rooms.html"),
+                ("ITEMS", "Items", "game/docs/creating/items.html"),
+                ("FRIENDS", "Friends", "game/docs/creating/friends.html"),
+                ("ENEMIES", "Enemies", "game/docs/creating/enemies.html"),
+                ("ENDSTATES", "End States", "game/docs/creating/endstates.html"),
+            ]
+        },
+
     )

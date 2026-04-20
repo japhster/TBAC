@@ -76,5 +76,4 @@ PLAYING_SECTIONS = [
         ],
         "examples": ["Give gold"],
     },
-
 ]

@@ -1,0 +1,37 @@
+
+
+
+<div class="container">
+  <h3>Rooms</h3>
+  <p>
+    A Room describes a location within your world, it could be anything from the hallway of a house to the clearing in the middle of a forest. All you need to do for rooms is provide them with a name and a description.
+  </p>
+  <h4>Descriptions</h4>
+  <p>
+    The description of the room is what will be printed when the player is in this location. Information you need to include in the description is anything that indicates things about the room that are not related to the items, friends or enemies found in the room. You should describe what other locations the player can move to from this location and anything that sets the scene - is there a large stone wall surrounding the player, or is there a field of wheat through which the player can run? You should not describe the fact there is a sword lying on the ground - if that sword is interactable - as this will come when you create the item.
+  </p>
+  <p>
+    If you want there to be a secondary description of the location for when a player comes back to it, you can add this in at this stage in too. For example you may wish for there to be some particularly descriptive text displayed when the player first enters the room, but once they've had the oportunity to read all the text and they've come back after visiting other areas, a shorthand description to remind them of the details is all that's necessary to not make them read it all again.
+  </p>
+  <h4>Room Connections</h3>
+  <p>
+    A connection joins two rooms together, creating a path between them. When the player is trying to move between two rooms they can do so in one of two ways. They can either specify the name of the room they want to move to (or one of it's accepted names) or they can state a direction in which they want to move - for example east or west, left or right. This direction is what is defined in the creation of the room connection.
+  </p>
+  <h4>Restricting Access to Rooms</h4>
+  <p>
+    There are two ways you can restrict access to rooms when creating your world.
+  </p>
+  <p>
+    One way is to "lock" the connection between two rooms. As an example a door to the jail cell may be locked with a key. This is done at the room connection creation stage however the item required to "unlock" the connection must have already been created.
+  </p>
+  <p>
+    The other way is to restrict access by requiring a specific item to enter the location. For example entering an underwater location may require a diving suit or exploring a dungeon may require having a map. This can be done by selecting the relevant item during the room's creation process. In order to do so however, you will have needed to create the item required.
+  </p>
+  <h4>Example</h4>
+  <p>
+    You put the player in the town square of a village. Other locations you have are a fort and the town gate. You add in the description of the town square that the player can see a road to the fort to the north and the exit to the town to the south. When creating the town gate room you should provide an accepted name of "town exit". When creating the room connections you should add "north" and "south" as the exit directions from the square to the fort and from the fort to the square respectively.
+  </p>
+  <p>
+    Perhaps the fort is actually split into two locations, the outside and the inside, but in order to go inside you need a key to unlock the way. You create the key and place it in the world. When creating the connection between the outside and the inside of the fort you tick the box to indicate that it is locked, and select the key as the item that unlocks it.
+  </p>
+</div>

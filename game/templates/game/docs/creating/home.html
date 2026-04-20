@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+
+
+{% block page_title %}Creating a Text-Based Adventure Game{% endblock %}
+
+{% block content %}
+
+<div class="container">
+  <p>
+    Welcome to a guide on how to create your very own text based adventure game. This  documentation will take you through the various components that are required to build your world.
+  </p>
+  <p>
+    Before you begin though, a note on names: most of the components in your world will be named, but in order to provide a smooth experience for your players you may wish to provide a list of alternative names to refer to them, this is possible using the "Accepted Names" fields which should be a comma-separated list of references. For example you may have an item you want to call "The Sword of Destiny", this is probably a bit long to type out each time, so you might wish to add an accepted name "sword".
+  </p>
+
+  <div class="row">
+    <div class="col">
+      <ul class="nav flex-column">
+        {% for page_id, page_title, _ in content %}
+          <li class="nav-item">
+            <a
+              class="nav-link {% if forloop.counter == 1 %}active{%endif %}"
+              id="{{ page_id }}-tab"
+              href="#{{ page_id }}"
+              role="tab"
+              aria-controls="{{ page_id }}"
+              aria-selected="{% if forloop.counter == 1 %}true{% else %}false{% endif %}"
+            >
+              {{ page_title }}
+            </a>
+          </li>
+        {% endfor %}
+      </ul>
+    </div>
+    <div class="col-lg-10">
+      <div class="tab-content" id="myTabContent">
+        {% for page_id, _, page_link in content %}
+          <div class="container tab-pane fade show {% if forloop.counter == 1 %}active{% endif %}" id="{{ page_id }}" role="tabpanel" aria-labelledby="{{ page_id }}-tab">
+            {% include page_link %}
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+
+{% block footer %}
+  {{ content|json_script:"content" }}
+  <script>
+    $(document).ready(() => {
+      $(`${window.location.hash}-tab`).tab("show");
+    })
+    const content = JSON.parse(document.getElementById("content").textContent);
+    console.log(content);
+    content.forEach((section) => {
+      $(`#${ section[0] }-tab`).on('click', function (e) {
+        e.preventDefault()
+        window.location.hash = section[0];
+        $(this).tab('show')
+      })
+    });
+  </script>
+{% endblock %}

@@ -1,0 +1,32 @@
+
+<div class="container">
+  <h3>Friends</h3>
+  A friend is anyone who the player can interact with and cannot attack. They can have complex dialogue trees and can even change the dialogue after receiving gifts.
+  <h3>Descriptions</h3>
+  As with items, friends have two descriptions, one that will be used when talking to the friend, and one that is used to describe them being in a room.
+  <h4>Dialogue</h4>
+  <p>
+    A Friend's Dialogue is comprised of lines of speech that the player can respond to. If you only want a single line of dialogue this is achievable, just don't add any responses.
+  </p>
+  <p>
+    If you want a complex tree of dialogue then you can select the dialogue option you want to add responses to and then add the response. A response needs a "talking point" which is the line of dialogue the player is selecting to say in response to the friend's speech. Then the friend has a response to that.
+  </p>
+  <h4>Received Gifts</h4>
+  <p>
+    At any point in the dialogue tree you can add a list of items that are given to the player by the friend when that line of dialogue is printed out.
+  </p>
+  <h4>Accepted Gifts</h4>
+  <p>
+    The final thing that is available with friends is Accepted Gifts. This is a set of items that can be given by the player to the friend. These items have the ability to hide certain sections of the dialogue and reveal others. This way you can set up quests that require fetching an item for a reward.
+  </p>
+  <p>
+    When creating the dialogue, you can set it to start as hidden. This way it won't be available to the player at first, until they have given the item that is set to reveal that dialogue. The earliest point in the dialogue that needs to be hidden or reveal is the only part that needs to be selected at this point, all the responses to it will be hidden or reveal implicitly.
+  </p>
+  <p>
+    You can take this to the extreme by replacing the entire dialogue tree by creating a new starting point entirely, though only one starting point can start as not hidden. Creating a new non-hidden starting point will automatically set any other starting points to hidden. 
+  </p>
+  <h4>Example</h4>
+  <p>
+    A jailor stands guard over the prison but you need access to a cell. In order to get in the cell the guard can give you the key but he wants a bottle of beer in return. So you add some dialogue to the guard asking the player what they want, and then inform them they are a bit thirsty. Another starting point of the dialogue is added - hidden at first - to thank the player for the beer and give the key to the player. You add an accepted gift of a bottle of beer item that hides the thirsty dialogue and reveals the thankful dialogue.
+  </p>
+</div>

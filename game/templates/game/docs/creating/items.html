@@ -1,0 +1,58 @@
+
+<div class="container">
+  <h3>Items</h3>
+  <p>
+    An Item is a named, interactable object within your world. They can be picked up inspected, given to or received from friends or dropped by enemies. They can also be defined as in a room but not takeable.
+  </p>
+  <h4>Descriptions</h4>
+  <p>There are two ways of describing an item.</p>
+  <p>
+    The first way is the actual description of the item as the player will see if they inspect it in their inventory or in the location it's found.
+  </p>
+  <p>
+    The second is how the item should be described when the player is presented with the description of the room. This is know as the "In Room Description" and is added onto the end of the room's description.
+  </p>
+  <h4>Item Type</h4>
+  <p>When creating an item, you can select the type of the item. This will define what can be done with the item in the world.</p>
+  <p>A Generic item is just any old item, from a cabbage to a letter to a pile of gold. These items have no definite purpose but may still be dropped by enemies or given to/received from friends.</p>
+  <p>An item defined as a Key can be used in a "Use" command to unlock a connection between two locations. This could be a keycard, or a literal key or a stone tablet placed into an alter.</p>
+  <p>A Container is an item that can store one or more other items and can be used in an "Open" command to retrieve the items inside. For example a box, or a treasure chest.</p>
+  <p>A Weapon is an item that must have a defined damage it can deal as these items can be used in combat against enemies. "The Sword of Destiny" is a weapon that deals great blows to your foes.</p>
+  <h4>Item Location</h4>
+  <p>There are five ways of defining how a player can come across an item in your world.</p>
+  <ul>
+    <li>
+      One is that they can simply start with the item in their inventory as soon as they begin the adventure.
+      <ul>
+        <li>This can be defined by checking the "Is Starting item" box on item creation</li>
+      </ul>
+    </li>
+    <li>
+      Another is it can be found in a room they enter.
+      <ul>
+        <li>This can be defined by adding the room during creation</li>
+      </ul>
+    </li>
+    <li>The player could also open an item that contains the item.</li>
+      <ul>
+        <li>This can be achieved by adding the container as the "Contained within" field in the item creation</li>
+      </ul>
+    <li>
+      Through a conversation with a Friend the player could receive an item.
+      <ul>
+        <li>This can be done during the setup of the Friends dialogue options.</li>
+      </ul>
+    </li>
+    <li>
+      Finally, the player could defeat an enemy and on death they drop an item.
+      <ul>
+        <li>This is setup when creating an enemy, at which point the item can be added to the enemy's drops.</li>
+      </ul>
+    </li>
+  </ul>
+  <p>The only times where the "In Room Description" is relevant is for if the item is found in a room, or an enemy drops the item. In the other cases, the base Description is the only one the player will see.</p>
+  <h4>Example</h4>
+  <p>
+    You have an item you have named The sword of Destiny. Accepted names for the item include "sword" and "weapon". You want to delay the discovery by the player that this is "The Sword of Destiny" so you add an in room description of "An inconspicuous sword lies on the ground" but a base description of "It's the sword of Destiny! Many tales are told of it's brilliance".
+  </p>
+</div>
