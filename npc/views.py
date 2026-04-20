@@ -489,7 +489,7 @@ def create_dialogue(request, friend_pk=None, parent_pk=None):
             "parent_option": parent_option,
             "friend": friend,
             "editing": False,
-            "is_alternative_starting_point": is_alternative_starting_point,
+            "is_new_starting_point": is_new_starting_point,
             "links": [
                 (
                     "back to dialogue tree",
