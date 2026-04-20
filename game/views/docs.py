@@ -38,5 +38,4 @@ def creating_documentation_home(request):
                 ("ENDSTATES", "End States", "game/docs/creating/endstates.html"),
             ]
         },
-
     )
