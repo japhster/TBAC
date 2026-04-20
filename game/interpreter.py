@@ -40,12 +40,12 @@ def get_room_pk(request, session, command, args):
         if room.matches(args) or direction.lower() == args.lower():
             return room.pk
 
-    for room in locked_rooms:
+    for room, direction in locked_rooms:
         if room.matches(args) or direction.lower() == args.lower():
             messages.add_message(request, messages.INFO, f"That way is locked.")
             return
 
-    for room in blocked_rooms:
+    for room, direction in blocked_rooms:
         if room.matches(args) or direction.lower() == args.lower():
             messages.add_message(
                 request, messages.INFO, f"That way requires something to access."
