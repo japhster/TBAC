@@ -12,7 +12,8 @@ EXPECTED_JSON_KEYS = [
     "friends",
     "friend_accepts_items",
     "friend_dialogue_options",
-    "friend_gifts",
+    "friend_gifts", 
+    "friend_name_changes",
     "game",
     "items",
     "rooms",
@@ -113,6 +114,9 @@ def get_export_data(game):
         "enemy_drops": list(game.enemy_drops.base().values("enemy", "item")),
         "friend_gifts": list(
             game.friend_gifts.base().values("friend", "item", "dialogue_option")
+        ),
+        "friend_name_changes": list(
+            game.friend_name_changes.base().values("friend", "dialogue_option", "new_name", "new_accepted_names","new_description","new_in_room_description")
         ),
         "friend_accepts_items": [
             {
@@ -307,6 +311,17 @@ def import_game(file, imported_by):
             friend=friends[gift_row["friend"]],
             item=items[gift_row["item"]],
             dialogue_option=dialogue[gift_row["dialogue_option"]],
+        )
+
+    for name_change_row in data["friend_name_changes"]:
+        models.FriendNameChange.objects.create(
+            game=game,
+            friend=friends[name_change_row["friend"]],
+            dialogue_option=dialogue[name_change_row["dialogue_option"]],
+            new_name=name_change_row["new_name"],
+            new_accepted_names=name_change_row["new_accepted_names"],
+            new_description=name_change_row["new_description"],
+            new_in_room_description=name_change_row["new_in_room_description"],
         )
 
     for accepted_row in data["friend_accepts_items"]:
