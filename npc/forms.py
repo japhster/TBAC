@@ -94,8 +94,7 @@ class FriendNameChangeForm(forms.Form):
         required=False,
     )
     new_in_room_description = forms.CharField(
-        widget=forms.Textarea(attrs={"class": "form-control"}),
-        required=False
+        widget=forms.Textarea(attrs={"class": "form-control"}), required=False
     )
     dialogue_option = forms.ModelChoiceField(
         queryset=models.FriendDialogueOption.objects.none(),
@@ -104,7 +103,9 @@ class FriendNameChangeForm(forms.Form):
 
     def __init__(self, *args, friend_pk, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields["dialogue_option"].queryset = models.FriendDialogueOption.objects.base().filter(
+        self.fields[
+            "dialogue_option"
+        ].queryset = models.FriendDialogueOption.objects.base().filter(
             friend_id=friend_pk
         )
 

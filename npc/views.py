@@ -148,10 +148,10 @@ def add_name_change_to_friend(request, friend_pk):
             game=friend.game,
             friend=friend,
             dialogue_option=form.cleaned_data["dialogue_option"],
-            new_name = form.cleaned_data["new_name"],
-            new_accepted_names = form.cleaned_data["new_accepted_names"],
-            new_description = form.cleaned_data["new_description"],
-            new_in_room_description = form.cleaned_data["new_in_room_description"],
+            new_name=form.cleaned_data["new_name"],
+            new_accepted_names=form.cleaned_data["new_accepted_names"],
+            new_description=form.cleaned_data["new_description"],
+            new_in_room_description=form.cleaned_data["new_in_room_description"],
         )
         return _friend_redirect(friend_pk)
 
@@ -160,6 +160,7 @@ def add_name_change_to_friend(request, friend_pk):
         "npc/friend_name_change_form.html",
         context={"friend": friend, "form": form},
     )
+
 
 @login_required
 def edit_name_change_for_friend(request, name_change_pk):
@@ -182,11 +183,13 @@ def edit_name_change_for_friend(request, name_change_pk):
     )
 
     if request.method == "POST" and form.is_valid():
-        name_change.dialogue_option=form.cleaned_data["dialogue_option"]
+        name_change.dialogue_option = form.cleaned_data["dialogue_option"]
         name_change.new_name = form.cleaned_data["new_name"]
         name_change.new_accepted_names = form.cleaned_data["new_accepted_names"]
         name_change.new_description = form.cleaned_data["new_description"]
-        name_change.new_in_room_description = form.cleaned_data["new_in_room_description"]
+        name_change.new_in_room_description = form.cleaned_data[
+            "new_in_room_description"
+        ]
         name_change.save()
 
         return _friend_redirect(name_change.friend_id)
@@ -196,7 +199,7 @@ def edit_name_change_for_friend(request, name_change_pk):
         "npc/friend_name_change_form.html",
         context={"friend": name_change.friend, "form": form},
     )
-            
+
 
 @login_required
 def add_accepted_item_to_friend(request, friend_pk):

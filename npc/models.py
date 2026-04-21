@@ -120,7 +120,9 @@ class FriendNameChange(models.Model):
     game = models.ForeignKey(
         "game.Game", related_name="friend_name_changes", on_delete=models.CASCADE
     )
-    friend = models.ForeignKey("Friend", related_name="name_changes", on_delete=models.CASCADE)
+    friend = models.ForeignKey(
+        "Friend", related_name="name_changes", on_delete=models.CASCADE
+    )
     dialogue_option = models.OneToOneField(
         "FriendDialogueOption",
         related_name="name_change",
@@ -229,7 +231,7 @@ class FriendDialogueOption(models.Model):
             new_value = getattr(name_change, f"new_{field}")
             if new_value:
                 setattr(self.friend, field, new_value)
-            
+
             self.friend.save()
 
     def __str__(self):
