@@ -6,6 +6,7 @@ A Django project that provides a website for both playing and creating text-base
 Run these commands:
 ```
 python pip install -r requirements.txt
+python manage.py makemigrations
 python manage.py createsuperuser
 python manage.py runserver
 ```
