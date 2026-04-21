@@ -20,6 +20,16 @@ urlpatterns = [
         views.edit_accepted_item,
         name="edit_accepted_item",
     ),
+    path(
+        "friend/name_change/new/<int:friend_pk>/",
+        views.add_name_change_to_friend,
+        name="add_name_change",
+    ),
+    path(
+        "friend/name_change/edit/<int:name_change_pk>/",
+        views.edit_name_change_for_friend,
+        name="edit_name_change",
+    ),
     # enemy urls
     path("enemy/detail/<int:enemy_pk>", views.enemy_detail, name="enemy"),
     path("enemy/new/<int:game_pk>/", views.create_enemy, name="new_enemy"),

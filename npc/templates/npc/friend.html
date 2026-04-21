@@ -29,24 +29,50 @@
     </tr>
   </table>
 
-  <table class="table">
-    <thead>
-      <tr><th><a href="{% url 'npc:add_accepted_item' friend.pk %}">+ new accepted item</a></th></tr>
-      <tr><th>Accepted Gifts</th></tr>
-    </thead>
-    <tbody>
-      {% for accepted_item in friend.items_accepted.all %}
-        <tr>
-          <th>
-            <a href="{% url 'npc:edit_accepted_item' accepted_item.pk %}">{{ accepted_item.item.name }}</a>
-          </th>
-        </tr>
-      {% empty %}
-        <tr>
-          <th>No Items are accepted by this friend</th>
-      {% endfor %}
-    </tbody>
-  </table>
+
+  <div class="row mt-4">
+    <div class="col-sm-6">
+      <table class="table">
+        <thead>
+          <tr><th><a href="{% url 'npc:add_accepted_item' friend.pk %}">+ new accepted item</a></th></tr>
+          <tr><th>Accepted Gifts</th></tr>
+        </thead>
+        <tbody>
+          {% for accepted_item in friend.items_accepted.all %}
+            <tr>
+              <th>
+                <a href="{% url 'npc:edit_accepted_item' accepted_item.pk %}">{{ accepted_item.item.name }}</a>
+              </th>
+            </tr>
+          {% empty %}
+            <tr>
+              <th>No Items are accepted by this friend</th>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    <div class="col-sm-6">
+      <table class="table">
+        <thead>
+          <tr><th><a href="{% url 'npc:add_name_change' friend.pk %}">+ new name change</a></th></tr>
+          <tr><th>Name Changes</th></tr>
+        </thead>
+        <tbody>
+          {% for name_change in friend.name_changes.all %}
+            <tr>
+              <th>
+                <a href="{% url 'npc:edit_name_change' name_change.pk %}">{{ name_change.new_name }}</a>
+              </th>
+            </tr>
+          {% empty %}
+            <tr>
+              <th>No name changes can happen with this friend</th>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
 </div>
 
 {% endblock %}

@@ -80,6 +80,35 @@ class FriendForm(forms.Form):
         )
 
 
+class FriendNameChangeForm(forms.Form):
+    new_name = forms.CharField(
+        widget=forms.TextInput(attrs={"class": "form-control"}),
+        required=False,
+    )
+    new_accepted_names = forms.CharField(
+        widget=forms.TextInput(attrs={"class": "form-control"}),
+        required=False,
+    )
+    new_description = forms.CharField(
+        widget=forms.Textarea(attrs={"class": "form-control"}),
+        required=False,
+    )
+    new_in_room_description = forms.CharField(
+        widget=forms.Textarea(attrs={"class": "form-control"}),
+        required=False
+    )
+    dialogue_option = forms.ModelChoiceField(
+        queryset=models.FriendDialogueOption.objects.none(),
+        widget=forms.Select(attrs={"class": "form-control"}),
+    )
+
+    def __init__(self, *args, friend_pk, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["dialogue_option"].queryset = models.FriendDialogueOption.objects.base().filter(
+            friend_id=friend_pk
+        )
+
+
 class EnemyForm(mixins.DamageForm):
     name = forms.CharField(
         widget=forms.TextInput(attrs={"class": "form-control"}),

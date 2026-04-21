@@ -136,6 +136,69 @@ def add_gift_to_dialogue(request, dialogue_pk):
 
 
 @login_required
+def add_name_change_to_friend(request, friend_pk):
+    friend = get_object_or_404(
+        models.Friend.objects.all(), pk=friend_pk, game__created_by=request.user
+    )
+
+    form = forms.FriendNameChangeForm(request.POST or None, friend_pk=friend.pk)
+
+    if request.method == "POST" and form.is_valid():
+        models.FriendNameChange.objects.create(
+            game=friend.game,
+            friend=friend,
+            dialogue_option=form.cleaned_data["dialogue_option"],
+            new_name = form.cleaned_data["new_name"],
+            new_accepted_names = form.cleaned_data["new_accepted_names"],
+            new_description = form.cleaned_data["new_description"],
+            new_in_room_description = form.cleaned_data["new_in_room_description"],
+        )
+        return _friend_redirect(friend_pk)
+
+    return render(
+        request,
+        "npc/friend_name_change_form.html",
+        context={"friend": friend, "form": form},
+    )
+
+@login_required
+def edit_name_change_for_friend(request, name_change_pk):
+    name_change = get_object_or_404(
+        models.FriendNameChange.objects.all(),
+        pk=name_change_pk,
+        game__created_by=request.user,
+    )
+
+    form = forms.FriendNameChangeForm(
+        request.POST or None,
+        friend_pk=name_change.friend.pk,
+        initial={
+            "dialogue_option": name_change.dialogue_option.pk,
+            "new_name": name_change.new_name,
+            "new_accepted_names": name_change.new_accepted_names,
+            "new_description": name_change.new_description,
+            "new_in_room_description": name_change.new_in_room_description,
+        },
+    )
+
+    if request.method == "POST" and form.is_valid():
+        name_change.dialogue_option=form.cleaned_data["dialogue_option"]
+        name_change.new_name = form.cleaned_data["new_name"]
+        name_change.new_accepted_names = form.cleaned_data["new_accepted_names"]
+        name_change.new_description = form.cleaned_data["new_description"]
+        name_change.new_in_room_description = form.cleaned_data["new_in_room_description"]
+        name_change.save()
+
+        return _friend_redirect(name_change.friend_id)
+
+    return render(
+        request,
+        "npc/friend_name_change_form.html",
+        context={"friend": name_change.friend, "form": form},
+    )
+            
+
+@login_required
 def add_accepted_item_to_friend(request, friend_pk):
     friend = get_object_or_404(
         models.Friend.objects.all(), pk=friend_pk, game__created_by=request.user

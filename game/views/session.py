@@ -219,6 +219,13 @@ def start_new_session(request, game_pk):
         gift.session = session
         gift.save()
 
+    for name_change in game.friend_name_changes.base():
+        name_change.pk = None
+        name_change.friend_id = friend_map[name_change.friend.pk]
+        name_change.dialogue_option_id = dialogue_map[name_change.dialogue_option.pk]
+        name_change.session = session
+        name_change.save()
+
     enemy_map = {}
 
     for enemy in game.enemies.base():
@@ -615,6 +622,7 @@ def friend_discussion(request, session_pk, dialogue_pk):
     dialogue = get_object_or_404(session.friend_dialogue_options, pk=dialogue_pk)
 
     dialogue.receive_gifts()
+    dialogue.activate_name_change()
 
     return render(
         request,

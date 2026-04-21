@@ -116,6 +116,36 @@ class FriendGift(models.Model):
     objects = mixins.SessionManager()
 
 
+class FriendNameChange(models.Model):
+    game = models.ForeignKey(
+        "game.Game", related_name="friend_name_changes", on_delete=models.CASCADE
+    )
+    friend = models.ForeignKey("Friend", related_name="name_changes", on_delete=models.CASCADE)
+    dialogue_option = models.OneToOneField(
+        "FriendDialogueOption",
+        related_name="name_change",
+        on_delete=models.CASCADE,
+        null=True,
+    )
+
+    new_name = models.CharField(max_length=250)
+    new_accepted_names = models.CharField(max_length=1000)
+    new_description = models.CharField(max_length=1000)
+    new_in_room_description = models.CharField(max_length=1000)
+
+    # session tracking
+    session = models.ForeignKey(
+        "game.Session",
+        related_name="friend_name_changes",
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+    )
+    already_changed = models.BooleanField(default=False)
+
+    objects = mixins.SessionManager()
+
+
 class FriendAcceptsItem(models.Model):
     game = models.ForeignKey(
         "game.Game", related_name="friend_items_accepted", on_delete=models.CASCADE
@@ -189,6 +219,18 @@ class FriendDialogueOption(models.Model):
             in_inventory=True
         )
         self.gifts.update(already_gifted=True)
+
+    def activate_name_change(self):
+        name_change = getattr(self, "name_change", None)
+        if name_change is None:
+            return
+
+        for field in ["name", "accepted_names", "description", "in_room_description"]:
+            new_value = getattr(name_change, f"new_{field}")
+            if new_value:
+                setattr(self.friend, field, new_value)
+            
+            self.friend.save()
 
     def __str__(self):
         return self.text

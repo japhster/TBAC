@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+
+{% block page_title %}Name Change{% endblock %}
+
+{% block content %}
+<div class="container">
+  <form method="POST">
+    {% csrf_token %}
+    <table class="table">
+      <tr>
+        <th>Dialogue Option</th>
+        <td>{{ form.dialogue_option }} {{ form.dialogue_option.errors.as_text }}</td>
+      </tr>
+      <tr>
+        <th>New Name</th>
+        <td>{{ form.new_name }} {{ form.new_name.errors.as_text }}</td>
+      </tr>
+      <tr>
+        <th>New Accepted Names (comma separated)</th>
+        <td>{{ form.new_accepted_names }} {{ form.new_accepted_names.errors.as_text }}</td>
+      </tr>
+      <tr>
+        <th>New Description</th>
+        <td>{{ form.new_description }} {{ form.new_description.errors.as_text }}</td>
+      </tr>
+      <tr>
+        <th>New In Room Description</th>
+        <td>{{ form.new_in_room_description }} {{ form.new_in_room_description.errors.as_text }}</td>
+      </tr>
+      <tr>
+        <th colspan=2 class="text-center">
+          {% for error in form.non_field_errors %}
+            <p>{{ error }}</p>
+          {% endfor %}
+          <button type="submit" class="btn btn-primary">
+            {% if editing %}Update{% else %}Create{% endif %}
+          </button>
+        </th>
+      </tr>
+    </table>
+  </form>
+</div>
+
+{% endblock %}
