@@ -3,7 +3,9 @@
 
 {% block window %}
   <div class="container">
-    <p>{{ dialogue_option.text }}</p>
+    <h3>{{ dialogue_option.friend.name }}</h3>
+    <p>{{ dialogue_option.friend.description }}</p>
+    <p>"{{ dialogue_option.text }}"</p>
 
     <ul class="list-group list-group-flush">
       {% for option in dialogue_option.sub_options.all %}
