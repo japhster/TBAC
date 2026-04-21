@@ -27,6 +27,14 @@
       <th>Auto Fight</th>
       <td>{{ enemy.auto_fight | yesno | title }}</td>
     </tr>
+    <tr>
+      <th>Starting Health</th>
+      <td>{{ enemy.health }}</td>
+    </tr>
+    <tr>
+      <th>Damage</th>
+      <td>{{ enemy.damage.get_display }}</td>
+    </tr>
   </table>
   <table class="table">
     <thead>

@@ -231,7 +231,10 @@ class DamageOutput(models.Model):
     def get_damage(self):
         return random.randint(self.min_damage, self.max_damage)
 
-    def __str__(self):
+    def get_display(self):
         if self.min_damage == self.max_damage:
-            return f"({self.min_damage})"
-        return f"({self.min_damage} - {self.max_damage})"
+            return f"{self.min_damage}"
+        return f"{self.min_damage} - {self.max_damage}"
+
+    def __str__(self):
+        return f"({self.get_display()})"
