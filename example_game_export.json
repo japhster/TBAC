@@ -50,7 +50,7 @@
       "pk": 2222,
       "name": "Thunder Road",
       "accepted_names": "road,outside",
-      "description": "It's a very noisy road with a lot of foot traffic and carts travelling up and down. No one is in the mood for chatter as they go about their day. It's also the road on which you find your house. Most of the people you see are heading towards the Zaralaam square.",
+      "description": "It's a very noisy road with a lot of foot traffic and carts travelling up and down. No one is in the mood for chatter as they go about their day. It's also the road on which you find your house. Most of the people you see are heading east towards the Zaralaam square.",
       "visited_description": "",
       "required_items": []
     },
@@ -58,7 +58,7 @@
       "pk": 2231,
       "name": "Zaralaam Square",
       "accepted_names": "square",
-      "description": "It's the centre of the city where everyone gathers to do anything. The Notice board is here where you should be able to pick up a job. You recognise the familiar sight of Thunder road and on the opposite side of the square is a dark looking side street which everyone seems to ignore. A short road to the south leads to the city exit through the Tri-Horned Gate. Opposite the gate lies a beautiful sparkling road know as Stardust Road",
+      "description": "It's the centre of the city where everyone gathers to do anything. The Notice board is here where you should be able to pick up a job. You recognise the familiar sight of to the west Thunder road and on the opposite side of the square is a dark looking side street which everyone seems to ignore. A short road to the south leads to the city exit through the Tri-Horned Gate. Opposite the gate lies a beautiful sparkling road know as Stardust Road",
       "visited_description": "",
       "required_items": []
     },
@@ -74,7 +74,7 @@
       "pk": 2233,
       "name": "Tri-Horned Gate",
       "accepted_names": "gate",
-      "description": "An imposing structure of stone with a metal gate blocking entrance and exit to the city Three large spikes of metal exit the stone work one on each side of the gate and the third above it. Two guards stand either side of the gate. By walking away from the gate you can get back to the Zaralaam Square. Going through the gate takes you to the outskirts of the city.",
+      "description": "An imposing structure of stone with a metal gate blocking entrance and exit to the city Three large spikes of metal exit the stone work one on each side of the gate and the third above it. Two guards stand either side of the gate. By going back north you can get back to the Zaralaam Square. Going south through the gate takes you to the outskirts of the city.",
       "visited_description": "",
       "required_items": []
     },
@@ -92,7 +92,7 @@
       "pk": 2235,
       "name": "Stardust Road",
       "accepted_names": "stardust",
-      "description": "The long road sparkles in the light it leads to the Impressive Palace of the Sun, with it's giant doors visible all the way down the road. On the opposite end of the road lies the Zaralaam Square.",
+      "description": "The long road sparkles in the light. Following it north leads to the impressive Palace of the Sun, with it's giant doors visible all the way down the road. On the opposite end of the road lies the Zaralaam Square.",
       "visited_description": "",
       "required_items": []
     },
@@ -100,8 +100,8 @@
       "pk": 2237,
       "name": "Deep Forest",
       "accepted_names": "Deeper,Forest,Deep,deep into the forest,deeper into the forest",
-      "description": "You are so deep in the forest it's hard to figure out which way you're going and where you've come from. It may be your imagination but you think you can see it gets brighter up ahead, which makes you believe there must be a clearing near. You know that heading in the opposite direction of this possible clearing must take you back to the forest entrance.",
-      "visited_description": "You are in the deepest depths of the forest, one way leads you to a clearing and the other leads you back to the entrance of the forest.",
+      "description": "You are in the deepest depths of the forest. It's so dark here you can hardly tell which way you've come from and which way is forward. The only indication of something to find is a faint light to the south that indicates a clearing of some sorts.",
+      "visited_description": "You are in the deepest depths of the forest, going south leads you to a clearing and going north leads you back to the entrance of the forest.",
       "required_items": []
     },
     {
