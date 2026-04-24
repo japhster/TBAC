@@ -87,3 +87,11 @@ class CommandForm(forms.Form):
 
 class GameImportForm(forms.Form):
     file = forms.FileField()
+
+
+class CurrencyForm(forms.Form):
+    name = forms.CharField(widget=forms.TextInput(attrs={"class": "form-control"}))
+    starting_amount = forms.IntegerField(
+        widget=forms.TextInput(attrs={"class": "form-control"}),
+        initial=0,
+    )

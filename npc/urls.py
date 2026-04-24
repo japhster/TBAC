@@ -30,6 +30,17 @@ urlpatterns = [
         views.edit_name_change_for_friend,
         name="edit_name_change",
     ),
+    # shopkeeper urls
+    path(
+        "shopkeeper/<int:shopkeeper_pk>/store_items/add/",
+        views.add_store_item_to_shopkeeper,
+        name="add_store_item",
+    ),
+    path(
+        "shopkeeper/store_items/edit/<int:accepted_item_pk>/",
+        views.edit_store_item,
+        name="edit_store_item",
+    ),
     # enemy urls
     path("enemy/detail/<int:enemy_pk>", views.enemy_detail, name="enemy"),
     path("enemy/new/<int:game_pk>/", views.create_enemy, name="new_enemy"),

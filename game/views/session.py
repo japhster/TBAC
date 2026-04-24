@@ -130,6 +130,14 @@ def start_new_session(request, game_pk):
             session.save()
         room_map[old_pk] = room.pk
 
+    for currency in game.currencies.all():
+        models.WalletItem.objects.create(
+            session=session,
+            currency=currency,
+            value=currency.starting_amount,
+            player=player,
+        )
+
     # a map of the old item pk to the new item pk
     item_map = {}
 
@@ -225,6 +233,13 @@ def start_new_session(request, game_pk):
         name_change.dialogue_option_id = dialogue_map[name_change.dialogue_option.pk]
         name_change.session = session
         name_change.save()
+
+    for shopkeeper_item in game.shopkeeper_items.base():
+        shopkeeper_item.pk = None
+        shopkeeper_item.shopkeeper_id = friend_map[shopkeeper_item.shopkeeper.pk]
+        shopkeeper_item.item_id = item_map[shopkeeper_item.item.pk]
+        shopkeeper_item.session = session
+        shopkeeper_item.save()
 
     enemy_map = {}
 
@@ -593,7 +608,7 @@ def talk_to_friend(request, session_pk, friend_pk):
     )
 
     if friend.room == session.current_location:
-        if friend.dialogue_options.count() == 1:
+        if friend.dialogue_options.count() == 1 and not friend.store_inventory.exists():
             dialogue_option = friend.dialogue_options.get()
             dialogue_option.receive_gifts()
             messages.add_message(
@@ -631,6 +646,7 @@ def friend_discussion(request, session_pk, dialogue_pk):
             "game": session.game,
             "session": session,
             "dialogue_option": dialogue,
+            "friend": dialogue.friend,
         },
     )
 
@@ -651,3 +667,69 @@ def give_item_to_friend(request, session_pk, accepted_item_pk):
     )
 
     return _session_redirect(session_pk)
+
+
+@login_required
+def view_store_items(request, session_pk, shopkeeper_pk):
+    session = get_object_or_404(models.Session, pk=session_pk)
+    shopkeeper = get_object_or_404(
+        session.friends.prefetch_related(
+            "store_inventory", "store_inventory__item", "store_inventory__currency"
+        ),
+        pk=shopkeeper_pk,
+    )
+
+    return render(
+        request,
+        "game/session/store.html",
+        context={
+            "game": session.game,
+            "session": session,
+            "shopkeeper": shopkeeper,
+            "player": session.player,
+        },
+    )
+
+
+@login_required
+def buy_item(request, session_pk, store_item_pk):
+    session = get_object_or_404(models.Session, pk=session_pk)
+    store_item = get_object_or_404(session.shopkeeper_items, pk=store_item_pk)
+
+    wallet_item = session.player.wallet.get(currency=store_item.currency)
+
+    if store_item.price > wallet_item.value:
+        messages.add_message(
+            request,
+            messages.INFO,
+            f"You don't have enough money to purchase {store_item.item.name}",
+        )
+
+        return helpers.custom_redirect(
+            "game:store",
+            kwargs={
+                "session_pk": session_pk,
+                "shopkeeper_pk": store_item.shopkeeper.pk,
+            },
+        )
+
+    messages.add_message(
+        request,
+        messages.INFO,
+        f"You bought {store_item.item.name}",
+    )
+
+    item = store_item.item
+    item.in_inventory = True
+    item.save()
+
+    store_item.sold = True
+    store_item.save()
+
+    wallet_item.value -= store_item.price
+    wallet_item.save()
+
+    return helpers.custom_redirect(
+        "game:store",
+        kwargs={"session_pk": session_pk, "shopkeeper_pk": store_item.shopkeeper.pk},
+    )

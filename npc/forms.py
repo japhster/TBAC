@@ -1,4 +1,5 @@
 from django import forms
+from django.core import validators
 
 from tbac import models, mixins
 
@@ -159,3 +160,37 @@ class DialogueForm(forms.Form):
         widget=forms.CheckboxInput(attrs={"class": "form-check-input"}),
         required=False,
     )
+
+
+class ShopkeeperItemForm(forms.Form):
+    shopkeeper = forms.ModelChoiceField(
+        queryset=models.Friend.objects.none(),
+        widget=forms.Select(attrs={"class": "form-control"}),
+        required=False,
+    )
+    item = forms.ModelChoiceField(
+        queryset=models.Item.objects.none(),
+        widget=forms.Select(attrs={"class": "form-control"}),
+        required=False,
+    )
+    currency = forms.ModelChoiceField(
+        queryset=models.Currency.objects.none(),
+        widget=forms.Select(attrs={"class": "form-control"}),
+        required=False,
+    )
+    price = forms.IntegerField(
+        widget=forms.TextInput(attrs={"class": "form-control"}),
+        validators=[validators.MinValueValidator(0)],
+    )
+
+    def __init__(self, *args, game_pk, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["shopkeeper"].queryset = models.Friend.objects.base().filter(
+            game_id=game_pk
+        )
+        self.fields["item"].queryset = models.Item.objects.base().filter(
+            game_id=game_pk
+        )
+        self.fields["currency"].queryset = models.Currency.objects.filter(
+            game_id=game_pk
+        )

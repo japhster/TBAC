@@ -25,7 +25,7 @@ def friend_detail(request, friend_pk):
     friend = get_object_or_404(
         models.Friend.objects.all()
         .select_related("game")
-        .prefetch_related("gifts", "gifts__item"),
+        .prefetch_related("gifts", "gifts__item", "store_inventory"),
         pk=friend_pk,
     )
     return render(
@@ -644,4 +644,87 @@ def show_dialogue(request, dialogue_pk):
 
     return helpers.custom_redirect(
         "npc:dialogue_list", kwargs={"friend_pk": dialogue.friend_id}
+    )
+
+
+@login_required
+def add_store_item_to_shopkeeper(request, shopkeeper_pk):
+    shopkeeper = get_object_or_404(
+        models.Friend.objects.all(), pk=shopkeeper_pk, game__created_by=request.user
+    )
+
+    form = forms.ShopkeeperItemForm(
+        request.POST or None,
+        game_pk=shopkeeper.game.pk,
+    )
+
+    if request.method == "POST" and form.is_valid():
+        store_item = models.ShopkeeperItem.objects.create(
+            game=shopkeeper.game,
+            shopkeeper=shopkeeper,
+            item=form.cleaned_data["item"],
+            price=form.cleaned_data["price"],
+            currency=form.cleaned_data["currency"],
+        )
+
+        return _friend_redirect(shopkeeper_pk)
+
+    return render(
+        request,
+        "npc/store_item_form.html",
+        context={
+            "shopkeeper": shopkeeper,
+            "form": form,
+            "links": [
+                (
+                    "back to friend",
+                    reverse("npc:friend", kwargs={"friend_pk": shopkeeper_pk}),
+                )
+            ],
+        },
+    )
+
+
+@login_required
+def edit_store_item(request, store_item_pk):
+    store_item = get_object_or_404(
+        models.ShopkeeperItem.objects.all(),
+        pk=store_item_pk,
+        game__created_by=request.user,
+    )
+
+    shopkeeper = store_item.shopkeeper
+
+    form = forms.ShopkeeperItemForm(
+        request.POST or None,
+        game_pk=shopkeeper.game.pk,
+        initial={
+            "item": store_item.item.pk,
+            "price": store_item.price,
+            "currency": store_item.currency.pk,
+        },
+    )
+
+    if request.method == "POST" and form.is_valid():
+        store_item.item = form.cleaned_data["item"]
+        store_item.price = form.cleaned_data["price"]
+        store_item.currency = form.cleaned_data["currency"]
+        store_item.save()
+
+        return _friend_redirect(shopkeeper.pk)
+
+    return render(
+        request,
+        "npc/store_item_form.html",
+        context={
+            "shopkeeper": shopkeeper,
+            "form": form,
+            "links": [
+                (
+                    "back to friend",
+                    reverse("npc:friend", kwargs={"friend_pk": shopkeeper.pk}),
+                )
+            ],
+            "editing": True,
+        },
     )

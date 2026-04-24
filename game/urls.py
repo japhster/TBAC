@@ -15,13 +15,17 @@ urlpatterns = [
     path("unpublish/<int:game_pk>/", views.unpublish_game, name="unpublish"),
     path("new/end_state/<int:game_pk>/", views.new_end_state, name="new_end_state"),
     path(
-        "edit/end_state/<int:end_state_pk>", views.edit_end_state, name="edit_end_state"
+        "edit/end_state/<int:end_state_pk>/",
+        views.edit_end_state,
+        name="edit_end_state",
     ),
     path(
         "delete/end_state/<int:end_state_pk>",
         views.delete_end_state,
         name="delete_end_state",
     ),
+    path("new/currency/<int:game_pk>/", views.new_currency, name="new_currency"),
+    path("edit/currency/<int:currency_pk>/", views.edit_currency, name="edit_currency"),
     path("export/<int:game_pk>/", views.export_game, name="export"),
     path("import/", views.import_game, name="import"),
     # session urls
@@ -105,6 +109,16 @@ urlpatterns = [
         "session/give/<int:session_pk>/<int:accepted_item_pk>/",
         views.give_item_to_friend,
         name="give",
+    ),
+    path(
+        "session/store/<int:session_pk>/<int:shopkeeper_pk>/",
+        views.view_store_items,
+        name="store",
+    ),
+    path(
+        "session/buy/<int:session_pk>/<int:store_item_pk>/",
+        views.buy_item,
+        name="buy",
     ),
     # doc views
     path(

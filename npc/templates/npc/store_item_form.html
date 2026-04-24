@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+
+{% block page_title %}
+  {% if editing %}
+    Store Item Editor
+  {% else %}
+    Add item to {{ shopkeeper.name }}'s Store
+  {% endif %}
+{% endblock %}
+
+{% block content %}
+
+<div class="container">
+  <form method="POST">
+    {% csrf_token %}
+    <table class="table table-fixed">
+      <tr>
+        <th>Item</th>
+        <td>{{ form.item }} {{ form.item.errors.as_text }}</td>
+      </tr>
+      <tr>
+        <th>Price</th>
+        <td>{{ form.price }} {{ form.price.errors.as_text }}</td>
+      </tr>
+      <tr>
+        <th>Currency</th>
+        <td>{{ form.currency }} {{ form.currency.errors.as_text }}</td>
+      </tr>
+      <tr>
+        <th colspan=2 class="text-center">
+          <button type="submit" class="btn btn-primary">
+            {% if editing %}Save{% else %}Add{% endif %}
+          </button>
+        </th>
+      </tr>
+    </table>
+  </form>
+</div>
+
+{% endblock %}

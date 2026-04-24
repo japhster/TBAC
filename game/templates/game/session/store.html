@@ -1,0 +1,32 @@
+{% extends "game/session/base.html" %}
+
+
+{% block window %}
+  <div class="container">
+    <h3>{{ shopkeeper.name }}</h3>
+    <p>{{ shopkeeper.description }}</p>
+    <p>
+      you have: {{ player.wallet.all | join:", " }}
+    </p>
+
+    <div class="container">
+      {% for message in messages %}
+        {% if message.level == DEFAULT_MESSAGE_LEVELS.INFO %}
+          <p>{{ message }}</p>
+        {% endif %}
+      {% endfor %}
+    </div>
+
+    <ul class="list-group list-group-flush">
+      {% for store_item in shopkeeper.store_inventory.all %}
+        {% if not store_item.sold %}
+          <li class="list-group-item">
+            <a href="{% url 'game:buy' session_pk=session.pk store_item_pk=store_item.pk %}">
+              {{ store_item.item.name }} - {{ store_item.price }} {{ store_item.currency }} 
+            </a>
+          </li>
+        {% endif %}
+      {% endfor %}
+      <li class="list-group-item"><a href="{% url 'game:play' session_pk=session.pk %}">Goodbye</a></li>
+  </div>
+{% endblock %}

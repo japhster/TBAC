@@ -3,11 +3,16 @@
 
 {% block window %}
   <div class="container">
-    <h3>{{ dialogue_option.friend.name }}</h3>
-    <p>{{ dialogue_option.friend.description }}</p>
+    <h3>{{ friend.name }}</h3>
+    <p>{{ friend.description }}</p>
     <p>"{{ dialogue_option.text }}"</p>
 
     <ul class="list-group list-group-flush">
+      {% if friend.store_inventory.all.exists %}
+        <li class="list-group-item">
+          <a href="{% url 'game:store' session_pk=session.pk shopkeeper_pk=friend.pk %}">Buy Items</a>
+        </li>
+      {% endif %}
       {% for option in dialogue_option.sub_options.all %}
         {% if not option.is_hidden %}
           <li class="list-group-item">

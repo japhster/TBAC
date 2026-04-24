@@ -236,3 +236,31 @@ class FriendDialogueOption(models.Model):
 
     def __str__(self):
         return self.text
+
+
+class ShopkeeperItem(models.Model):
+    game = models.ForeignKey(
+        "game.Game", related_name="shopkeeper_items", on_delete=models.CASCADE
+    )
+    shopkeeper = models.ForeignKey(
+        "Friend", related_name="store_inventory", on_delete=models.CASCADE
+    )
+    item = models.ForeignKey(
+        "item.Item", related_name="sold_by_shopkeeper", on_delete=models.CASCADE
+    )
+    price = models.PositiveIntegerField()
+    currency = models.ForeignKey(
+        "game.Currency", related_name="items", on_delete=models.CASCADE
+    )
+
+    # session tracking
+    session = models.ForeignKey(
+        "game.Session",
+        related_name="shopkeeper_items",
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+    )
+    sold = models.BooleanField(default=False)
+
+    objects = mixins.SessionManager()

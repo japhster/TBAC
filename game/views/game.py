@@ -39,7 +39,9 @@ def my_games(request):
 def game_dashboard(request, game_pk):
     game = get_object_or_404(
         models.Game.objects.filter(created_by=request.user)
-        .prefetch_related("rooms", "items", "friends", "enemies", "end_states")
+        .prefetch_related(
+            "rooms", "items", "friends", "enemies", "end_states"
+        )
         .select_related("start_room"),
         pk=game_pk,
     )
@@ -72,6 +74,7 @@ def game_dashboard(request, game_pk):
                 ("room", "Rooms"),
                 ("exit", "Room Connections"),
                 ("item", "Items"),
+                ("currency", "Currencies"),
                 ("friend", "Friends"),
                 ("enemy", "Enemies"),
                 ("endstate", "End States"),
@@ -283,5 +286,61 @@ def import_game(request):
             "links": [
                 ("back to my games", reverse("game:my_games")),
             ],
+        },
+    )
+
+
+@login_required
+def new_currency(request, game_pk):
+    game = get_object_or_404(models.Game, pk=game_pk, created_by=request.user)
+    form = forms.CurrencyForm(request.POST or None)
+    if request.method == "POST" and form.is_valid():
+        currency = models.Currency.objects.create(
+            name=form.cleaned_data["name"],
+            starting_amount=form.cleaned_data["starting_amount"],
+            game=game,
+        )
+
+        return HttpResponseRedirect(
+            reverse("game:dashboard", kwargs={"game_pk": game_pk})
+        )
+
+    return render(
+        request,
+        "game/currency_form.html",
+        context={
+            "form": form,
+            "game": game,
+            "editing": False,
+        },
+    )
+
+
+@login_required
+def edit_currency(request, currency_pk):
+    currency = get_object_or_404(
+        models.Currency, pk=currency_pk, game__created_by=request.user
+    )
+    form = forms.CurrencyForm(
+        request.POST or None,
+        initial={"name": currency.name, "starting_amount": currency.starting_amount},
+    )
+
+    if request.method == "POST" and form.is_valid():
+        currency.name = form.cleaned_data["name"]
+        currency.starting_amount = form.cleaned_data["starting_amount"]
+        currency.save()
+
+        return HttpResponseRedirect(
+            reverse("game:dashboard", kwargs={"game_pk": currency.game.pk})
+        )
+
+    return render(
+        request,
+        "game/currency_form.html",
+        context={
+            "form": form,
+            "game": currency.game,
+            "editing": True,
         },
     )

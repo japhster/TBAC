@@ -73,6 +73,32 @@
       </table>
     </div>
   </div>
+  <div class="row mt-4">
+    <div class="col-sm-12">
+      <table class="table table-fixed">
+        <thead>
+          <tr><th colspan=3><a href="{% url 'npc:add_store_item' friend.pk %}">+ new store item</a></th></tr>
+          <tr><th colspan=3>Sold Items</th></tr>
+          <tr><th>Item</th><th>Price</th><th>Currency</th></tr>
+        </thead>
+        <tbody>
+          {% for sold_item in friend.store_inventory.all %}
+            <tr>
+              <th>
+                <a href="{% url 'npc:edit_store_item' sold_item.pk %}">{{ sold_item.item.name }}</a>
+              </th>
+              <td>{{ sold_item.price }}</td>
+              <td>{{ sold_item.currency }}</td>
+            </tr>
+          {% empty %}
+            <tr>
+              <th colspan=3>No Items are sold by this shopkeeper</th>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
 </div>
+
 
 {% endblock %}

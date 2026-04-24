@@ -93,6 +93,30 @@ class Player(models.Model):
         return self.name
 
 
+class WalletItem(models.Model):
+    player = models.ForeignKey(
+        "Player", related_name="wallet", on_delete=models.CASCADE
+    )
+    value = models.PositiveIntegerField()
+    currency = models.ForeignKey(
+        "Currency", related_name="wallet", on_delete=models.CASCADE
+    )
+
+    # session tracking
+    session = models.ForeignKey(
+        "Session",
+        related_name="wallet_items",
+        on_delete=models.CASCADE,
+        null=True,
+        default=None,
+    )
+
+    objects = mixins.SessionManager()
+
+    def __str__(self):
+        return f"{self.value} {self.currency}"
+
+
 class Session(models.Model):
     game = models.ForeignKey("Game", related_name="sessions", on_delete=models.CASCADE)
     current_location = models.ForeignKey(
@@ -238,3 +262,14 @@ class DamageOutput(models.Model):
 
     def __str__(self):
         return f"({self.get_display()})"
+
+
+class Currency(models.Model):
+    name = models.CharField(max_length=250)
+    game = models.ForeignKey(
+        "Game", related_name="currencies", on_delete=models.CASCADE
+    )
+    starting_amount = models.PositiveIntegerField(default=0)
+
+    def __str__(self):
+        return self.name
