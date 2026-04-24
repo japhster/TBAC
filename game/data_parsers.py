@@ -12,7 +12,7 @@ EXPECTED_JSON_KEYS = [
     "friends",
     "friend_accepts_items",
     "friend_dialogue_options",
-    "friend_gifts", 
+    "friend_gifts",
     "friend_name_changes",
     "game",
     "items",
@@ -116,7 +116,14 @@ def get_export_data(game):
             game.friend_gifts.base().values("friend", "item", "dialogue_option")
         ),
         "friend_name_changes": list(
-            game.friend_name_changes.base().values("friend", "dialogue_option", "new_name", "new_accepted_names","new_description","new_in_room_description")
+            game.friend_name_changes.base().values(
+                "friend",
+                "dialogue_option",
+                "new_name",
+                "new_accepted_names",
+                "new_description",
+                "new_in_room_description",
+            )
         ),
         "friend_accepts_items": [
             {
