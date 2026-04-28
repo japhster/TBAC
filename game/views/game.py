@@ -39,9 +39,7 @@ def my_games(request):
 def game_dashboard(request, game_pk):
     game = get_object_or_404(
         models.Game.objects.filter(created_by=request.user)
-        .prefetch_related(
-            "rooms", "items", "friends", "enemies", "end_states"
-        )
+        .prefetch_related("rooms", "items", "friends", "enemies", "end_states")
         .select_related("start_room"),
         pk=game_pk,
     )
