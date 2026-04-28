@@ -58,7 +58,7 @@
       "pk": 2231,
       "name": "Zaralaam Square",
       "accepted_names": "square",
-      "description": "It's the centre of the city where everyone gathers to do anything. The Notice board is here where you should be able to pick up a job. You recognise the familiar sight of Thunder road and on the opposite side of the square is a dark looking side street which everyone seems to ignore. A short road to the south leads to the city exit through the Tri-Horned Gate. Opposite the gate lies a beautiful sparkling road know as Stardust Road",
+      "description": "It's the centre of the city where everyone gathers to do anything. The Notice board is here where you should be able to pick up a job. You recognise the familiar sight of Thunder road to the west and on the opposite side of the square is a dark looking side street which everyone seems to ignore. A short road to the south leads to the city exit through the Tri-Horned Gate. Opposite the gate lies a beautiful sparkling road know as Stardust Road. You can see an anvil sign hanging from a building which tells you that it's probably a blacksmith.",
       "visited_description": "",
       "required_items": []
     },
@@ -142,6 +142,22 @@
       "accepted_names": "forest",
       "description": "It's so dark and constricting it's hard to tell where you are. The only way you know which way to go is some slight light coming from a direction you know must be the city outskirts.",
       "visited_description": "",
+      "required_items": []
+    },
+    {
+      "pk": 2995,
+      "name": "Blacksmith",
+      "accepted_names": "",
+      "description": "You're in a dark room where the walls are completely covered in all sorts of weapons. Axes, swords, spears, daggers, and maces are displayed and you can tell just by looking at them they are the best creations in the city.",
+      "visited_description": "",
+      "required_items": []
+    },
+    {
+      "pk": 3094,
+      "name": "Balthazar's Bits and Bobs",
+      "accepted_names": "Balthazar,balthazar's,balthazars,bits and bobs",
+      "description": "You're in a shop that is absolutely heaving with items on uncountable shelves with such limited space between them you'll have to turn sideways to get down the aisles. Or at least that's what you thought you'd find in Balthazar's Bits and Bobs. In reality it's a very quiet and dusty shop with basically nothing on the shelves except cobwebs. An old man sits at the counter so shocked that someone has entered their store that he dropped a thick tome he was reading on the desk, causing a plume of dust particles to shoot into the air.",
+      "visited_description": "It's Balthazar's Bits and Bobs, it doesn't sell much but the store owner seems friendly - if a little eccentric.",
       "required_items": []
     }
   ],
@@ -241,6 +257,22 @@
       "key_required": null,
       "leave_room_1": "south",
       "leave_room_2": "north"
+    },
+    {
+      "room_1": 2231,
+      "room_2": 2995,
+      "is_locked": false,
+      "key_required": null,
+      "leave_room_1": "",
+      "leave_room_2": ""
+    },
+    {
+      "room_1": 2231,
+      "room_2": 3094,
+      "is_locked": false,
+      "key_required": null,
+      "leave_room_1": "",
+      "leave_room_2": ""
     }
   ],
   "items": [
@@ -260,7 +292,8 @@
       "container_discard_after_open": true,
       "container_open_name": "",
       "damage__min_damage": null,
-      "damage__max_damage": null
+      "damage__max_damage": null,
+      "healing": null
     },
     {
       "pk": 300,
@@ -278,7 +311,8 @@
       "container_discard_after_open": true,
       "container_open_name": "",
       "damage__min_damage": null,
-      "damage__max_damage": null
+      "damage__max_damage": null,
+      "healing": null
     },
     {
       "pk": 301,
@@ -296,7 +330,8 @@
       "container_discard_after_open": true,
       "container_open_name": "",
       "damage__min_damage": null,
-      "damage__max_damage": null
+      "damage__max_damage": null,
+      "healing": null
     },
     {
       "pk": 302,
@@ -314,7 +349,8 @@
       "container_discard_after_open": true,
       "container_open_name": "",
       "damage__min_damage": null,
-      "damage__max_damage": null
+      "damage__max_damage": null,
+      "healing": null
     },
     {
       "pk": 303,
@@ -332,7 +368,8 @@
       "container_discard_after_open": true,
       "container_open_name": "",
       "damage__min_damage": null,
-      "damage__max_damage": null
+      "damage__max_damage": null,
+      "healing": null
     },
     {
       "pk": 419,
@@ -350,7 +387,27 @@
       "container_discard_after_open": true,
       "container_open_name": "",
       "damage__min_damage": 20,
-      "damage__max_damage": 50
+      "damage__max_damage": 50,
+      "healing": null
+    },
+    {
+      "pk": 655,
+      "name": "Health Potion",
+      "accepted_names": "Potion,healing,healing potion",
+      "description": "It's a miraculous potion that can provided a health boost when used.",
+      "in_room_description": "a health potion sits on the ground",
+      "item_type": "HEALTH",
+      "room": null,
+      "can_be_taken": true,
+      "contained_within": null,
+      "is_starting_item": false,
+      "container_is_locked": false,
+      "container_key_required": null,
+      "container_discard_after_open": true,
+      "container_open_name": "",
+      "damage__min_damage": null,
+      "damage__max_damage": null,
+      "healing": 50
     }
   ],
   "friends": [
@@ -385,6 +442,22 @@
       "description": "An ornately armoured guard.",
       "in_room_description": "An ornately armoured guard stands at attention to the left of the doors.",
       "room": 2240
+    },
+    {
+      "pk": 244,
+      "name": "Ted",
+      "accepted_names": "blacksmith,smith",
+      "description": "It's Ted the blacksmith. He sells Swords.",
+      "in_room_description": "The most muscly man you have ever seen stands at an anvil banging on a lump of metal that you assume will become a deadly weapon of some kind.",
+      "room": 2995
+    },
+    {
+      "pk": 270,
+      "name": "Balthazar",
+      "accepted_names": "old man,shopkeeper",
+      "description": "A very old man who clearly doesn't interact much with the public.",
+      "in_room_description": ".",
+      "room": 3094
     }
   ],
   "enemies": [
@@ -621,6 +694,54 @@
       "talking_point": "",
       "can_back_out": true,
       "is_hidden": false
+    },
+    {
+      "pk": 884,
+      "friend": 244,
+      "requires_dialogue": null,
+      "text": "Hey, how can I help you?",
+      "talking_point": "",
+      "can_back_out": false,
+      "is_hidden": false
+    },
+    {
+      "pk": 975,
+      "friend": 270,
+      "requires_dialogue": null,
+      "text": "Hello! How can I help you today?",
+      "talking_point": "",
+      "can_back_out": true,
+      "is_hidden": false
+    },
+    {
+      "pk": 976,
+      "friend": 270,
+      "requires_dialogue": 975,
+      "text": "Yes well, you see, apparently no one has any need for bits and bobs these days. It's an unfortunate reality but does give me plenty of time to research my texts!",
+      "talking_point": "What's happened in here?",
+      "can_back_out": true,
+      "is_hidden": false
+    }
+  ],
+  "currencies": [
+    {
+      "pk": 2,
+      "name": "Gold",
+      "starting_amount": 150
+    }
+  ],
+  "shopkeeper_items": [
+    {
+      "shopkeeper": 244,
+      "item": 419,
+      "price": 100,
+      "currency": 2
+    },
+    {
+      "shopkeeper": 270,
+      "item": 655,
+      "price": 10,
+      "currency": 2
     }
   ]
 }
