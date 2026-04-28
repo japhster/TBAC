@@ -85,6 +85,7 @@ def get_export_data(game):
                 "container_open_name",
                 "damage__min_damage",
                 "damage__max_damage",
+                "healing",
             )
         ),
         "friends": list(
@@ -209,6 +210,7 @@ def import_game(file, imported_by):
             container_is_locked=item_row["container_is_locked"],
             container_discard_after_open=item_row["container_discard_after_open"],
             container_open_name=item_row["container_open_name"],
+            healing=item_row["healing"],
         )
         if item.item_type == models.Item.ItemTypeChoices.WEAPON:
             item.damage = models.DamageOutput.objects.create(
