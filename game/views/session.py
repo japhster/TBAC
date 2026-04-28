@@ -3,7 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404, render
 from django.db.models import Q
 
-from .. import constants, forms, interpreter
+from .. import actions, constants, forms, interpreter
 from item.models import Item
 from room.models import Exit, Room
 from tbac import helpers, models
@@ -449,22 +449,39 @@ def use_item(request, session_pk, item_pk):
     session = get_object_or_404(models.Session, pk=session_pk)
     item = get_object_or_404(session.items.all(), pk=item_pk)
 
-    if item.in_inventory and item.item_type == models.Item.ItemTypeChoices.KEY:
+    printable_item_name = item.name.replace("the", "").replace("The", "")
+
+    if not item.in_inventory:
+        messages.add_message(request, messages.INFO, f"You don't have that.")
+
+    if item.item_type == models.Item.ItemTypeChoices.KEY:
         unlocked = session.exits.filter(
             Q(room_1=session.current_location) | Q(room_2=session.current_location),
             key_required=item,
         ).update(is_locked=False)
         if unlocked:
             messages.add_message(
-                request, messages.INFO, f"You used the {item.name} to unlock the way."
+                request,
+                messages.INFO,
+                f"You used the {item.get_sentence_name()} to unlock the way.",
             )
         else:
             messages.add_message(
                 request, messages.INFO, f"That doesn't seem to do unlock anything here."
             )
+    if item.item_type == models.Item.ItemTypeChoices.HEALTH:
+        success = actions.heal_player(session.player, item)
+        if success:
+            messages.add_message(
+                request,
+                messages.INFO,
+                f"You used the {item.get_sentence_name()} to heal yourself.",
+            )
     else:
         messages.add_message(
-            request, messages.INFO, f"You don't know how to use the {item.name}"
+            request,
+            messages.INFO,
+            f"You don't know how to use the {item.get_sentence_name()}",
         )
 
     return _session_redirect(session_pk)
@@ -513,6 +530,18 @@ def fight_enemy(request, session_pk, enemy_pk):
         ]
     )
 
+    health_options = [
+        {
+            "item_pk": item.pk,
+            "item_name": item.name,
+            "healing_amount": item.healing,
+        }
+        for item in session.items.filter(
+            item_type=models.Item.ItemTypeChoices.HEALTH,
+            in_inventory=True,
+        )
+    ]
+
     return render(
         request,
         "game/session/fight.html",
@@ -521,6 +550,7 @@ def fight_enemy(request, session_pk, enemy_pk):
             "enemy": enemy,
             "player": player,
             "fight_options": fight_options,
+            "health_options": health_options,
             "enemy_health_bar_width": (enemy.current_health / enemy.health) * 100,
             "player_health_bar_width": (player.current_health / player.health) * 100,
         },
@@ -572,6 +602,20 @@ def enemy_attack(request, session_pk, enemy_pk):
                 "killed_by": enemy,
             },
         )
+
+    return helpers.custom_redirect(
+        "game:fight", kwargs={"session_pk": session_pk, "enemy_pk": enemy_pk}
+    )
+
+
+@login_required
+def heal_in_fight(request, session_pk, item_pk, enemy_pk):
+    session = get_object_or_404(models.Session, pk=session_pk)
+    healing_item = get_object_or_404(
+        session.items.all(), item_type=Item.ItemTypeChoices.HEALTH, pk=item_pk
+    )
+
+    actions.heal_player(session.player, healing_item)
 
     return helpers.custom_redirect(
         "game:fight", kwargs={"session_pk": session_pk, "enemy_pk": enemy_pk}

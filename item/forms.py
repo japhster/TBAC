@@ -46,6 +46,10 @@ class ItemForm(mixins.DamageForm):
         widget=forms.CheckboxInput(attrs={"class": "form-check-input"}),
         required=False,
     )
+    healing = forms.IntegerField(
+        widget=forms.TextInput(attrs={"class": "form-control"}),
+        required=False,
+    )
 
     def __init__(self, *args, game_pk, **kwargs):
         super().__init__(*args, **kwargs)
@@ -69,6 +73,11 @@ class ItemForm(mixins.DamageForm):
                     {
                         "max_damage": "Maximum damage is required if item type is 'Weapon'."
                     }
+                )
+        if cd["item_type"] == models.Item.ItemTypeChoices.HEALTH:
+            if cd.get("healing") is None:
+                raise forms.ValidationError(
+                    {"healing": "This field is required when creating a health item."}
                 )
 
         return cd

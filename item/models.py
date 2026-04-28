@@ -13,6 +13,7 @@ class Item(mixins.SearchableMixin):
         CONTAINER = ("CONTAINER", "Container")
         LIGHT = ("LIGHT", "Light Source")
         WEAPON = ("WEAPON", "Weapon")
+        HEALTH = ("HEALTH", "Health")
 
     description = models.CharField(max_length=1000)
     in_room_description = models.CharField(max_length=1000)
@@ -48,6 +49,9 @@ class Item(mixins.SearchableMixin):
     damage = models.OneToOneField(
         "game.DamageOutput", null=True, on_delete=models.CASCADE
     )
+
+    # specific details for Health Items
+    healing = models.IntegerField(default=None, null=True)
     # session tracking
     session = models.ForeignKey(
         "game.Session",
@@ -60,6 +64,12 @@ class Item(mixins.SearchableMixin):
     container_is_open = models.BooleanField(default=False)
 
     objects = mixins.SessionManager()
+
+    def get_sentence_name(self):
+        if self.name.lower().startswith("the"):
+            return self.name[4:]
+
+        return self.name
 
     def __str__(self):
         if self.container_is_open and self.container_open_name:

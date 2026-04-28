@@ -91,6 +91,11 @@ urlpatterns = [
         name="enemy_attack",
     ),
     path(
+        "session/heal/<int:session_pk>/<int:item_pk>/<int:enemy_pk>/",
+        views.heal_in_fight,
+        name="heal",
+    ),
+    path(
         "session/fight/<int:session_pk>/<int:enemy_pk>/success/",
         views.fight_won,
         name="fight_won",

@@ -60,6 +60,13 @@
           {{ form.contained_within.errors.as_text }}
         </td>
       </tr>
+      <tr class="hideable-item-row" item-type="HEALTH">
+        <th>Amount of Healing Provided</th>
+        <td>
+          {{ form.healing }}
+          {{ form.healing.errors.as_text }}
+        </td>
+      </tr>
       {% include "inclusions/damage_form.html" with item_type="WEAPON" %}
       <tr>
         <th colspan=2 class="text-center">
