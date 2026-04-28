@@ -42,9 +42,10 @@ PLAYING_SECTIONS = [
         "title": "Using Items",
         "commands": constants.COMMAND_OPTIONS[constants.USE_COMMAND],
         "content": [
-            "Currently the only items that have a 'use' function are keys. If you have a key in your inventory and use this command in the room that the key unlocks a door; the door will be unlocked."
+            "If you have a key in your inventory and use this command in the room that the key unlocks a door; the door will be unlocked.",
+            "If you have a healing item in your inventory and use this command then you will use the item and recover some health. Health items can also be used during combat so you do not have to use them in this way.",
         ],
-        "examples": ["Use key"],
+        "examples": ["Use key", "Use health potion"],
     },
     {
         "key": constants.INSPECT_COMMAND,
@@ -72,6 +73,7 @@ PLAYING_SECTIONS = [
             "When you find a friend in a location you're in, you can usually engage them in conversation.",
             "There are two types of conversations that can occur. Sometimes a friend will only have one thing they can say, in which case they will say the thing and you will be able to enter another command immediately. On the other hand, they may allow you to respond to their speech in which case dialogue options will appear and you can interact with them until you wish to leave - by selecting 'Goodbye'.",
             "In some cases conversing with a friend might result in you gaining some items, when you exit conversation with such friends, you'll find those items in your inventory.",
+            "Friends can also sell items for a price, if this is the case you'll find an option 'Buy Items' when you talk to them and this will provide the opportunity to shop.",
         ],
         "examples": ["Talk to the queen"],
     },
