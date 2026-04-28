@@ -1,6 +1,5 @@
 from game import constants
 
-
 PLAYING_SECTIONS = [
     {
         "key": "INTRO",

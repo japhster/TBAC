@@ -152,6 +152,23 @@ def get_export_data(game):
                 "is_hidden",
             )
         ),
+        "currencies": list(
+            models.Currency.objects.filter(game=game).values(
+                "pk",
+                "name",
+                "starting_amount",
+            )
+        ),
+        "shopkeeper_items": list(
+            models.ShopkeeperItem.objects.base()
+            .filter(game=game)
+            .values(
+                "shopkeeper",
+                "item",
+                "price",
+                "currency",
+            )
+        ),
     }
 
 
@@ -352,5 +369,22 @@ def import_game(file, imported_by):
             ]
         )
         accepted_item.save()
+
+    currencies = {}
+    for currency_row in data["currencies"]:
+        currencies[currency_row["pk"]] = new_currency = models.Currency.objects.create(
+            game=game,
+            name=currency_row["name"],
+            starting_amount=currency_row["starting_amount"],
+        )
+
+    for item_row in data["shopkeeper_items"]:
+        models.ShopkeeperItem.objects.create(
+            game=game,
+            shopkeeper=friends[item_row["shopkeeper"]],
+            item=items[item_row["item"]],
+            price=item_row["price"],
+            currency=currencies[item_row["currency"]],
+        )
 
     return game
