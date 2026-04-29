@@ -446,9 +446,9 @@
     {
       "pk": 244,
       "name": "Ted",
-      "accepted_names": "blacksmith,smith",
+      "accepted_names": "blacksmith,smith,man",
       "description": "It's Ted the blacksmith. He sells Swords.",
-      "in_room_description": "The most muscly man you have ever seen stands at an anvil banging on a lump of metal that you assume will become a deadly weapon of some kind.",
+      "in_room_description": "The most muscly man you have ever seen stands at an anvil banging on a lump of metal that you assume will become a deadly weapon of some kind. You know him as Ted.",
       "room": 2995
     },
     {
@@ -699,7 +699,7 @@
       "pk": 884,
       "friend": 244,
       "requires_dialogue": null,
-      "text": "Hey, how can I help you?",
+      "text": "Hey, how can I help you [PLAYER_NAME]?",
       "talking_point": "",
       "can_back_out": false,
       "is_hidden": false
