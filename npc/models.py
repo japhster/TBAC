@@ -234,6 +234,12 @@ class FriendDialogueOption(models.Model):
 
             self.friend.save()
 
+    def get_text_display(self):
+        if self.session is None:
+            return self.text
+
+        return self.text.replace("[PLAYER_NAME]", self.session.player.name)
+
     def __str__(self):
         return self.text
 

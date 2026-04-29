@@ -5,7 +5,7 @@
   <div class="container">
     <h3>{{ friend.name }}</h3>
     <p>{{ friend.description }}</p>
-    <p>"{{ dialogue_option.text }}"</p>
+    <p>"{{ dialogue_option.get_text_display }}"</p>
 
     <ul class="list-group list-group-flush">
       {% if friend.store_inventory.all.exists %}

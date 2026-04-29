@@ -658,7 +658,7 @@ def talk_to_friend(request, session_pk, friend_pk):
             messages.add_message(
                 request,
                 messages.INFO,
-                dialogue_option.text or f"You talked to {friend.name}.",
+                dialogue_option.get_text_display() or f"You talked to {friend.name}.",
             )
         else:
             dialogue = get_object_or_404(
