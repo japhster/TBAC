@@ -58,7 +58,7 @@
       "pk": 2231,
       "name": "Zaralaam Square",
       "accepted_names": "square",
-      "description": "It's the centre of the city where everyone gathers to do anything. The Notice board is here where you should be able to pick up a job. You recognise the familiar sight of Thunder road to the west and on the opposite side of the square is a dark looking side street which everyone seems to ignore. A short road to the south leads to the city exit through the Tri-Horned Gate. Opposite the gate lies a beautiful sparkling road know as Stardust Road. You can see an anvil sign hanging from a building which tells you that it's probably a blacksmith.",
+      "description": "It's the centre of the city where everyone gathers to do anything. The Notice board is here where you should be able to pick up a job. You recognise the familiar sight of Thunder road to the west and on the opposite side of the square is a dark looking side street which everyone seems to ignore. A short road to the south leads to the city exit through the Tri-Horned Gate. Opposite the gate lies a beautiful sparkling road know as Stardust Road. You can see an anvil sign hanging from a building which tells you that it's probably a blacksmith. A shop sits next to the blacksmith with a banner over the front which reads \"Balthazar's Bits and Bobs\".",
       "visited_description": "",
       "required_items": []
     },
@@ -155,7 +155,7 @@
     {
       "pk": 3094,
       "name": "Balthazar's Bits and Bobs",
-      "accepted_names": "Balthazar,balthazar's,balthazars,bits and bobs",
+      "accepted_names": "Balthazar,balthazar's,balthazars,bits and bobs,shop",
       "description": "You're in a shop that is absolutely heaving with items on uncountable shelves with such limited space between them you'll have to turn sideways to get down the aisles. Or at least that's what you thought you'd find in Balthazar's Bits and Bobs. In reality it's a very quiet and dusty shop with basically nothing on the shelves except cobwebs. An old man sits at the counter so shocked that someone has entered their store that he dropped a thick tome he was reading on the desk, causing a plume of dust particles to shoot into the air.",
       "visited_description": "It's Balthazar's Bits and Bobs, it doesn't sell much but the store owner seems friendly - if a little eccentric.",
       "required_items": []
@@ -422,7 +422,7 @@
     {
       "pk": 35,
       "name": "Thug Leader",
-      "accepted_names": "thug,bandit,leader,regal man",
+      "accepted_names": "thug,bandit,leader,regal man,man",
       "description": "A Regal-looking young man whom you assume is the leader of this group of thugs.",
       "in_room_description": "Upon the chair sits a regal looking man - presumably the leader of this group of thugs. He's not obviously threatening to you but instead looking cautious.",
       "room": 2239
@@ -476,7 +476,7 @@
     {
       "pk": 31,
       "name": "Thug",
-      "accepted_names": "",
+      "accepted_names": "man",
       "room": 2238,
       "description": "A large-chested man who has clearly spent a lot of his life in hiding.",
       "in_room_description": "Standing to the side of the Pavilion, resting on a wooden post, stands a man dressed in the same clothing as the thug you fought in the city.",
@@ -484,6 +484,18 @@
       "damage__min_damage": 5,
       "damage__max_damage": 10,
       "auto_fight": false
+    },
+    {
+      "pk": 133,
+      "name": "Thug",
+      "accepted_names": "",
+      "room": 2232,
+      "description": "An evil-looking man glancing between you and his leader.",
+      "in_room_description": "Another man is standing next to him talking quietly.",
+      "health": 100,
+      "damage__min_damage": 5,
+      "damage__max_damage": 10,
+      "auto_fight": true
     }
   ],
   "enemy_drops": [

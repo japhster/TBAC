@@ -76,8 +76,8 @@ urlpatterns = [
         name="inspect",
     ),
     path(
-        "session/fight/<int:session_pk>/<int:enemy_pk>/",
-        views.fight_enemy,
+        "session/fight/<int:session_pk>/",
+        views.fight_enemies,
         name="fight",
     ),
     path(
@@ -86,19 +86,14 @@ urlpatterns = [
         name="attack",
     ),
     path(
-        "session/enemy_attack/<int:session_pk>/<int:enemy_pk>/",
+        "session/enemy_attack/<int:session_pk>/",
         views.enemy_attack,
         name="enemy_attack",
     ),
     path(
-        "session/heal/<int:session_pk>/<int:item_pk>/<int:enemy_pk>/",
+        "session/heal/<int:session_pk>/<int:item_pk>/",
         views.heal_in_fight,
         name="heal",
-    ),
-    path(
-        "session/fight/<int:session_pk>/<int:enemy_pk>/success/",
-        views.fight_won,
-        name="fight_won",
     ),
     path(
         "session/talk/<int:session_pk>/<int:friend_pk>/",

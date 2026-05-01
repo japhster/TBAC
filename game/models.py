@@ -89,6 +89,9 @@ class Player(models.Model):
 
     current_health = models.IntegerField(default=0)
 
+    def get_health_bar_percentage(self):
+        return self.current_health / self.health * 100
+
     def __str__(self):
         return self.name
 

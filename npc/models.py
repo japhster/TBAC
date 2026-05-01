@@ -63,6 +63,9 @@ class Enemy(mixins.SearchableMixin):
             return self.game.items.base().filter(enemy_drop__enemy=self)
         return self.session.items.filter(enemy_drop__enemy=self)
 
+    def get_health_bar_percentage(self):
+        return self.current_health / self.health * 100
+
     def __str__(self):
         return self.name
 

@@ -300,10 +300,7 @@ def play_game(request, session_pk):
         room=location, auto_fight=True, is_dead=False
     ).values_list("pk", flat=True)
     if auto_fight_enemies.exists():
-        return helpers.custom_redirect(
-            "game:fight",
-            kwargs={"session_pk": session.pk, "enemy_pk": auto_fight_enemies.first()},
-        )
+        return helpers.custom_redirect("game:fight", kwargs={"session_pk": session.pk})
 
     if location.visited and location.visited_description:
         location_description = location.visited_description
@@ -499,14 +496,13 @@ def inspect_item(request, session_pk, item_pk):
 
 
 @login_required
-def fight_enemy(request, session_pk, enemy_pk):
+def fight_enemies(request, session_pk):
     session = get_object_or_404(models.Session, pk=session_pk)
-    enemy = get_object_or_404(session.enemies.all(), pk=enemy_pk)
+    enemies = session.enemies.filter(room=session.current_location, is_dead=False)
 
-    if enemy.current_health == 0:
-        return helpers.custom_redirect(
-            "game:fight_won", kwargs={"session_pk": session_pk, "enemy_pk": enemy_pk}
-        )
+    if not enemies.exists():
+        messages.add_message(request, messages.INFO, "There are no enemies to fight.")
+        return _session_redirect(session_pk)
 
     player = session.player
 
@@ -547,12 +543,10 @@ def fight_enemy(request, session_pk, enemy_pk):
         "game/session/fight.html",
         context={
             "session": session,
-            "enemy": enemy,
+            "enemies": enemies,
             "player": player,
             "fight_options": fight_options,
             "health_options": health_options,
-            "enemy_health_bar_width": (enemy.current_health / enemy.health) * 100,
-            "player_health_bar_width": (player.current_health / player.health) * 100,
         },
     )
 
@@ -568,48 +562,58 @@ def attack_enemy(request, session_pk, enemy_pk, attack_pk):
         weapon = session.items.get(pk=attack_pk)
         attack_damage = weapon.damage
 
-    enemy.current_health = max(enemy.current_health - attack_damage.get_damage(), 0)
+    damage = attack_damage.get_damage()
+
+    enemy.current_health = max(enemy.current_health - damage, 0)
+    messages.add_message(request, messages.SUCCESS, f"You dealt {damage} damage!")
+    if enemy.current_health == 0:
+        enemy.is_dead = True
+        enemy.get_dropped_items().update(room=session.current_location)
+
     enemy.save()
 
-    if enemy.current_health == 0:
-        return helpers.custom_redirect(
-            "game:fight_won", kwargs={"session_pk": session_pk, "enemy_pk": enemy_pk}
-        )
+    remaining = session.enemies.filter(room=session.current_location, is_dead=False)
+
+    if not remaining.exists():
+        messages.add_message(request, messages.INFO, "You defeated the enemies!")
+        return _session_redirect(session_pk)
 
     return helpers.custom_redirect(
-        "game:enemy_attack", kwargs={"session_pk": session_pk, "enemy_pk": enemy_pk}
+        "game:enemy_attack", kwargs={"session_pk": session_pk}
     )
 
 
 @login_required
-def enemy_attack(request, session_pk, enemy_pk):
+def enemy_attack(request, session_pk):
     session = get_object_or_404(models.Session, pk=session_pk)
-    enemy = get_object_or_404(session.enemies.all(), pk=enemy_pk)
+    enemies = session.enemies.filter(room=session.current_location, is_dead=False)
 
     player = session.player
 
-    player.current_health = max(player.current_health - enemy.damage.get_damage(), 0)
-    player.save()
-
-    if player.current_health == 0:
-        return render(
-            request,
-            "game/end.html",
-            context={
-                "session": session,
-                "game": session.game,
-                "end_state": None,
-                "killed_by": enemy,
-            },
+    for enemy in enemies:
+        damage = enemy.damage.get_damage()
+        player.current_health = max(
+            player.current_health - damage, 0
         )
+        messages.add_message(request, messages.WARNING, f"{enemy.name} dealt {damage} damage!")
+        player.save()
+        if player.current_health == 0:
+            return render(
+                request,
+                "game/end.html",
+                context={
+                    "session": session,
+                    "game": session.game,
+                    "end_state": None,
+                    "killed_by": enemy,
+                },
+            )
 
-    return helpers.custom_redirect(
-        "game:fight", kwargs={"session_pk": session_pk, "enemy_pk": enemy_pk}
-    )
+    return helpers.custom_redirect("game:fight", kwargs={"session_pk": session_pk})
 
 
 @login_required
-def heal_in_fight(request, session_pk, item_pk, enemy_pk):
+def heal_in_fight(request, session_pk, item_pk):
     session = get_object_or_404(models.Session, pk=session_pk)
     healing_item = get_object_or_404(
         session.items.all(), item_type=Item.ItemTypeChoices.HEALTH, pk=item_pk
@@ -617,30 +621,7 @@ def heal_in_fight(request, session_pk, item_pk, enemy_pk):
 
     actions.heal_player(session.player, healing_item)
 
-    return helpers.custom_redirect(
-        "game:fight", kwargs={"session_pk": session_pk, "enemy_pk": enemy_pk}
-    )
-
-
-@login_required
-def fight_won(request, session_pk, enemy_pk):
-    session = get_object_or_404(models.Session, pk=session_pk)
-    enemy = get_object_or_404(session.enemies.filter(current_health=0), pk=enemy_pk)
-
-    if enemy.is_dead:
-        messages.add_message(
-            request,
-            messages.INFO,
-            f"You already slew {enemy.name}",
-        )
-
-    if enemy.room == session.current_location and not enemy.is_dead:
-        enemy.is_dead = True
-        enemy.save()
-        enemy.get_dropped_items().update(room=session.current_location)
-        messages.add_message(request, messages.INFO, f"You slew {enemy.name}!")
-
-    return _session_redirect(session_pk)
+    return helpers.custom_redirect("game:fight", kwargs={"session_pk": session_pk})
 
 
 @login_required
