@@ -592,10 +592,10 @@ def enemy_attack(request, session_pk):
 
     for enemy in enemies:
         damage = enemy.damage.get_damage()
-        player.current_health = max(
-            player.current_health - damage, 0
+        player.current_health = max(player.current_health - damage, 0)
+        messages.add_message(
+            request, messages.WARNING, f"{enemy.name} dealt {damage} damage!"
         )
-        messages.add_message(request, messages.WARNING, f"{enemy.name} dealt {damage} damage!")
         player.save()
         if player.current_health == 0:
             return render(
