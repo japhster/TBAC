@@ -90,7 +90,7 @@ def create_game(request):
             description=form.cleaned_data["description"],
             created_by=request.user,
             starting_health=form.cleaned_data["starting_health"],
-            base_damage=models.DamageOutput(
+            base_damage=models.DamageOutput.objects.create(
                 min_damage=form.cleaned_data["min_damage"],
                 max_damage=form.cleaned_data["max_damage"],
             ),
