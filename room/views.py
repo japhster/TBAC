@@ -59,6 +59,7 @@ def edit_room(request, room_pk):
         room.name = form.cleaned_data["name"]
         room.accepted_names = form.cleaned_data["accepted_names"]
         room.description = form.cleaned_data["description"]
+        room.visited_description = form.cleaned_data["visited_description"]
         room.save()
         room.required_items.set(form.cleaned_data["required_items"])
 
