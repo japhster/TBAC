@@ -53,7 +53,6 @@
       $(`${window.location.hash}-tab`).tab("show");
     })
     const content = JSON.parse(document.getElementById("content").textContent);
-    console.log(content);
     content.forEach((section) => {
       $(`#${ section[0] }-tab`).on('click', function (e) {
         e.preventDefault()

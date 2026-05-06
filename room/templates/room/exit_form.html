@@ -74,12 +74,9 @@
 
     $(document).ready(function() {
       isLocked = $('#id_is_locked').prop("checked");
-      console.log("woah", isLocked);
       showRelevantRows(isLocked);
       $('#id_is_locked').on('change', function() {
-        console.log("wahoo!");
         isLocked = $(this).prop("checked");
-        console.log("ah", isLocked);
         showRelevantRows(isLocked);
       });
     });

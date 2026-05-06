@@ -126,10 +126,8 @@
   <script>
     document.addEventListener("DOMContentLoaded", function() {
       const attackUrlTemplate = "{% url 'game:attack' session_pk=session.pk enemy_pk=0 attack_pk=0 %}";
-      console.log("wahey")
       document.querySelectorAll("[data-enemy-pk]").forEach(function(button) {
         button.addEventListener("click", function() {
-          console.log("clicked!")
           const enemyPk = this.getAttribute("data-enemy-pk");
           const enemyName = this.getAttribute("data-enemy-name");
           const enemyDescription = this.getAttribute("data-enemy-description");
