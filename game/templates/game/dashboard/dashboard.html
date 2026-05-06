@@ -41,12 +41,21 @@
 {% endblock %}
 
 {% block footer %}
+  {{ tabs|json_script:"tabs" }}
   <script>
     $(document).ready(() => {
       $(`${window.location.hash}-tab`).tab("show");
-      window.location.hash = "";
     })
-    
+
+    const tabs = JSON.parse(document.getElementById("tabs").textContent);
+    tabs.forEach((item) => {
+      $(`#${item[0]}-tab`).on("click", function (e) {
+        e.preventDefault()
+        window.location.hash = item[0];
+        $(this).tab("show");
+      });
+    });
+
     $(document).ready(function() {
     $('.delete-button').on('click', function(e) {
         // 1. Prevent the link from opening immediately
