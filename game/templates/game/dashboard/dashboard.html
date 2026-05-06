@@ -1,6 +1,8 @@
 {% extends "base.html" %}
+{% load static %}
 
-{% block page_title %}{{ game.name }}{% endblock %}
+
+{% block page_title %}<span id="gameName"></span>{% endblock %}
 
 {% block content %}
 <nav>
@@ -63,5 +65,23 @@
         }
     });
 });
+  </script>
+
+  <script src="{% static 'js/api_handlers.js' %}"></script>
+  <script>
+    async function updateGameName() {
+      response = await getAPI("/api/game/name/{{game.pk}}/");
+      console.log("ah", response);
+      $("#gameName").text(response["name"]);
+    };
+
+    updateGameName();
+    setTimeout(() => {
+      postAPI(
+        "/api/game/update/name/{{game.pk}}/",
+        {"name": "Set it to this!"},
+        (response) => {console.log("Success!");updateGameName();},
+      );
+    }, 2000);
   </script>
 {% endblock %}

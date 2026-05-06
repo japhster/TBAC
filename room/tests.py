@@ -11,8 +11,6 @@ class CreateRoomTestCase(BaseLoggedInTestCase):
     def setUp(self):
         super().setUp()
 
-        self.game = models.Game.objects.create(name="Test Game", created_by=self.user)
-
         self.room_data = {
             "name": "Test Room",
             "description": "A Room",
@@ -85,7 +83,6 @@ class CreateRoomTestCase(BaseLoggedInTestCase):
 class SetAsStartingRoomTestCase(BaseLoggedInTestCase):
     def setUp(self):
         super().setUp()
-        self.game = models.Game.objects.create(name="Test Game", created_by=self.user)
         self.room = models.Room.objects.create(name="Test Room", game=self.game)
 
     def test_set_as_starting_room(self):

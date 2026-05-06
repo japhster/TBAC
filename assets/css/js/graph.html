@@ -1,0 +1,87 @@
+<html>
+  <head></head>
+  <body>
+    <div id="container" style="width:800px;height:600px"></div>
+  </body>
+
+  <!-- Load Cytoscape First -->
+  <script src="https://unpkg.com/cytoscape@3.28.1/dist/cytoscape.min.js"></script>
+
+  <!-- Load Edgehandles Second -->
+  <script src="https://unpkg.com/cytoscape-edgehandles@4.0.1/dist/cytoscape-edgehandles.min.js"></script>
+
+  <script type="text/javascript">
+    cytoscape('edgehandles', Promise.resolve(window.cytoscapeEdgehandles));
+
+    const cy = cytoscape({
+      container: document.getElementById('container'),
+      style: [
+        {
+          selector: 'node',
+          style: { 'label': 'data(id)', 'background-color': '#0074D9', 'color': '#fff' }
+        },
+        {
+          selector: '.eh-handle', // The little handle you grab to drag an edge
+          style: { 'background-color': 'red', 'width': 10, 'height': 10, 'shape': 'ellipse' }
+        }
+      ],
+      elements: [] 
+    });
+
+    // --- 1. Drag to Connect Logic ---
+    // let eh = cy.edgehandles({
+    //   canConnect: (source, target) => !source.same(target), // No self-loops
+    //   edgeParams: (source, target) => ({ data: { source: source.id(), target: target.id() } })
+    // });
+
+    // --- 2. Click Empty Space to Add Node ---
+    cy.on('tap', (event) => {
+      // Check if the click was on the background (the "core"), not a node
+      if (event.target === cy) {
+        const pos = event.position;
+        const newId = `n${cy.nodes().length + 1}`;
+
+        cy.add({
+          group: 'nodes',
+          data: { id: newId },
+          position: { x: pos.x, y: pos.y }
+        });
+        
+        console.log(`Node ${newId} created at`, pos);
+      }
+    });
+  </script>
+
+<!--   
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/sigma.js/2.4.0/sigma.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/graphology/0.25.4/graphology.umd.min.js"></script>
+  <script type="module">
+    import uuid from 'https://cdn.jsdelivr.net/npm/uuid@14.0.0/+esm'
+    const graph = new graphology.Graph();
+    graph.addNode("1", { label: "Node 1", x: 0, y: 0, size: 20, color: "blue" });
+    graph.addNode("2", { label: "Node 2", x: 1, y: 1, size: 20, color: "red" });
+    graph.addEdge("1", "2", { size: 5, color: "purple" });
+
+    const sigmaInstance = new Sigma(graph, document.getElementById("container"));
+    sigmaInstance.on("clickNode", ({ event }) => console.log("data", event));
+
+    var latestId = 3;
+    sigmaInstance.on("clickStage", ({ event }) => {
+      // Sigma (ie. graph) and screen (viewport) coordinates are not the same.
+      // So we need to translate the screen x & y coordinates to the graph one by calling the sigma helper `viewportToGraph`
+      const coordForGraph = sigmaInstance.viewportToGraph({ x: event.x, y: event.y });
+
+      // We create a new node
+      const node = {
+        ...coordForGraph,
+        size: 20,
+        color: "#000000",
+      };
+
+      graph.addNode(latestId, node);
+      latestId += 1;
+    });
+
+  </script> -->
+
+</html>
