@@ -16,4 +16,9 @@ urlpatterns = [
         api.update_game_name,
         name="update_game_name",
     ),
+    path(
+        "exit/add/<int:room_pk>/",
+        api.add_exit_to_room,
+        name="add_exit_to_room",
+    ),
 ]

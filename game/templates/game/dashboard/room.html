@@ -1,3 +1,5 @@
+{% load static %}
+
 <div class="container w-75 text-center">
   <table class="table table-fixed mt-2">
     <thead>
@@ -30,6 +32,22 @@
                 {% include "icons/set_start_room.html" %}
               </a>
             {% endif %}
+            <span
+              data-toggle="popover"
+              data-trigger="hover focus"
+              data-placement="top"
+              data-content="connect to a room"
+            >
+            <a
+              href="{% url 'room:new_exit' game.pk %}"
+              style="text-decoration:none"
+              data-toggle="modal"
+              data-target="#exitModal"
+              data-room-pk="{{ room.pk }}"
+              data-room-name="{{ room.name }}"
+            >
+              {% include "icons/room_connection.html" %}
+            </a></span>
             <a class="delete-button" data-name="{{ room.name }}" href="{% url 'room:delete' room.pk %}" style="text-decoration:none">
               {% include "icons/delete.html" %}
             </a>
@@ -39,3 +57,121 @@
     </tbody>
   </table>
 </div>
+
+<div class="modal fade" id="exitModal" tabindex="-1"  aria-labelledby="exitModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exitModalLabel">Add Connection to <span class="modalRoomName"></span></h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body" id="exitFormModal">
+        <form method=POST id="exitForm">
+          {% csrf_token %}
+          <table class="table table-fixed">
+            <tbody>
+              <tr>
+                <th>Room to connect to</th>
+                <td>{{ add_exit_form.room_2 }}</td>
+              </tr>
+              <tr>
+                <th>Leave "<span class="modalRoomName"></span>"</th>
+                <td>{{ add_exit_form.leave_room_1 }}</td>
+              </tr>
+              <tr>
+                <th>Come back to "<span class="modalRoomName"></span>"</th>
+                <td>{{ add_exit_form.leave_room_2 }}</td>
+              </tr>
+              <tr>
+                <th>Is Locked</th>
+                <td class="text-center">{{ add_exit_form.is_locked }}</td>
+              </tr>
+              <tr class="hideable-row" checkboxId="id_is_locked">
+                <th>Unlocked By</th>
+                <td>
+                  {{ add_exit_form.key_required }}
+                </td>
+              </tr>
+              <tr>
+                <th colspan=2 class="text-center">
+                  <button type="submit" class="btn btn-primary" id="connectButton">Connect</button>
+                </th>
+              </tr>
+            </tbody>
+          </table>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.2.1.min.js" crossorigin="anonymous"></script>
+<script src="{% static 'js/api_handlers.js' %}"></script>
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+    document.querySelectorAll("[data-room-pk]").forEach(function(button) {
+      button.addEventListener("click", function() {
+        const roomPk = this.getAttribute("data-room-pk");
+        const roomName = this.getAttribute("data-room-name");
+
+        $(".modalRoomName").text(roomName);
+
+        $("#exitForm").on("submit", function(e) {
+          e.preventDefault();
+
+          const link = `/api/exit/add/${roomPk}/`
+          const formDictionary = {};
+          $.each($(this).serializeArray(), function(_, field) {
+            formDictionary[field.name] = field.value;
+          });
+
+          postAPI(
+            link,
+            formDictionary,
+            function(response) {
+              $("#exitFormModal").html("<p>Connection Created!</p>");
+            },
+            function(response) {
+              $.each(response.responseJSON.errors, function(fieldName, messages) {
+                $.each(messages, function(_, message) {
+                  $("#exitFormModal").append(
+                    `<p style='color:#CC0000'>${message}</p>`
+                  );
+                });
+              });
+            }
+          );
+
+        });
+
+      });
+    });
+  })
+
+  
+</script>
+
+
+<script>
+  function showRelevantRows(isLocked) {
+    const $rows = $('.hideable-row');
+    if (isLocked) {
+      // Show only the rows that match the item-type attribute
+      $rows.filter('[checkboxId="id_is_locked"]').show();
+    } else {
+      // Hide everything first
+      $rows.hide();
+    }
+  }
+
+  $(document).ready(function() {
+    isLocked = $('#id_is_locked').prop("checked");
+    showRelevantRows(isLocked);
+    $('#id_is_locked').on('change', function() {
+      isLocked = $(this).prop("checked");
+      showRelevantRows(isLocked);
+    });
+  });
+</script>

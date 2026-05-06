@@ -77,6 +77,7 @@ def game_dashboard(request, game_pk):
                 ("enemy", "Enemies"),
                 ("endstate", "End States"),
             ],
+            "add_exit_form": forms.AddExitForm(game_pk=game_pk),
         },
     )
 

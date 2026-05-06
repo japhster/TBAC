@@ -1,20 +1,4 @@
 
-function getCookie(name) {
-    let cookieValue = null;
-    if (document.cookie && document.cookie !== '') {
-        const cookies = document.cookie.split(';');
-        for (let i = 0; i < cookies.length; i++) {
-            const cookie = cookies[i].trim();
-            // Does this cookie string begin with the name we want?
-            if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                break;
-            }
-        }
-    }
-    return cookieValue;
-}
-
 async function getAPI(api_url) {
     try {
         const response = await fetch(api_url);
@@ -27,21 +11,22 @@ async function getAPI(api_url) {
 }
 
 function postAPI(api_url, data, successFunc, errorFunc=null) {
+    console.log(successFunc);
     $.ajax({
         url: api_url,
         type: 'POST',
         data: JSON.stringify(data),
         contentType: 'application/json',
-        headers: { "X-CSRFToken": getCookie('csrftoken') }, // Security!
+        headers: { "X-CSRFToken": data["csrfmiddlewaretoken"] }, // Security!
         success: function(response) {
             // This is where you update the UI
             successFunc(response);
         },
-        error: function(error) {
+        error: function(response) {
             if (errorFunc === null) {
-                console.log("Error:", error);
+                console.log(response);
             } else {
-                errorFunc(error);
+                errorFunc(response);
             }
         }
     });

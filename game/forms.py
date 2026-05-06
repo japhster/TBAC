@@ -95,3 +95,42 @@ class CurrencyForm(forms.Form):
         widget=forms.TextInput(attrs={"class": "form-control"}),
         initial=0,
     )
+
+
+class AddExitForm(forms.Form):
+    room_2 = forms.ModelChoiceField(
+        queryset=Room.objects.none(),
+        widget=forms.Select(attrs={"class": "form-control"}),
+    )
+    leave_room_1 = forms.CharField(
+        widget=forms.TextInput(
+            attrs={"class": "form-control", "placeholder": "e.g. east"}
+        ),
+        required=False,
+    )
+    leave_room_2 = forms.CharField(
+        widget=forms.TextInput(
+            attrs={"class": "form-control", "placeholder": "e.g. west"}
+        ),
+        required=False,
+    )
+
+    is_locked = forms.BooleanField(
+        widget=forms.CheckboxInput(attrs={"class": "form-check-input"}),
+        required=False,
+    )
+    key_required = forms.ModelChoiceField(
+        queryset=Item.objects.none(),
+        widget=forms.Select(attrs={"class": "form-control"}),
+        required=False,
+    )
+
+    def __init__(self, *args, game_pk, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["room_2"].queryset = Room.objects.base().filter(
+            game_id=game_pk
+        )
+        self.fields["key_required"].queryset = Item.objects.base().filter(
+            game_id=game_pk,
+            item_type=Item.ItemTypeChoices.KEY,
+        )
