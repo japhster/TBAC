@@ -2,6 +2,7 @@ from rest_framework import serializers
 
 from tbac import models
 
+
 class GameNameSerializer(serializers.Serializer):
     name = serializers.CharField(max_length=250)
 
@@ -21,9 +22,14 @@ class AddExitSerializer(serializers.Serializer):
 
     def validate(self, *args, **kwargs):
         validated_data = super().validate(*args, **kwargs)
-        if validated_data.get("is_locked", False) and validated_data.get("key_required") is None:
+        if (
+            validated_data.get("is_locked", False)
+            and validated_data.get("key_required") is None
+        ):
             raise serializers.ValidationError(
-                {"key_required": "You need to select a key when the connection is locked."}
+                {
+                    "key_required": "You need to select a key when the connection is locked."
+                }
             )
-            
+
         return validated_data

@@ -7,6 +7,7 @@ from rest_framework import status
 from . import serializers
 from tbac import models
 
+
 @api_view(["GET"])
 def get_game_name(request, game_pk):
     game = models.Game.objects.get(pk=game_pk)
@@ -60,6 +61,8 @@ def get_exit_data(request, game_pk):
     game = models.Game.objects.get(pk=game_pk)
     return Response(
         {
-            "exits": models.Exit.objects.base().filter(room_1__game=game).values("pk", "room_1__name", "room_2__name", "is_locked")
+            "exits": models.Exit.objects.base()
+            .filter(room_1__game=game)
+            .values("pk", "room_1__name", "room_2__name", "is_locked")
         }
     )

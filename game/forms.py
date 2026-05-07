@@ -127,9 +127,7 @@ class AddExitForm(forms.Form):
 
     def __init__(self, *args, game_pk, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields["room_2"].queryset = Room.objects.base().filter(
-            game_id=game_pk
-        )
+        self.fields["room_2"].queryset = Room.objects.base().filter(game_id=game_pk)
         self.fields["key_required"].queryset = Item.objects.base().filter(
             game_id=game_pk,
             item_type=Item.ItemTypeChoices.KEY,
