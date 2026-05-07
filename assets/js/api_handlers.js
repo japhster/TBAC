@@ -11,7 +11,6 @@ async function getAPI(api_url) {
 }
 
 function postAPI(api_url, data, successFunc, errorFunc=null) {
-    console.log(successFunc);
     $.ajax({
         url: api_url,
         type: 'POST',

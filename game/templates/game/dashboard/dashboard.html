@@ -42,6 +42,7 @@
 
 {% block footer %}
   {{ tabs|json_script:"tabs" }}
+  <script type="module" src="{% static 'js/dashboard_logic/dashboard.js' %}"></script>
   <script>
     $(document).ready(() => {
       $(`${window.location.hash}-tab`).tab("show");

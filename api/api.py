@@ -53,3 +53,13 @@ def add_exit_to_room(request, room_pk):
         status=status.HTTP_400_BAD_REQUEST,
         data={"errors": serializer.errors},
     )
+
+
+@api_view(["GET"])
+def get_exit_data(request, game_pk):
+    game = models.Game.objects.get(pk=game_pk)
+    return Response(
+        {
+            "exits": models.Exit.objects.base().filter(room_1__game=game).values("pk", "room_1__name", "room_2__name", "is_locked")
+        }
+    )

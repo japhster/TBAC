@@ -21,4 +21,9 @@ urlpatterns = [
         api.add_exit_to_room,
         name="add_exit_to_room",
     ),
+    path(
+        "exit/list/<int:game_pk>/",
+        api.get_exit_data,
+        name="get_exit_data",
+    ),
 ]

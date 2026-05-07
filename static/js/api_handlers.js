@@ -1,5 +1,5 @@
 
-async function getAPI(api_url) {
+export async function getAPI(api_url) {
     try {
         const response = await fetch(api_url);
         const data = await response.json();
@@ -10,7 +10,7 @@ async function getAPI(api_url) {
     }
 }
 
-function postAPI(api_url, data, successFunc, errorFunc=null) {
+export function postAPI(api_url, data, successFunc, errorFunc=null) {
     $.ajax({
         url: api_url,
         type: 'POST',

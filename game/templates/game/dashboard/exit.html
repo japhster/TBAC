@@ -1,4 +1,8 @@
+{% load static %}
+
 <div class="container w-75 text-center">
+  <template id="editHTML">{% include 'icons/edit.html' %}</template> 
+  <template id="deleteHTML">{% include 'icons/delete.html' %}</template> 
   <table class="table table-fixed mt-2">
     <thead>
       <tr><th colspan=4>
@@ -7,24 +11,6 @@
 
       <tr><th colspan=2>Connection Between</th><th>Is Locked?</th><th>Actions</th></tr>
     </thead>
-    <tbody>
-      {% for exit in exits %}
-        <tr>
-          <th>{{ exit.room_1.name }}</th>
-          <th>{{ exit.room_2.name }}</th>
-          <td>{{ exit.is_locked | yesno | title }}</td>
-          <td>
-            <a href="{% url 'room:edit_exit' game_pk=game.pk exit_pk=exit.pk %}" style="text-decoration:none">
-              {% include "icons/edit.html" %}
-            </a>
-            <a class="delete-button" data-name="exit" href="{% url 'room:delete_exit' exit.pk %}" style="text-decoration:none">
-              {% include "icons/delete.html" %}
-            </a>
-          </td>
-        </tr>
-      {% empty %}
-        <tr><th colspan=4>No exits have been added</th></tr>
-      {% endfor %}
-    </tbody>
+    <tbody id="exitTableBody" data-game-id="{{ game.pk }}"></tbody>
   </table>
 </div>
