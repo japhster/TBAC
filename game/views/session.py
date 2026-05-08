@@ -543,8 +543,8 @@ def fight_enemies(request, session_pk):
         "game/session/fight.html",
         context={
             "session": session,
-            "enemies": enemies,
-            "player": player,
+            # "enemies": enemies,
+            # "player": player,
             "fight_options": fight_options,
             "health_options": health_options,
         },

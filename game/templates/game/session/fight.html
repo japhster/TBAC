@@ -1,4 +1,5 @@
 {% extends "game/session/base.html" %}
+{% load static %}
 
 
 {% block window %}
@@ -13,6 +14,8 @@
       </div>
     {% endif %}
 
+    <template id="finishURL" data-finish-url="{% url 'game:play' session.pk %}"></template>
+
     <div class="container w-75">
       <table class="table">
         <thead>
@@ -24,15 +27,15 @@
               <div class="progress">
                 {% with health_bar_percentage=player.get_health_bar_percentage %}
                 <div
-                  class="progress-bar {% if health_bar_percentage <= 20 %}bg-danger{% else %}bg-success{% endif %}"
+                  class="progress-bar"
                   role="progressbar"
-                  style="width: {{ health_bar_percentage }}%;"
                   aria-valuenow="{{ health_bar_percentage }}"
                   aria-valuemin="0"
                   aria-valuemax="{{ player.health }}"
+                  id="playerHealthBar"
                 >
                 {% endwith %}
-                  {{ player.current_health }}hp
+                  <span id="playerHealth">{{ player.current_health }}hp</span>
                 </div>
               </div>
             </td>
@@ -44,38 +47,12 @@
         <thead>
           <tr><th class="text-center" colspan=3>Enemies</th></tr>
         </thead>
-        <tbody>
-          {% for enemy in enemies %}
-            <tr>
-              <th>{{ enemy.name }}:</th>
-              <td>
-                <div class="progress">
-                  <div
-                    class="progress-bar bg-success"
-                    role="progressbar"
-                    style="width: {{ enemy.get_health_bar_percentage }}%;"
-                    aria-valuenow="{{ enemy.current_health }}"
-                    aria-valuemin="0"
-                    aria-valuemax="{{ enemy.health }}"
-                  >
-                    {{ enemy.current_health }}hp
-                  </div>
-                </div>
-              </td>
-              <td class="text-center">
-                <button
-                  class="btn btn-sm btn-danger"
-                  data-toggle="modal"
-                  data-target="#attackModal"
-                  data-enemy-pk="{{ enemy.pk }}"
-                  data-enemy-name="{{ enemy.name }}"
-                  data-enemy-description="{{ enemy.description }}"
-                >
-                  Attack
-                </button>
-              </td>
-            </tr>
-          {% endfor %}
+        <tbody
+          id="enemyTableData"
+          data-session-pk="{{ session.pk }}"
+          data-attack-url="{% url 'api:perform_attack_round' session_pk=session.pk %}"
+          data-csrf-token="{{ csrf_token }}"
+        >
         </tbody>
       </table>
 
@@ -106,7 +83,7 @@
             <ul class="list-group list-group-flush">
               {% for option in fight_options %}
                 <li class="list-group-item">
-                  <a class="attack-link" data-attack-pk="{{ option.attack_pk }}">
+                  <a class="attack-link" href="#" data-attack-pk="{{ option.attack_pk }}">
                     {{ option.attack_name }} {{ option.attack_damage }}
                   </a>
                 </li>
@@ -122,26 +99,5 @@
 {% endblock %}
 
 {% block footer %}
-
-  <script>
-    document.addEventListener("DOMContentLoaded", function() {
-      const attackUrlTemplate = "{% url 'game:attack' session_pk=session.pk enemy_pk=0 attack_pk=0 %}";
-      document.querySelectorAll("[data-enemy-pk]").forEach(function(button) {
-        button.addEventListener("click", function() {
-          const enemyPk = this.getAttribute("data-enemy-pk");
-          const enemyName = this.getAttribute("data-enemy-name");
-          const enemyDescription = this.getAttribute("data-enemy-description");
-
-          document.getElementById("modalEnemyName").textContent = enemyName;
-          document.getElementById("modalEnemyDescription").textContent = enemyDescription;
-
-
-          document.querySelectorAll(".attack-link").forEach(function(link) {
-            const attackPk = link.getAttribute("data-attack-pk");
-            link.href = attackUrlTemplate.replace("/0/", `/${enemyPk}/`).replace("/0/", `/${attackPk}/`);
-          });
-        });
-      });
-    })
-  </script>
+  <script type="module" src="{% static 'js/fight.js' %}"></script>
 {% endblock %}

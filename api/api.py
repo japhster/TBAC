@@ -4,7 +4,7 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
 
-from . import serializers
+from . import actions, serializers
 from tbac import models
 
 
@@ -65,4 +65,78 @@ def get_exit_data(request, game_pk):
             .filter(room_1__game=game)
             .values("pk", "room_1__name", "room_2__name", "is_locked")
         }
+    )
+
+
+@api_view(["POST"])
+def perform_attack_round(request, session_pk):
+    session = models.Session.objects.get(pk=session_pk)
+    player = session.player
+    serializer = serializers.AttackSerializer(data=request.data)
+    if not serializer.is_valid():
+        return Response(
+            status=status.HTTP_400_BAD_REQUEST,
+            data={"error": "Unknown attack or enemy reference."},
+        )
+
+    enemy = serializer.validated_data["enemy"]
+    actions.perform_player_attack(
+        session=session,
+        enemy=enemy,
+        attack_pk=serializer.validated_data["attack_pk"],
+    )
+
+    remaining_enemies = session.enemies.filter(
+        room=session.current_location, is_dead=False
+    )
+
+    actions.perform_enemy_attack(player=player, enemies=remaining_enemies)
+
+    return Response(
+        status=status.HTTP_200_OK,
+        data={
+            "remaining_enemies_count": remaining_enemies.count(),
+            "player_is_dead": player.current_health == 0,
+        },
+    )
+
+
+@api_view(["GET"])
+def get_enemy_table_data(request, session_pk):
+    session = models.Session.objects.get(pk=session_pk)
+    remaining_enemies = session.enemies.filter(
+        room=session.current_location, is_dead=False
+    )
+
+    return Response(
+        status=status.HTTP_200_OK,
+        data={
+            "enemies": [
+                {
+                    "pk": enemy.pk,
+                    "name": enemy.name,
+                    "health_bar_percentage": enemy.get_health_bar_percentage(),
+                    "current_health": enemy.current_health,
+                    "max_heath": enemy.health,
+                    "description": enemy.description,
+                }
+                for enemy in remaining_enemies
+            ],
+        },
+    )
+
+
+@api_view(["GET"])
+def get_player_table_data(request, session_pk):
+    session = models.Session.objects.select_related("player").get(pk=session_pk)
+
+    return Response(
+        status=status.HTTP_200_OK,
+        data={
+            "player": {
+                "health_bar_percentage": session.player.get_health_bar_percentage(),
+                "current_health": session.player.current_health,
+                "max_heath": session.player.health,
+            },
+        },
     )

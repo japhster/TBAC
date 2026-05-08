@@ -26,4 +26,19 @@ urlpatterns = [
         api.get_exit_data,
         name="get_exit_data",
     ),
+    path(
+        "play/fight/<int:session_pk>/",
+        api.perform_attack_round,
+        name="perform_attack_round",
+    ),
+    path(
+        "play/fight/enemies/<int:session_pk>/",
+        api.get_enemy_table_data,
+        name="get_enemy_table_data",
+    ),
+    path(
+        "play/fight/player/<int:session_pk>/",
+        api.get_player_table_data,
+        name="get_player_table_data",
+    ),
 ]

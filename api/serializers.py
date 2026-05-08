@@ -33,3 +33,8 @@ class AddExitSerializer(serializers.Serializer):
             )
 
         return validated_data
+
+
+class AttackSerializer(serializers.Serializer):
+    attack_pk = serializers.IntegerField()
+    enemy = serializers.PrimaryKeyRelatedField(queryset=models.Enemy.objects.all())
