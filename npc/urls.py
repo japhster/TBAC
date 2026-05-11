@@ -67,6 +67,11 @@ urlpatterns = [
         name="edit_dialogue",
     ),
     path(
+        "dialogue/delete/<int:dialogue_pk>/",
+        views.delete_dialogue,
+        name="delete_dialogue",
+    ),
+    path(
         "dialogue/gift/add/<int:dialogue_pk>/",
         views.add_gift_to_dialogue,
         name="add_gift",

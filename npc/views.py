@@ -511,6 +511,10 @@ def dialogue_detail(request, dialogue_pk):
                     "edit",
                     reverse("npc:edit_dialogue", kwargs={"dialogue_pk": dialogue_pk}),
                 ),
+                (
+                    "delete",
+                    reverse("npc:delete_dialogue", kwargs={"dialogue_pk":  dialogue_pk}),
+                ),
             ],
         },
     )
@@ -616,6 +620,16 @@ def edit_dialogue(request, dialogue_pk):
                 ),
             ],
         },
+    )
+
+
+def delete_dialogue(request, dialogue_pk):
+    dialogue = get_object_or_404(models.FriendDialogueOption, pk=dialogue_pk)
+    friend = dialogue.friend
+    dialogue.delete()
+
+    return helpers.custom_redirect(
+        "npc:dialogue_list", kwargs={"friend_pk": friend.pk}
     )
 
 
