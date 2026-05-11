@@ -26,12 +26,12 @@
           <td>{{ parent_option.text|truncatechars:50 }}
         </tr>
         <tr>
-          <th>Talking Point</th>
+          <th>Text the Player says</th>
           <td>{{ form.talking_point }} {{ form.talking_point.errors.as_text }}</td>
         </tr>
       {% endif %}
       <tr>
-        <th>Text</th>
+        <th>Text {{ friend.name }} responds with</th>
         <td>{{ form.text }} {{ form.text.errors.as_text }}</td>
       </tr>
       <tr>
