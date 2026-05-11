@@ -533,7 +533,7 @@ def create_dialogue(request, friend_pk=None, parent_pk=None):
         friend = parent_option.friend
     form = forms.DialogueForm(request.POST or None)
 
-    is_new_starting_point = parent_option is None and friend.dialogue_options.exists()
+    is_alternative_starting_point = parent_option is None and friend.dialogue_options.exists()
 
     if request.method == "POST" and form.is_valid():
         dialogue = models.FriendDialogueOption.objects.create(
@@ -544,7 +544,7 @@ def create_dialogue(request, friend_pk=None, parent_pk=None):
             can_back_out=form.cleaned_data["can_back_out"],
             is_hidden=form.cleaned_data["is_hidden"],
         )
-        if is_new_starting_point and not form.cleaned_data["is_hidden"]:
+        if is_alternative_starting_point and not form.cleaned_data["is_hidden"]:
             friend.dialogue_options.filter(requires_dialogue=None).exclude(
                 pk=dialogue.pk
             ).update(is_hidden=True)
@@ -559,7 +559,7 @@ def create_dialogue(request, friend_pk=None, parent_pk=None):
             "parent_option": parent_option,
             "friend": friend,
             "editing": False,
-            "is_new_starting_point": is_new_starting_point,
+            "is_alternative_starting_point": is_alternative_starting_point,
             "links": [
                 (
                     "back to dialogue tree",
