@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load static %}
 
 {% block page_title %}Dialogue with {{ dialogue.friend.name }}{% endblock %}
 
@@ -102,4 +103,11 @@
       </tbody>
     </table>
   </div>
+{% endblock %}
+
+{% block footer %}
+  <script>
+    $("a:contains('delete')").addClass("delete-button").data("custom-message", "Are you sure you want to delete this dialogue line, it will delete all branches of responses to it as well")
+  </script>
+  <script type="module" src="{% static 'js/delete_button_logic.js' %}"></script>
 {% endblock %}
