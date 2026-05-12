@@ -41,4 +41,30 @@ urlpatterns = [
         api.get_player_table_data,
         name="get_player_table_data",
     ),
+    # network apis
+    path(
+        "network/data/<int:game_pk>/",
+        api.get_network_data,
+        name="get_network_data",
+    ),
+    path(
+        "network/add_node/<int:game_pk>/",
+        api.add_new_node,
+        name="add_node",
+    ),
+    path(
+        "network/add_edge/<int:game_pk>/",
+        api.add_new_edge,
+        name="add_edge",
+    ),
+    path(
+        "network/delete_node/<int:node_pk>/",
+        api.delete_node,
+        name="delete_node",
+    ),
+    path(
+        "network/delete_edge/<int:edge_pk>/",
+        api.delete_edge,
+        name="delete_edge",
+    ),
 ]

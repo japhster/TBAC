@@ -65,6 +65,7 @@ def game_dashboard(request, game_pk):
             "links": [
                 ("back", reverse("game:my_games")),
                 ("edit", reverse("game:edit", kwargs={"game_pk": game_pk})),
+                ("visualise", reverse("game:network", kwargs={"game_pk": game_pk})),
                 publish_link,
                 ("export", reverse("game:export", kwargs={"game_pk": game_pk})),
             ],
@@ -80,6 +81,15 @@ def game_dashboard(request, game_pk):
             "add_exit_form": forms.AddExitForm(game_pk=game_pk),
         },
     )
+
+
+@login_required
+def game_network(request, game_pk):
+    game = get_object_or_404(
+        models.Game.objects.filter(created_by=request.user),
+        pk=game_pk,
+    )
+    return render(request, "game/game_network.html", context={"game": game})
 
 
 @login_required

@@ -1,4 +1,5 @@
 from django.db.models import Q
+from django.shortcuts import get_object_or_404
 
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
@@ -140,3 +141,70 @@ def get_player_table_data(request, session_pk):
             },
         },
     )
+
+
+@api_view(["GET"])
+def get_network_data(request, game_pk):
+    game = models.Game.objects.get(pk=game_pk)
+
+    rooms = game.rooms.base()
+
+    exits = models.Exit.objects.base().filter(room_1__game=game)
+
+    return Response(
+        status=status.HTTP_200_OK,
+        data={
+            "nodes": [{"id": room.pk, "label": room.name} for room in rooms],
+            "edges": [
+                {"id": exit_.pk, "from": exit_.room_1.pk, "to": exit_.room_2.pk}
+                for exit_ in exits
+            ],
+        },
+    )
+
+
+@api_view(["POST"])
+def add_new_node(request, game_pk):
+    game = models.Game.objects.get(pk=game_pk)
+
+    serializer = serializers.NewNodeSerializer(data=request.data)
+    if serializer.is_valid():
+        room = models.Room.objects.create(
+            game=game,
+            name=serializer.validated_data["name"],
+        )
+
+        return Response(status=status.HTTP_200_OK, data={"room_id": room.pk})
+
+    return Response(status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(["POST"])
+def add_new_edge(request, game_pk):
+    game = models.Game.objects.get(pk=game_pk)
+
+    serializer = serializers.NewEdgeSerializer(data=request.data, game_pk=game_pk)
+
+    if serializer.is_valid():
+        exit_ = models.Exit.objects.create(
+            room_1=serializer.validated_data["from_room"],
+            room_2=serializer.validated_data["to_room"],
+        )
+
+        return Response(status=status.HTTP_200_OK, data={"exit_id": exit_.pk})
+
+    return Response(status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(["POST"])
+def delete_node(request, node_pk):
+    room = get_object_or_404(models.Room, pk=node_pk)
+    room.delete()
+    return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+@api_view(["POST"])
+def delete_edge(request, edge_pk):
+    exit_ = get_object_or_404(models.Exit, pk=edge_pk)
+    exit_.delete()
+    return Response(status=status.HTTP_204_NO_CONTENT)

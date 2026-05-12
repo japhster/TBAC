@@ -38,3 +38,22 @@ class AddExitSerializer(serializers.Serializer):
 class AttackSerializer(serializers.Serializer):
     attack_pk = serializers.IntegerField()
     enemy = serializers.PrimaryKeyRelatedField(queryset=models.Enemy.objects.all())
+
+
+class NewNodeSerializer(serializers.Serializer):
+    name = serializers.CharField(max_length=250)
+
+
+class NewEdgeSerializer(serializers.Serializer):
+    from_room = serializers.PrimaryKeyRelatedField(
+        queryset=models.Room.objects.none(),
+    )
+    to_room = serializers.PrimaryKeyRelatedField(
+        queryset=models.Room.objects.none(),
+    )
+
+    def __init__(self, *args, game_pk, **kwargs):
+        super().__init__(*args, **kwargs)
+        game_rooms = models.Room.objects.filter(game_id=game_pk)
+        self.fields["from_room"].queryset = game_rooms
+        self.fields["to_room"].queryset = game_rooms

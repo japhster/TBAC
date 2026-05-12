@@ -1,6 +1,9 @@
 {% extends "game/session/base.html" %}
 {% load static %}
 
+{% block head %}
+  <meta name="csrf-token" content="{{ csrf_token }}">
+{% endblock %}
 
 {% block window %}
   <div class="container">
@@ -51,7 +54,6 @@
           id="enemyTableData"
           data-session-pk="{{ session.pk }}"
           data-attack-url="{% url 'api:perform_attack_round' session_pk=session.pk %}"
-          data-csrf-token="{{ csrf_token }}"
         >
         </tbody>
       </table>
