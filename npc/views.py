@@ -513,7 +513,7 @@ def dialogue_detail(request, dialogue_pk):
                 ),
                 (
                     "delete",
-                    reverse("npc:delete_dialogue", kwargs={"dialogue_pk":  dialogue_pk}),
+                    reverse("npc:delete_dialogue", kwargs={"dialogue_pk": dialogue_pk}),
                 ),
             ],
         },
@@ -533,7 +533,9 @@ def create_dialogue(request, friend_pk=None, parent_pk=None):
         friend = parent_option.friend
     form = forms.DialogueForm(request.POST or None)
 
-    is_alternative_starting_point = parent_option is None and friend.dialogue_options.exists()
+    is_alternative_starting_point = (
+        parent_option is None and friend.dialogue_options.exists()
+    )
 
     if request.method == "POST" and form.is_valid():
         dialogue = models.FriendDialogueOption.objects.create(
@@ -628,9 +630,7 @@ def delete_dialogue(request, dialogue_pk):
     friend = dialogue.friend
     dialogue.delete()
 
-    return helpers.custom_redirect(
-        "npc:dialogue_list", kwargs={"friend_pk": friend.pk}
-    )
+    return helpers.custom_redirect("npc:dialogue_list", kwargs={"friend_pk": friend.pk})
 
 
 @login_required
