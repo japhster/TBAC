@@ -14,10 +14,6 @@ class GiftedItemForm(forms.Form):
         super().__init__(*args, **kwargs)
         self.fields["item"].queryset = models.Item.objects.base().filter(
             game_id=game_pk,
-            room=None,
-            contained_within=None,
-            is_starting_item=False,
-            enemy_drop=None,
         )
 
 
