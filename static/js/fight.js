@@ -59,10 +59,10 @@ async function updatePlayerTable() {
     }
 }
 
-async function performAttackRound(enemyPk, attackPk, csrfToken) {
+async function performAttackRound(enemyPk, attackPk) {
     postAPI(
         $("#enemyTableData").data("attack-url"),
-        {"enemy": enemyPk, "attack_pk": attackPk, "csrfmiddlewaretoken": csrfToken},
+        {"enemy": enemyPk, "attack_pk": attackPk},
         function(data) {
             $("#attackModal").modal("hide");
             if (data["remaining_enemies_count"] == 0 || data["player_is_dead"]) {
@@ -86,7 +86,6 @@ $(document).ready(() => {
             performAttackRound(
                 $(this).data("enemy-pk"),
                 $(this).data("attack-pk"),
-                $("#enemyTableData").data("csrf-token"),
             );
         });
     });
