@@ -69,3 +69,28 @@ class UpdateRoomSerializer(serializers.Serializer):
         queryset=models.Item.objects.base(),
         many=True,
     )
+
+
+class UpdateExitSerializer(serializers.Serializer):
+    leave_room_1 = serializers.CharField(required=False, allow_blank=True)
+    leave_room_2 = serializers.CharField(required=False, allow_blank=True)
+    is_locked = serializers.BooleanField(required=False)
+    key_required = serializers.PrimaryKeyRelatedField(
+        required=False,
+        queryset=models.Item.objects.base().filter(
+            item_type=models.Item.ItemTypeChoices.KEY
+        ),
+        allow_null=True,
+    )
+
+    def validate(self, *args, **kwargs):
+        data = super().validate(*args, **kwargs)
+        is_locked = data.get("is_locked", False)
+        if is_locked and data["key_required"] is None:
+            raise serializers.ValidationError(
+                {"key_required": "Need to specify which key can open a locked exit."}
+            )
+        if not is_locked:
+            data["key_required"] = None
+
+        return data

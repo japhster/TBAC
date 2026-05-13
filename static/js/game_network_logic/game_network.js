@@ -1,5 +1,6 @@
 import { getAPI, postAPI } from "../api_handlers.js";
 import { editNode } from "./edit_node.js";
+import { editEdge } from "./edit_edge.js";
 
 function getGamePk() {
     return $("#gameNetwork").data("game-pk");
@@ -68,6 +69,7 @@ async function createNetwork(gamePk) {
             "addNode": addNode,
             "addEdge": addEdge,
             "editNode": editNode,
+            "editEdge": {"editWithoutDrag": editEdge},
             "deleteNode": deleteNode,
             "deleteEdge": deleteEdge,
         }};

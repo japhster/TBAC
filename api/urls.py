@@ -77,4 +77,14 @@ urlpatterns = [
         api.get_node_data,
         name="node_data",
     ),
+    path(
+        "network/edge/update/<int:edge_pk>/",
+        api.update_edge,
+        name="update_edge",
+    ),
+    path(
+        "network/edge/data/<int:edge_pk>/",
+        api.get_edge_data,
+        name="edge_data",
+    ),
 ]

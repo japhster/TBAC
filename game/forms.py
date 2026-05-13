@@ -160,3 +160,29 @@ class RoomNetworkForm(forms.Form):
         self.fields["required_items"].queryset = Item.objects.base().filter(
             game_id=game_pk
         )
+
+
+class ExitNetworkForm(forms.Form):
+    leave_room_1 = forms.CharField(
+        widget=forms.TextInput(attrs={"class": "form-control"}),
+        required=False,
+    )
+    leave_room_2 = forms.CharField(
+        widget=forms.TextInput(attrs={"class": "form-control"}),
+        required=False,
+    )
+    is_locked = forms.BooleanField(
+        widget=forms.CheckboxInput(attrs={"class": "form-check-input"}), required=False
+    )
+    key_required = forms.ModelChoiceField(
+        widget=forms.Select(attrs={"class": "form-control"}),
+        required=False,
+        queryset=Item.objects.none(),
+    )
+
+    def __init__(self, *args, game_pk, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["key_required"].queryset = Item.objects.base().filter(
+            game_id=game_pk,
+            item_type=Item.ItemTypeChoices.KEY,
+        )

@@ -59,6 +59,49 @@
       </div>
     </div>
   </div>
+  
+  <div class="modal fade" id="edgeModal" tabindex="-1" aria-labelledby="edgeModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="edgeModalLabel">Edit Connection</span></h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <form method="POST" id="edgeForm">
+            {% csrf_token %}
+            <table class="table fixed-table">
+              <tbody>
+                <tr>
+                  <th>Leave <span class="room_1_name"></span> (optional)</th>
+                  <td id="leave_room_1">{{ exit_form.leave_room_1 }}</td>
+                </tr>
+                <tr>
+                  <th>leave <span class="room_2_name"></span></th>
+                  <td id="leave_room_2">{{ exit_form.leave_room_2 }}</td>
+                </tr>
+                <tr>
+                  <th>Is Locked</th>
+                  <td id="is_locked" class="text-center">{{ exit_form.is_locked }}</td>
+                </tr>
+                <tr class="hideable-row" checkboxId="id_is_locked">
+                  <th>Key Required to Unlock Connection</th>
+                  <td id="key_required">{{ exit_form.key_required }}</td>
+                </tr>
+                <tr>
+                  <th colspan=2 class="text-center">
+                    <button type="submit" class="btn btn-primary" id="updateEdgeButton">Update</button>
+                  </th>
+                </tr>
+              </tbody>
+            </table>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
 {% endblock %}
 
 

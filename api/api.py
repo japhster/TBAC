@@ -251,3 +251,40 @@ def get_node_data(request, node_pk):
             "required_items": room.required_items.values_list("pk", flat=True),
         },
     )
+
+
+@api_view(["POST"])
+def update_edge(request, edge_pk):
+    edge = get_object_or_404(models.Exit.objects, pk=edge_pk)
+
+    data = request.data
+
+    serializer = serializers.UpdateExitSerializer(data=data)
+    if serializer.is_valid():
+        edge.is_locked = serializer.validated_data.get("is_locked", False)
+        edge.key_required = serializer.validated_data["key_required"]
+        edge.leave_room_1 = serializer.validated_data["leave_room_1"]
+        edge.leave_room_2 = serializer.validated_data["leave_room_2"]
+        edge.save()
+
+        return Response(status=status.HTTP_200_OK, data={"is_locked": edge.is_locked})
+
+    return Response(
+        status=status.HTTP_400_BAD_REQUEST, data={"errors": serializer.errors}
+    )
+
+
+@api_view(["GET"])
+def get_edge_data(request, edge_pk):
+    edge = get_object_or_404(models.Exit, pk=edge_pk)
+    return Response(
+        status=status.HTTP_200_OK,
+        data={
+            "room_1_name": edge.room_1.name,
+            "room_2_name": edge.room_2.name,
+            "is_locked": edge.is_locked,
+            "key_required": edge.key_required.pk if edge.key_required else None,
+            "leave_room_1": edge.leave_room_1,
+            "leave_room_2": edge.leave_room_2,
+        },
+    )

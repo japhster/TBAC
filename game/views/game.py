@@ -96,6 +96,7 @@ def game_network(request, game_pk):
         context={
             "game": game,
             "room_form": forms.RoomNetworkForm(game_pk=game_pk),
+            "exit_form": forms.ExitNetworkForm(game_pk=game_pk),
         },
     )
 
