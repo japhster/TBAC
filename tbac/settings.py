@@ -11,7 +11,10 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
 import os
+from dotenv import load_dotenv
 from pathlib import Path
+
+load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / "subdir".
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -43,6 +46,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "rest_framework",
+    "debug_toolbar",
 ]
 
 MIDDLEWARE = [
@@ -53,9 +57,12 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "debug_toolbar.middleware.DebugToolbarMiddleware",
 ]
 
 ROOT_URLCONF = "tbac.urls"
+
+
 
 TEMPLATES = [
     {
@@ -134,3 +141,10 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 # Login URL
 
 LOGIN_URL = "/login/"
+
+# Django debug toolbar
+
+SHOW_DEBUG_TOOLBAR = os.getenv("SHOW_DEBUG_TOOLBAR", default="False") == "True"
+
+if SHOW_DEBUG_TOOLBAR:
+    INTERNAL_IPS = ["127.0.0.1"]
