@@ -79,3 +79,5 @@ class ExitForm(forms.Form):
             raise forms.ValidationError(
                 {"key_required": "Need to specify which key can open a locked exit."}
             )
+
+        return cleaned_data
