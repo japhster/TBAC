@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+
+
+{% block page_title %}{{ room.name }}{% endblock %}
+
+
+{% block content %}
+
+<div class="container text-center">
+  <table class="table table-fixed">
+    <thead><tr><th colspan=2>Details</th></tr></thead>
+    <tr>
+      <th>Accepted Names</th>
+      <td>{{ room.accepted_names }}</td>
+    </tr>
+    <tr>
+      <th>Description</th>
+      <td>{{ room.description }}</td>
+    </tr>
+    <tr>
+      <th>Description after First Visit</th>
+      <td>{{ room.visited_description |default:"-"}}</td>
+    </tr>
+  </table>
+</div>
+
+
+<div class="row mt-4 text-center">
+  <div class="col-sm-6">
+    <table class="table">
+      <thead>
+        <tr><th>Items in Room</th></tr>
+      </thead>
+      <tbody>
+        {% for item in room.items.all %}
+          <tr>
+            <th>{{ item.name }}</th>
+          </tr>
+        {% empty %}
+          <tr>
+            <th>No Items are found in this room</th>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  <div class="col-sm-6">
+    <table class="table">
+      <thead>
+        <tr><th>Connected to</th><th>Key Required (if locked)</th></tr>
+      </thead>
+      <tbody>
+        {% for exit_row in exit_data %}
+          <tr>
+            <th><a href="{% url 'room:detail' exit_row.room.pk %}">{{ exit_row.room.name }}</a></th>
+            <td>{{ exit_row.key_required | default:"-" }}</td>
+          </tr>
+        {% empty %}
+          <tr>
+            <th>No Items are found in this room</th>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+<div class="row mt-4 text-center">
+  <div class="col-sm-6">
+    <table class="table">
+      <thead>
+        <tr><th>Friends in Room</th></tr>
+      </thead>
+      <tbody>
+        {% for friend in room.friends.all %}
+          <tr>
+            <th><a href="{% url 'npc:friend' friend.pk %}">{{ friend }}</a></th>
+          </tr>
+        {% empty %}
+          <tr>
+            <th>No friends are found in this room</th>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  <div class="col-sm-6">
+    <table class="table">
+      <thead>
+        <tr><th>Enemies in Room</th></tr>
+      </thead>
+      <tbody>
+        {% for enemy in room.enemies.all %}
+          <tr>
+            <th><a href="{% url 'npc:enemy' enemy.pk %}">{{ enemy }}</a></th>
+          </tr>
+        {% empty %}
+          <tr>
+            <th>No enemies are found in this room</th>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+{% endblock %}

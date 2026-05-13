@@ -74,6 +74,12 @@ async function createNetwork(gamePk) {
             "deleteEdge": deleteEdge,
         }};
     var network = new vis.Network(container, data, options);
+
+    network.on("doubleClick", function(params) {
+        if (params["nodes"]) {
+            window.location.href = `/room/detail/${params["nodes"][0]}/`;
+        }
+    });
 }
 
 

@@ -14,4 +14,5 @@ urlpatterns = [
     path("new_exit/<int:game_pk>/", views.create_exit, name="new_exit"),
     path("edit_exit/<int:game_pk>/<int:exit_pk>/", views.edit_exit, name="edit_exit"),
     path("delete_exit/<int:exit_pk>/", views.delete_exit, name="delete_exit"),
+    path("detail/<int:room_pk>/", views.room_detail, name="detail"),
 ]

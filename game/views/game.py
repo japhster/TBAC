@@ -6,7 +6,7 @@ from django.shortcuts import render, reverse, get_object_or_404
 
 from .. import forms, models, data_parsers
 from room.models import Exit
-from tbac import helpers
+from tbac import helpers, links
 
 # Create your views here.
 
@@ -97,6 +97,7 @@ def game_network(request, game_pk):
             "game": game,
             "room_form": forms.RoomNetworkForm(game_pk=game_pk),
             "exit_form": forms.ExitNetworkForm(game_pk=game_pk),
+            "links": [links.game_dashboard(game_pk)],
         },
     )
 

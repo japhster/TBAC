@@ -1,3 +1,4 @@
+from django.db.models import Q
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, render, reverse
@@ -173,3 +174,33 @@ def delete_exit(request, exit_pk):
     room_exit.delete()
 
     return helpers.custom_redirect("game:dashboard", kwargs={"game_pk": game_pk})
+
+
+@login_required
+def room_detail(request, room_pk):
+    room = get_object_or_404(
+        models.Room.objects.prefetch_related("friends", "items", "enemies"),
+        pk=room_pk,
+        game__created_by=request.user,
+    )
+    exits = []
+    for exit_ in models.Exit.objects.select_related("room_1", "room_2").filter(
+        Q(room_1=room) | Q(room_2=room)
+    ):
+        exit_room = exit_.room_2 if exit_.room_1 == room else exit_.room_1
+        exits.append({"room": exit_room, "key_required": exit_.key_required})
+    return render(
+        request,
+        "room/room.html",
+        context={
+            "room": room,
+            "exit_data": exits,
+            "links": [
+                (
+                    "back to visualisation",
+                    reverse("game:network", kwargs={"game_pk": room.game.pk}),
+                ),
+                links.game_dashboard(room.game.pk),
+            ],
+        },
+    )
