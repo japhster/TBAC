@@ -48,23 +48,33 @@ urlpatterns = [
         name="get_network_data",
     ),
     path(
-        "network/add_node/<int:game_pk>/",
+        "network/node/add/<int:game_pk>/",
         api.add_new_node,
         name="add_node",
     ),
     path(
-        "network/add_edge/<int:game_pk>/",
+        "network/edge/add/<int:game_pk>/",
         api.add_new_edge,
         name="add_edge",
     ),
     path(
-        "network/delete_node/<int:node_pk>/",
+        "network/node/delete/<int:node_pk>/",
         api.delete_node,
         name="delete_node",
     ),
     path(
-        "network/delete_edge/<int:edge_pk>/",
+        "network/edge/delete/<int:edge_pk>/",
         api.delete_edge,
         name="delete_edge",
+    ),
+    path(
+        "network/node/update/<int:node_pk>/",
+        api.update_node,
+        name="update_node",
+    ),
+    path(
+        "network/node/data/<int:node_pk>/",
+        api.get_node_data,
+        name="node_data",
     ),
 ]

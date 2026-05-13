@@ -57,3 +57,15 @@ class NewEdgeSerializer(serializers.Serializer):
         game_rooms = models.Room.objects.filter(game_id=game_pk)
         self.fields["from_room"].queryset = game_rooms
         self.fields["to_room"].queryset = game_rooms
+
+
+class UpdateRoomSerializer(serializers.Serializer):
+    name = serializers.CharField()
+    accepted_names = serializers.CharField(required=False, allow_blank=True)
+    description = serializers.CharField()
+    visited_description = serializers.CharField(required=False, allow_blank=True)
+    required_items = serializers.PrimaryKeyRelatedField(
+        required=False,
+        queryset=models.Item.objects.base(),
+        many=True,
+    )

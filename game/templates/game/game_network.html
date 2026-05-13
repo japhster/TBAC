@@ -12,6 +12,53 @@
   <div class="vis-network" tabindex="0" style="position: relative; overflow: hidden; touch-action: pan-y; user-select: none; -webkit-user-drag: none; -webkit-tap-highlight-color: rgba(0, 0, 0, 0); width: 100%; height: 100%;"><canvas width="100%" style="position: relative; touch-action: none; user-select: none; -webkit-user-drag: none; -webkit-tap-highlight-color: rgba(0, 0, 0, 0); width: 100%; height: 100%;" height="100%"></canvas><div class="vis-manipulation" style="display: block;"><button class="vis-button vis-add" style="touch-action: pan-y; user-select: none; -webkit-user-drag: none; -webkit-tap-highlight-color: rgba(0, 0, 0, 0);"><div class="vis-label">Add Node</div></button><div class="vis-separator-line"></div><button class="vis-button vis-connect" style="touch-action: pan-y; user-select: none; -webkit-user-drag: none; -webkit-tap-highlight-color: rgba(0, 0, 0, 0);"><div class="vis-label">Add Edge</div></button></div><div class="vis-edit-mode" style="display: block;"></div><button class="vis-close" aria-label="Close" style="display: block; touch-action: pan-y; user-select: none; -webkit-user-drag: none; -webkit-tap-highlight-color: rgba(0, 0, 0, 0);"></button></div>
   <div class="vis-edit-mode" style="display: block;"><button class="vis-button vis-edit vis-edit-mode" style="touch-action: pan-y; user-select: none; -webkit-user-drag: none; -webkit-tap-highlight-color: rgba(0, 0, 0, 0);"><div class="vis-label">Edit</div></button></div>
 </div>
+
+  <div class="modal fade" id="roomModal" tabindex="-1" aria-labelledby="roomModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="roomModalLabel">Edit <span id="modalRoomName"></span></h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <form method="POST" id="roomForm">
+            {% csrf_token %}
+            <table class="table fixed-table">
+              <tbody>
+                <tr>
+                  <th>Name</th>
+                  <td id="name">{{ room_form.name }}</td>
+                </tr>
+                <tr>
+                  <th>Accepted Names (comma separated) (optional)</th>
+                  <td id="accepted_names">{{ room_form.accepted_names }}</td>
+                </tr>
+                <tr>
+                  <th>Description</th>
+                  <td id="description">{{ room_form.description }}</td>
+                </tr>
+                <tr>
+                  <th>Description after Visiting (optional)</th>
+                  <td id="visited_description">{{ room_form.visited_description }}</td>
+                </tr>
+                <tr>
+                  <th>Required Items to access</th>
+                  <td id="required_items">{{ room_form.required_items }}</td>
+                </tr>
+                <tr>
+                  <th colspan=2 class="text-center">
+                    <button type="submit" class="btn btn-primary" id="updateRoomButton">Update</button>
+                  </th>
+                </tr>
+              </tbody>
+            </table>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
 {% endblock %}
 
 

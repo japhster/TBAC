@@ -89,7 +89,15 @@ def game_network(request, game_pk):
         models.Game.objects.filter(created_by=request.user),
         pk=game_pk,
     )
-    return render(request, "game/game_network.html", context={"game": game})
+
+    return render(
+        request,
+        "game/game_network.html",
+        context={
+            "game": game,
+            "room_form": forms.RoomNetworkForm(game_pk=game_pk),
+        },
+    )
 
 
 @login_required

@@ -1,4 +1,5 @@
 import { getAPI, postAPI } from "../api_handlers.js";
+import { editNode } from "./edit_node.js";
 
 function getGamePk() {
     return $("#gameNetwork").data("game-pk");
@@ -6,7 +7,7 @@ function getGamePk() {
 
 function addNode(nodeData, callback) {
     postAPI(
-        `/api/network/add_node/${getGamePk()}/`,
+        `/api/network/node/add/${getGamePk()}/`,
         {"name": nodeData["label"]},
         (response) => {
             nodeData["id"] = response["room_id"];
@@ -17,7 +18,7 @@ function addNode(nodeData, callback) {
 
 function addEdge(edgeData, callback) {
     postAPI(
-        `/api/network/add_edge/${getGamePk()}/`, 
+        `/api/network/edge/add/${getGamePk()}/`, 
         {
             "from_room": edgeData["from"],
             "to_room": edgeData["to"],
@@ -32,7 +33,7 @@ function addEdge(edgeData, callback) {
 
 function deleteNode(deleteData, callback) {
     postAPI(
-        `/api/network/delete_node/${deleteData["nodes"][0]}/`,
+        `/api/network/node/delete/${deleteData["nodes"][0]}/`,
         {},
         (response) => {callback(deleteData)},
     );
@@ -40,7 +41,7 @@ function deleteNode(deleteData, callback) {
 
 function deleteEdge(deleteData, callback) {
     postAPI(
-        `/api/network/delete_edge/${deleteData["edges"][0]}/`,
+        `/api/network/edge/delete/${deleteData["edges"][0]}/`,
         {},
         (response) => {callback(deleteData)}
     );
@@ -61,10 +62,12 @@ async function createNetwork(gamePk) {
         edges: edges,
     };
     var options = {
+        "layout": {"randomSeed": 3.14},
         "manipulation": {
             "enabled": true,
             "addNode": addNode,
             "addEdge": addEdge,
+            "editNode": editNode,
             "deleteNode": deleteNode,
             "deleteEdge": deleteEdge,
         }};

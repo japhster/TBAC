@@ -132,3 +132,31 @@ class AddExitForm(forms.Form):
             game_id=game_pk,
             item_type=Item.ItemTypeChoices.KEY,
         )
+
+
+class RoomNetworkForm(forms.Form):
+    name = forms.CharField(
+        widget=forms.TextInput(attrs={"class": "form-control"}),
+    )
+    accepted_names = forms.CharField(
+        widget=forms.TextInput(attrs={"class": "form-control"}),
+        required=False,
+    )
+    description = forms.CharField(
+        widget=forms.Textarea(attrs={"class": "form-control"}),
+    )
+    visited_description = forms.CharField(
+        widget=forms.Textarea(attrs={"class": "form-control"}),
+        required=False,
+    )
+    required_items = forms.ModelMultipleChoiceField(
+        widget=forms.SelectMultiple(attrs={"class": "form-control"}),
+        required=False,
+        queryset=Item.objects.none(),
+    )
+
+    def __init__(self, *args, game_pk, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["required_items"].queryset = Item.objects.base().filter(
+            game_id=game_pk
+        )

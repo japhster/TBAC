@@ -156,7 +156,12 @@ def get_network_data(request, game_pk):
         data={
             "nodes": [{"id": room.pk, "label": room.name} for room in rooms],
             "edges": [
-                {"id": exit_.pk, "from": exit_.room_1.pk, "to": exit_.room_2.pk}
+                {
+                    "id": exit_.pk,
+                    "from": exit_.room_1.pk,
+                    "to": exit_.room_2.pk,
+                    "dashes": exit_.is_locked,
+                }
                 for exit_ in exits
             ],
         },
@@ -208,3 +213,41 @@ def delete_edge(request, edge_pk):
     exit_ = get_object_or_404(models.Exit, pk=edge_pk)
     exit_.delete()
     return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+@api_view(["POST"])
+def update_node(request, node_pk):
+    room = get_object_or_404(models.Room.objects.select_related("game"), pk=node_pk)
+
+    data = request.data
+    data["required_items"] = [int(i) for i in data["required_items"]]
+
+    serializer = serializers.UpdateRoomSerializer(data=data)
+    if serializer.is_valid():
+        room.name = serializer.validated_data["name"]
+        room.accepted_names = serializer.validated_data["accepted_names"]
+        room.description = serializer.validated_data["description"]
+        room.visited_description = serializer.validated_data["visited_description"]
+        room.required_items.set(serializer.validated_data.get("required_items", []))
+        room.save()
+
+        return Response(status=status.HTTP_200_OK, data={"room_name": room.name})
+
+    return Response(
+        status=status.HTTP_400_BAD_REQUEST, data={"errors": serializer.errors}
+    )
+
+
+@api_view(["GET"])
+def get_node_data(request, node_pk):
+    room = get_object_or_404(models.Room, pk=node_pk)
+    return Response(
+        status=status.HTTP_200_OK,
+        data={
+            "name": room.name,
+            "accepted_names": room.accepted_names,
+            "description": room.description,
+            "visited_description": room.visited_description,
+            "required_items": room.required_items.values_list("pk", flat=True),
+        },
+    )
