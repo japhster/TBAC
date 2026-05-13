@@ -9,6 +9,4 @@ def heal_player(player, healing_item):
     healing_item.in_inventory = False
     healing_item.save()
 
-    print(healing_item.in_inventory)
-
     return True
