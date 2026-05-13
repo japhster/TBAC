@@ -184,7 +184,7 @@ def room_detail(request, room_pk):
         game__created_by=request.user,
     )
     exits = []
-    for exit_ in models.Exit.objects.select_related("room_1", "room_2").filter(
+    for exit_ in models.Exit.objects.base().select_related("room_1", "room_2").filter(
         Q(room_1=room) | Q(room_2=room)
     ):
         exit_room = exit_.room_2 if exit_.room_1 == room else exit_.room_1

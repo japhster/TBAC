@@ -32,7 +32,7 @@
         <tr><th>Items in Room</th></tr>
       </thead>
       <tbody>
-        {% for item in room.items.all %}
+        {% for item in room.items.base %}
           <tr>
             <th>{{ item.name }}</th>
           </tr>
@@ -69,7 +69,7 @@
         <tr><th>Friends in Room</th></tr>
       </thead>
       <tbody>
-        {% for friend in room.friends.all %}
+        {% for friend in room.friends.base %}
           <tr>
             <th><a href="{% url 'npc:friend' friend.pk %}">{{ friend }}</a></th>
           </tr>
@@ -86,7 +86,7 @@
         <tr><th>Enemies in Room</th></tr>
       </thead>
       <tbody>
-        {% for enemy in room.enemies.all %}
+        {% for enemy in room.enemies.base %}
           <tr>
             <th><a href="{% url 'npc:enemy' enemy.pk %}">{{ enemy }}</a></th>
           </tr>
