@@ -8,7 +8,7 @@
       <tr><th>Friend</th><th>Location</th><th>Actions</th></tr>
     </thead>
     <tbody>
-      {% for friend in game.friends.base %}
+      {% for friend in friends %}
         <tr>
           <th><a href="{% url 'npc:friend' friend.pk %}">{{ friend.name }}</a></th>
           <td>{{ friend.room.name }}</td>

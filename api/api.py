@@ -149,7 +149,7 @@ def get_network_data(request, game_pk):
 
     rooms = game.rooms.base()
 
-    exits = models.Exit.objects.base().filter(room_1__game=game)
+    exits = models.Exit.objects.base().filter(room_1__game=game).select_related("room_1", "room_2")
 
     return Response(
         status=status.HTTP_200_OK,

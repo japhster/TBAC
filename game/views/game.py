@@ -4,9 +4,9 @@ from django.db.models import Q
 from django.http import HttpResponseRedirect, JsonResponse
 from django.shortcuts import render, reverse, get_object_or_404
 
-from .. import forms, models, data_parsers
+from .. import forms, data_parsers
 from room.models import Exit
-from tbac import helpers, links
+from tbac import helpers, links, models
 
 # Create your views here.
 
@@ -39,7 +39,7 @@ def my_games(request):
 def game_dashboard(request, game_pk):
     game = get_object_or_404(
         models.Game.objects.filter(created_by=request.user)
-        .prefetch_related("rooms", "items", "friends", "enemies", "end_states")
+        .prefetch_related("rooms", "end_states")
         .select_related("start_room"),
         pk=game_pk,
     )
@@ -56,12 +56,19 @@ def game_dashboard(request, game_pk):
         .select_related("room_1", "room_2")
     )
 
+    items = models.Item.objects.base().filter(game=game).select_related("room", "enemy_drop")
+    friends = models.Friend.objects.base().filter(game=game).select_related("room")
+    enemies = models.Enemy.objects.base().filter(game=game).select_related("room")
+
     return render(
         request,
         "game/dashboard/dashboard.html",
         context={
             "game": game,
             "exits": all_exits,
+            "items": items,
+            "friends": friends,
+            "enemies": enemies,
             "links": [
                 ("back", reverse("game:my_games")),
                 ("edit", reverse("game:edit", kwargs={"game_pk": game_pk})),

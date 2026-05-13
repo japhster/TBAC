@@ -8,7 +8,7 @@
       <tr><th>Enemy</th><th>Location</th><th>Actions</th></tr>
     </thead>
     <tbody>
-      {% for enemy in game.enemies.base %}
+      {% for enemy in enemies %}
         <tr>
           <th><a href="{% url 'npc:enemy' enemy.pk %}">{{ enemy.name }}</a></th>
           <td>{{ enemy.room.name }}</td>
