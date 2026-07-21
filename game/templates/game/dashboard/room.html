@@ -12,7 +12,7 @@
     <tbody>
       {% for room in game.rooms.base %}
         <tr>
-          <th>{{ room.name }}</th>
+          <th><a href="{% url 'room:detail' room.pk %}">{{ room.name }}</a></th>
           <td>{% if room.pk == game.start_room.pk %}Yes{% else %}No{% endif %}</td>
           <td>
             <a href="{% url 'room:edit' room.pk %}" style="text-decoration:none">
