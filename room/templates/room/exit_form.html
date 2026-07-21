@@ -38,10 +38,24 @@
         </td>
       </tr>
       <tr class="hideable-row" checkboxId="id_is_locked">
-        <th>Unlocked By</th>
+        <th>Exit reference (required with code unlock)</th>
+        <td>
+          {{ form.exit_reference }}
+          {{ form.exit_refence.errors.as_text }}
+        </td>
+      </tr>
+      <tr class="hideable-row" checkboxId="id_is_locked">
+        <th>Key to unlock</th>
         <td>
           {{ form.key_required }}
           {{ form.key_required.errors.as_text }}
+        </td>
+      </tr>
+      <tr class="hideable-row" checkboxId="id_is_locked">
+        <th>Code to Unlock</th>
+        <td>
+          {{ form.code_required }}
+          {{ form.code_required.errors.as_text }}
         </td>
       </tr>
       <tr>

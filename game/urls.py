@@ -122,6 +122,16 @@ urlpatterns = [
         views.buy_item,
         name="buy",
     ),
+    path(
+        "session/unlock/<int:session_pk>/<int:exit_pk>/",
+        views.unlock_exit,
+        name="unlock",
+    ),
+    path(
+        "session/unlock/<int:session_pk>/<int:exit_pk>/code/",
+        views.unlock_exit_with_code,
+        name="code_unlock",
+    ),
     # doc views
     path(
         "docs/list/",

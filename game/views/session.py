@@ -164,7 +164,7 @@ def start_new_session(request, game_pk):
         room_exit.room_2_id = room_map[room_exit.room_2_id]
         room_exit.session = session
         if room_exit.is_locked:
-            room_exit.key_required_id = item_map[room_exit.key_required_id]
+            room_exit.key_required_id = item_map.get(room_exit.key_required_id)
         room_exit.save()
 
     for end_state in game.end_states.base():
@@ -425,8 +425,8 @@ def open_item(request, session_pk, item_pk):
     session = get_object_or_404(models.Session, pk=session_pk)
     container = get_object_or_404(
         session.items.all(),
+        Q(in_inventory=True) | Q(can_be_taken=False),
         pk=item_pk,
-        in_inventory=True,
         item_type=Item.ItemTypeChoices.CONTAINER,
     )
 
@@ -482,6 +482,58 @@ def use_item(request, session_pk, item_pk):
         )
 
     return _session_redirect(session_pk)
+
+
+@login_required
+def unlock_exit(request, session_pk, exit_pk):
+    session = get_object_or_404(models.Session, pk=session_pk)
+    exit_ = get_object_or_404(session.exits.all(), pk=exit_pk)
+
+    if not exit_.is_locked:
+        message.add_message(request, messages.INFO, "That way is not locked.")
+        return _session_redirect(session_pk)
+
+    if exit_.code_required:
+        return helpers.custom_redirect(
+            "game:code_unlock",
+            kwargs={"session_pk": session_pk, "exit_pk": exit_pk},
+        )
+
+    if exit_.key_required and exit_.key_required.in_inventory:
+        messages.add_message(
+            request,
+            message.INFO,
+            f"You used the {exit_.key_required.get_sentence_name()} to unlock the way.",
+        )
+        exit_.is_locked = False
+        exit_.save()
+
+    return _session_redirect(session_pk)
+
+
+@login_required
+def unlock_exit_with_code(request, session_pk, exit_pk):
+    session = get_object_or_404(models.Session, pk=session_pk)
+    exit_ = get_object_or_404(session.exits.all(), pk=exit_pk)
+
+    form = forms.CodeUnlockForm(request.POST or None)
+    if request.method == "POST" and form.is_valid():
+        if exit_.code_required == form.cleaned_data["code"]:
+            messages.add_message(
+                request, messages.INFO, "The code was accepted and the way is unlocked."
+            )
+            exit_.is_locked = False
+            exit_.save()
+        else:
+            messages.add_message(request, message.INFO, "Incorrect code.")
+
+        return _session_redirect(session_pk)
+
+    return render(
+        request,
+        "game/session/code_unlock.html",
+        context={"game": session.game, "form": form},
+    )
 
 
 @login_required

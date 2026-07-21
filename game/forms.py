@@ -186,3 +186,9 @@ class ExitNetworkForm(forms.Form):
             game_id=game_pk,
             item_type=Item.ItemTypeChoices.KEY,
         )
+
+
+class CodeUnlockForm(forms.Form):
+    code = forms.CharField(
+        widget=forms.TextInput(attrs={"class": "form-control"}),
+    )

@@ -62,7 +62,9 @@ def get_export_data(game):
                 "room_1",
                 "room_2",
                 "is_locked",
+                "exit_reference",
                 "key_required",
+                "code_required",
                 "leave_room_1",
                 "leave_room_2",
             )
@@ -261,6 +263,7 @@ def import_game(file, imported_by):
             room_2=rooms[exit_row["room_2"]],
             is_locked=exit_row["is_locked"],
             key_required=items.get(exit_row["key_required"]),
+            code_required=exit_row["code_required"],
             leave_room_1=exit_row["leave_room_1"],
             leave_room_2=exit_row["leave_room_2"],
         )

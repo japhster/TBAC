@@ -49,9 +49,11 @@ class Exit(models.Model):
         "Room", related_name="exists_from_2", on_delete=models.CASCADE
     )
     is_locked = models.BooleanField(default=False)
+    exit_reference = models.CharField(max_length=250, blank=True)
     key_required = models.ForeignKey(
         "item.Item", related_name="unlocks", on_delete=models.SET_NULL, null=True
     )
+    code_required = models.CharField(max_length=50, blank=True)
     leave_room_1 = models.CharField(max_length=250)
     leave_room_2 = models.CharField(max_length=250)
 

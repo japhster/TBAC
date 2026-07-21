@@ -2,6 +2,7 @@ from django.contrib import messages
 import re
 
 from . import constants
+from tbac import helpers
 
 
 def split_accepted_names(names):
@@ -129,6 +130,16 @@ def get_accepted_item_pk(request, session, command, args):
     )
 
 
+def get_exit_pk(request, session, command, args):
+    exits = session.get_exits().filter(is_locked=True)
+
+    for exit_ in exits:
+        if helpers.strip_stop_words(exit_.exit_reference.lower()) == args.lower():
+            return exit_.pk
+
+    messages.add_message(request, messages.INFO, f"You don't know what the {args} is.")
+
+
 COMMAND_MAP = {
     # Command string: (view name, kwarg name for view, func to retrieve pk)
     constants.MOVE_COMMAND: ("game:move", "room_pk", get_room_pk),
@@ -150,4 +161,5 @@ COMMAND_MAP = {
     constants.FIGHT_COMMAND: ("game:fight", None, None),
     constants.TALK_COMMAND: ("game:talk", "friend_pk", get_friend_pk),
     constants.GIVE_COMMAND: ("game:give", "accepted_item_pk", get_accepted_item_pk),
+    constants.UNLOCK_COMMAND: ("game:unlock", "exit_pk", get_exit_pk),
 }

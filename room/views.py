@@ -105,7 +105,9 @@ def create_exit(request, game_pk):
             room_1=form.cleaned_data["room_1"],
             room_2=form.cleaned_data["room_2"],
             is_locked=form.cleaned_data["is_locked"],
+            exit_reference=form.cleaned_data["exit_reference"],
             key_required=form.cleaned_data["key_required"],
+            code_required=form.cleaned_data["code_required"],
             leave_room_1=form.cleaned_data["leave_room_1"],
             leave_room_2=form.cleaned_data["leave_room_2"],
         )
@@ -135,7 +137,9 @@ def edit_exit(request, game_pk, exit_pk):
             "room_1": room_exit.room_1.pk,
             "room_2": room_exit.room_2.pk,
             "is_locked": room_exit.is_locked,
+            "exit_reference": room_exit.exit_reference,
             "key_required": room_exit.key_required,
+            "code_required": room_exit.code_required,
             "leave_room_1": room_exit.leave_room_1,
             "leave_room_2": room_exit.leave_room_2,
         },
@@ -145,7 +149,9 @@ def edit_exit(request, game_pk, exit_pk):
         room_exit.room_1 = form.cleaned_data["room_1"]
         room_exit.room_2 = form.cleaned_data["room_2"]
         room_exit.is_locked = form.cleaned_data["is_locked"]
+        room_exit.exit_reference = form.cleaned_data["exit_reference"]
         room_exit.key_required = form.cleaned_data["key_required"]
+        room_exit.code_required = form.cleaned_data["code_required"]
         room_exit.leave_room_1 = form.cleaned_data["leave_room_1"]
         room_exit.leave_room_2 = form.cleaned_data["leave_room_2"]
         room_exit.save()
@@ -190,7 +196,12 @@ def room_detail(request, room_pk):
         .filter(Q(room_1=room) | Q(room_2=room))
     ):
         exit_room = exit_.room_2 if exit_.room_1 == room else exit_.room_1
-        exits.append({"room": exit_room, "key_required": exit_.key_required})
+        exits.append(
+            {
+                "room": exit_room,
+                "key_required": exit_.key_required or exit_.code_required,
+            }
+        )
     return render(
         request,
         "room/room.html",

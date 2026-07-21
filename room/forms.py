@@ -54,9 +54,21 @@ class ExitForm(forms.Form):
         widget=forms.CheckboxInput(attrs={"class": "form-check-input"}),
         required=False,
     )
+    exit_reference = forms.CharField(
+        widget=forms.TextInput(
+            attrs={"class": "form-control", "placeholder": "e.g. green door"}
+        ),
+        required=False,
+    )
     key_required = forms.ModelChoiceField(
         queryset=models.Item.objects.none(),
         widget=forms.Select(attrs={"class": "form-control"}),
+        required=False,
+    )
+    code_required = forms.CharField(
+        widget=forms.TextInput(
+            attrs={"class": "form-control", "placeholder": "e.g. 1234"}
+        ),
         required=False,
     )
 
@@ -75,9 +87,25 @@ class ExitForm(forms.Form):
 
     def clean(self, *args, **kwargs):
         cleaned_data = super().clean(*args, **kwargs)
-        if cleaned_data["is_locked"] and cleaned_data["key_required"] is None:
-            raise forms.ValidationError(
-                {"key_required": "Need to specify which key can open a locked exit."}
-            )
+        if cleaned_data["is_locked"]:
+            if (
+                cleaned_data["key_required"] is None
+                and cleaned_data["code_required"] is None
+            ):
+                raise forms.ValidationError(
+                    {
+                        "key_required": "Need to specify a key or code can open the locked exit."
+                    }
+                )
+
+            if (
+                cleaned_data["code_required"] is not None
+                and cleaned_data["exit_reference"] is None
+            ):
+                raise_forms.ValidationError(
+                    {
+                        "exit_reference": "Need to specify the reference the player will use for this door when locked with a code."
+                    }
+                )
 
         return cleaned_data
