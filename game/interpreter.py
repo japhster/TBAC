@@ -151,7 +151,13 @@ COMMAND_MAP = {
             *args, **kwargs, in_possession=False, in_room=True
         ),
     ),
-    constants.OPEN_COMMAND: ("game:open", "item_pk", get_item_pk),
+    constants.OPEN_COMMAND: (
+        "game:open",
+        "item_pk",
+        lambda *args, **kwargs: get_item_pk(
+            *args, **kwargs, in_possession=False, in_room=True
+        ),
+    ),
     constants.USE_COMMAND: ("game:use", "item_pk", get_item_pk),
     constants.INSPECT_COMMAND: (
         "game:inspect",
