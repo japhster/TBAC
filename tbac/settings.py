@@ -63,7 +63,6 @@ MIDDLEWARE = [
 ROOT_URLCONF = "tbac.urls"
 
 
-
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",

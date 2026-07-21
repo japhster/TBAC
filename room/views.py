@@ -184,8 +184,10 @@ def room_detail(request, room_pk):
         game__created_by=request.user,
     )
     exits = []
-    for exit_ in models.Exit.objects.base().select_related("room_1", "room_2").filter(
-        Q(room_1=room) | Q(room_2=room)
+    for exit_ in (
+        models.Exit.objects.base()
+        .select_related("room_1", "room_2")
+        .filter(Q(room_1=room) | Q(room_2=room))
     ):
         exit_room = exit_.room_2 if exit_.room_1 == room else exit_.room_1
         exits.append({"room": exit_room, "key_required": exit_.key_required})
@@ -196,11 +198,11 @@ def room_detail(request, room_pk):
             "room": room,
             "exit_data": exits,
             "links": [
+                links.game_dashboard(room.game.pk),
                 (
                     "back to visualisation",
                     reverse("game:network", kwargs={"game_pk": room.game.pk}),
                 ),
-                links.game_dashboard(room.game.pk),
             ],
         },
     )

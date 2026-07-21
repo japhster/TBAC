@@ -56,7 +56,11 @@ def game_dashboard(request, game_pk):
         .select_related("room_1", "room_2")
     )
 
-    items = models.Item.objects.base().filter(game=game).select_related("room", "enemy_drop")
+    items = (
+        models.Item.objects.base()
+        .filter(game=game)
+        .select_related("room", "enemy_drop")
+    )
     friends = models.Friend.objects.base().filter(game=game).select_related("room")
     enemies = models.Enemy.objects.base().filter(game=game).select_related("room")
 
