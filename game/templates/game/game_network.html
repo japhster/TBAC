@@ -90,6 +90,14 @@
                   <th>Key Required to Unlock Connection</th>
                   <td id="key_required">{{ exit_form.key_required }}</td>
                 </tr>
+                <tr class="hideable-row" checkboxId="id_is_locked">
+                  <th>Code Required to Unlock Connection</th>
+                  <td id="key_required">{{ exit_form.code_required }}</td>
+                </tr>
+                <tr class="hideable-row" checkboxId="id_is_locked">
+                  <th>Connection Reference (required for code locks)</th>
+                  <td id="key_required">{{ exit_form.exit_reference }}</td>
+                </tr>
                 <tr>
                   <th colspan=2 class="text-center">
                     <button type="submit" class="btn btn-primary" id="updateEdgeButton">Update</button>

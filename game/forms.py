@@ -174,10 +174,22 @@ class ExitNetworkForm(forms.Form):
     is_locked = forms.BooleanField(
         widget=forms.CheckboxInput(attrs={"class": "form-check-input"}), required=False
     )
+    exit_reference = forms.CharField(
+        widget=forms.TextInput(
+            attrs={"class": "form-control", "placeholder": "e.g. green door"}
+        ),
+        required=False,
+    )
     key_required = forms.ModelChoiceField(
+        queryset=Item.objects.none(),
         widget=forms.Select(attrs={"class": "form-control"}),
         required=False,
-        queryset=Item.objects.none(),
+    )
+    code_required = forms.CharField(
+        widget=forms.TextInput(
+            attrs={"class": "form-control", "placeholder": "e.g. 1234"}
+        ),
+        required=False,
     )
 
     def __init__(self, *args, game_pk, **kwargs):
