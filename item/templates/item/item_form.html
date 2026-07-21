@@ -60,6 +60,20 @@
           {{ form.contained_within.errors.as_text }}
         </td>
       </tr>
+      <tr class="hideable-item-row" item-type="CONTAINER">
+        <th>Container is Locked</th>
+        <td class="text-center">
+          {{ form.container_is_locked }}
+          {{ form.container_is_locked.errors.as_text }}
+        </td>
+      </tr>
+      <tr class="hideable-item-row" item-type="CONTAINER">
+        <th>Key required for Container</th>
+        <td>
+          {{ form.container_key_required }}
+          {{ form.container_key_required.errors.as_text }}
+        </td>
+      </tr>
       <tr class="hideable-item-row" item-type="HEALTH">
         <th>Amount of Healing Provided</th>
         <td>

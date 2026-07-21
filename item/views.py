@@ -27,6 +27,8 @@ def create_item(request, game_pk):
             contained_within=form.cleaned_data["contained_within"],
             is_starting_item=form.cleaned_data["is_starting_item"],
             healing=form.cleaned_data["healing"],
+            container_is_locked=form.cleaned_data["container_is_locked"],
+            container_key_required=form.cleaned_data["container_key_required"],
         )
         if new_item.item_type == models.Item.ItemTypeChoices.WEAPON:
             new_item.damage = models.DamageOutput.objects.create(
@@ -73,6 +75,8 @@ def edit_item(request, item_pk):
                 if item.item_type == models.Item.ItemTypeChoices.WEAPON
                 else {}
             ),
+            "container_is_locked": item.container_is_locked,
+            "container_key_required": item.container_key_required,
         },
     )
 
@@ -87,6 +91,8 @@ def edit_item(request, item_pk):
         item.contained_within = form.cleaned_data["contained_within"]
         item.is_starting_item = form.cleaned_data["is_starting_item"]
         item.healing = form.cleaned_data["healing"]
+        item.container_is_locked = form.cleaned_data["container_is_locked"]
+        item.container_key_required = form.cleaned_data["container_key_required"]
         item.save()
         if item.item_type == models.Item.ItemTypeChoices.WEAPON:
             damage = item.damage

@@ -36,7 +36,6 @@ class ItemForm(mixins.DamageForm):
         required=False,
         initial=True,
     )
-
     contained_within = forms.ModelChoiceField(
         queryset=models.Item.objects.none(),
         widget=forms.Select(attrs={"class": "form-control"}),
@@ -50,12 +49,27 @@ class ItemForm(mixins.DamageForm):
         widget=forms.TextInput(attrs={"class": "form-control"}),
         required=False,
     )
+    container_is_locked = forms.BooleanField(
+        widget=forms.CheckboxInput(attrs={"class": "form-check-input"}),
+        initial=False,
+        required=False,
+    )
+    container_key_required = forms.ModelChoiceField(
+        queryset=models.Item.objects.none(),
+        widget=forms.Select(attrs={"class": "form-control"}),
+        required=False,
+    )
 
     def __init__(self, *args, game_pk, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields["room"].queryset = Room.objects.base().filter(game_id=game_pk)
         self.fields["contained_within"].queryset = models.Item.objects.base().filter(
             game_id=game_pk, item_type=models.Item.ItemTypeChoices.CONTAINER
+        )
+        self.fields[
+            "container_key_required"
+        ].queryset = models.Item.objects.base().filter(
+            game_id=game_pk, item_type=models.Item.ItemTypeChoices.KEY
         )
 
     def clean(self, *args, **kwargs):
@@ -79,5 +93,19 @@ class ItemForm(mixins.DamageForm):
                 raise forms.ValidationError(
                     {"healing": "This field is required when creating a health item."}
                 )
+
+        if cd["item_type"] == models.Item.ItemTypeChoices.CONTAINER:
+            if (
+                cd.get("container_is_locked", False)
+                and cd.get("container_key_required") is None
+            ):
+                raise forms.ValidationError(
+                    {
+                        "container_key_required": "This field is required when locking a container."
+                    }
+                )
+        else:
+            cd["container_is_locked"] = False
+            cd["container_key_required"] = None
 
         return cd
